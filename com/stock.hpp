@@ -13,7 +13,7 @@
 
 #include <string>
 
-namespace s11n_example {
+namespace pop {
 
 	/// Structure to hold information about a single stock.
 	struct stock

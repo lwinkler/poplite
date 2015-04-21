@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef SERIALIZATION_CONNECTION_HPP
-#define SERIALIZATION_CONNECTION_HPP
+#ifndef POP_CONNECTION_HPP
+#define POP_CONNECTION_HPP
 
 #include <boost/asio.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -24,7 +24,7 @@
 
 using namespace std;
 
-namespace s11n_example {
+namespace pop {
 
 	/// The connection class provides serialization primitives on top of a socket.
 	/**
@@ -234,6 +234,6 @@ namespace s11n_example {
 
 	typedef boost::shared_ptr<connection> connection_ptr;
 
-} // namespace s11n_example
+} // namespace
 
-#endif // SERIALIZATION_CONNECTION_HPP
+#endif
