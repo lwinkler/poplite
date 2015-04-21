@@ -58,8 +58,18 @@ namespace pop {
 								boost::asio::placeholders::error, conn));
 #else
 					int method_id = -1;
-					conn->sync_read(method_id);
+					std::stringstream ss;
+					conn->sync_read(ss);
+					// cout << oa << endl;
+					pop::bufin ia(ss);
+					ia >> method_id;
+					
+				std::tuple<int,int,double,string> tup;
 					cout << "mid" << method_id << endl;
+
+					conn->sync_read(ss2);
+					bufin ia2(ss2);
+					ia2 >> tup;
 					boost::system::error_code error;
 					handle_read(error, conn);
 #endif

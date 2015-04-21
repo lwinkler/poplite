@@ -54,8 +54,9 @@ namespace pop {
 					// of stocks. The connection::async_read() function will automatically
 					// decode the data that is read from the underlying socket.
 					int method_id = 1;
+				std::cout<<__LINE__<<std::endl;
 					connection_.async_write(method_id,
-							boost::bind(&client::handle_write, this,
+							boost::bind(&client::handle_write0, this,
 								boost::asio::placeholders::error));
 				}
 				else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
@@ -76,11 +77,19 @@ namespace pop {
 				}
 			}
 
+			void handle_write0(const boost::system::error_code& e)
+			{
+					connection_.async_write(tup,
+							boost::bind(&client::handle_write, this,
+								boost::asio::placeholders::error));
+			}
+
 			/// Handle completion of a read operation.
 			void handle_write(const boost::system::error_code& e)
 			{
 				if (!e)
 				{
+				std::cout<<__LINE__<<std::endl;
 					connection_.async_read(tup,
 							boost::bind(&client::handle_read, this,
 								boost::asio::placeholders::error));

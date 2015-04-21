@@ -22,6 +22,8 @@
 #include <sstream>
 #include <vector>
 
+#include "com/serialize.hpp"
+
 using namespace std;
 
 namespace pop {
@@ -96,53 +98,48 @@ namespace pop {
 				}
 
 			/// synchronously read a data structure from the socket.
-			template <typename T>
-				void sync_read(T& t)
+			// void sync_read(pop::bufin& oa)
+			void sync_read(std::ostream& ost)
+			{
+				// Issue a read operation to read exactly the number of bytes in a header.
+				boost::asio::read(socket_, boost::asio::buffer(inbound_header_));
+				// Determine the length of the serialized data.
+				std::istringstream is(std::string(inbound_header_, header_length));
+				std::size_t inbound_data_size = 0;
+				if (!(is >> std::hex >> inbound_data_size))
 				{
-					// Issue a read operation to read exactly the number of bytes in a header.
-					boost::asio::read(socket_, boost::asio::buffer(inbound_header_));
-					if (false)
-					{
-						//boost::get<0>(handler)(e);
-						cerr << "read error"<<endl;
-					}
-					else
-					{
-						// Determine the length of the serialized data.
-						std::istringstream is(std::string(inbound_header_, header_length));
-						std::size_t inbound_data_size = 0;
-						if (!(is >> std::hex >> inbound_data_size))
-						{
-							// Header doesn't seem to be valid. Inform the caller.
-							boost::system::error_code error(boost::asio::error::invalid_argument);
-							cerr << "read error"<<endl;
-							return;
-						}
-
-						// Start an asynchronous call to receive the data.
-						inbound_data_.resize(inbound_data_size);
-						boost::asio::read(socket_, boost::asio::buffer(inbound_data_));
-					}
-						// Extract the data structure from the data just received.
-						try
-						{
-							std::string archive_data(&inbound_data_[0], inbound_data_.size());
-							std::istringstream archive_stream(archive_data);
-							boost::archive::text_iarchive archive(archive_stream);
-							archive >> t;
-						}
-						catch (std::exception& e)
-						{
-							// Unable to decode data.
-							boost::system::error_code error(boost::asio::error::invalid_argument);
-							cerr << "error A" <<endl;
-							return;
-						}
-
-						// Inform caller that data has been received ok.
-						// boost::get<0>(handler)(e);
-						cout << "data read" <<endl;
+					// Header doesn't seem to be valid. Inform the caller.
+					boost::system::error_code error(boost::asio::error::invalid_argument);
+					cerr << "read error"<<endl;
+					return;
 				}
+
+				// Start an asynchronous call to receive the data.
+				inbound_data_.resize(inbound_data_size);
+				boost::asio::read(socket_, boost::asio::buffer(inbound_data_));
+
+				// Extract the data structure from the data just received.
+				try
+				{
+					std::cout<<"read length " << inbound_data_.size() << std::endl;
+					std::string archive_data(&inbound_data_[0], inbound_data_.size());
+					std::istringstream archive_stream(archive_data);
+					// boost::archive::text_iarchive archive(archive_stream);
+					// archive >> ia;
+					ost << archive_data;
+				}
+				catch (std::exception& e)
+				{
+					// Unable to decode data.
+					boost::system::error_code error(boost::asio::error::invalid_argument);
+					cerr << "error A" <<endl;
+					return;
+				}
+
+				// Inform caller that data has been received ok.
+				// boost::get<0>(handler)(e);
+				cout << "data read" <<endl;
+			}
 
 			/// Handle a completed read of a message header. The handler is passed using
 			/// a tuple since boost::bind seems to have trouble binding a function object
