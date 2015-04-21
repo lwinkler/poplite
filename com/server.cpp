@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
 		unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
 
 		boost::asio::io_service io_service;
-		pop::remote::broker<ParClass> brok(ParClass::parallel_methods());
-		s11n_example::server<ParClass> server(io_service, port, brok);
+		pop::remote::broker<TestClass> brok(TestClass::parallel_methods());
+		pop::server<TestClass> server(io_service, port, brok);
 		io_service.run();
 	}
 	catch (std::exception& e)

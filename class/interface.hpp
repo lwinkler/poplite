@@ -6,8 +6,6 @@
 
 namespace pop{
 
-using namespace std;
-
 class interface
 {
 	public:
@@ -23,9 +21,9 @@ class interface
 
 				ia >> tup;
 			}
-			catch(exception& e)
+			catch(std::exception& e)
 			{
-				cout << "exception in call_sync: " << e.what() << endl;
+				std::cerr << "exception in call_sync: " << e.what() << std::endl;
 			}
 		}
 	private:

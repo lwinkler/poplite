@@ -40,7 +40,7 @@ class gps_position
 	{}
 };
 
-class ParClass
+class TestClass
 {
 	public:
 		void ChangeValues(std::tuple<int, int, double, string>& args)
@@ -78,16 +78,16 @@ class ParClass
 		}
 
 
-	// typedef void (broker<ParClass>::*pt_method_)(pop::bufin& ia, pop::bufout& oa);
-	static const vector<remote::parallel_method<ParClass>>& parallel_methods()
+	// typedef void (broker<TestClass>::*pt_method_)(pop::bufin& ia, pop::bufout& oa);
+	static const vector<remote::parallel_method<TestClass>>& parallel_methods()
 	{
-		static const vector<remote::parallel_method<ParClass>>meths
+		static const vector<remote::parallel_method<TestClass>>meths
 		{
-			std::bind(&remote::broker<ParClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &ParClass::ChangeValues),
-			std::bind(&remote::broker<ParClass>::call_simple<int,int>,               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &ParClass::ParMethod2),
-			std::bind(&remote::broker<ParClass>::call_simple<>,                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &ParClass::ParMethod3),
-			std::bind(&remote::broker<ParClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &ParClass::ParMethod4),
-			std::bind(&remote::broker<ParClass>::call_simple<vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &ParClass::ParMethod5)
+			std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ChangeValues),
+			std::bind(&remote::broker<TestClass>::call_simple<int,int>,               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod2),
+			std::bind(&remote::broker<TestClass>::call_simple<>,                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod3),
+			std::bind(&remote::broker<TestClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
+			std::bind(&remote::broker<TestClass>::call_simple<vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5)
 		};
 		return meths;
 	}

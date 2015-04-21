@@ -24,7 +24,7 @@
 #include "example/test_class.hpp"
 
 
-namespace s11n_example {
+namespace pop {
 
 	/// Serves stock quote information to any client that connects to it.
 	template<class ParClass>
@@ -80,9 +80,10 @@ namespace s11n_example {
 			{
 				// Nothing to do. The socket will be closed automatically when the last
 				// reference to the connection object goes away.
-					cout<<"asdfasf"<<stocks_.at(0).low_price<<endl;
+					
+				std::tuple<int,int,double,string> tup;
 
-					conn->async_write(stocks_,
+					conn->async_write(tup,
 							boost::bind(&server::handle_write, this,
 								boost::asio::placeholders::error, conn));
 
@@ -105,7 +106,7 @@ namespace s11n_example {
 			boost::asio::ip::tcp::acceptor acceptor_;
 
 			/// The data to be sent to each client.
-			std::vector<stock> stocks_;
+			// std::vector<stock> stocks_;
 			pop::remote::broker<ParClass>& m_brok;
 	};
 

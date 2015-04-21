@@ -19,6 +19,7 @@
 #include "connection.hpp" // Must come before boost/serialization headers.
 #include <boost/serialization/vector.hpp>
 #include "stock.hpp"
+#include "class/interface.hpp"
 
 namespace pop {
 
@@ -52,8 +53,6 @@ namespace pop {
 					// Successfully established connection. Start operation to read the list
 					// of stocks. The connection::async_read() function will automatically
 					// decode the data that is read from the underlying socket.
-					stocks_.emplace_back();
-					stocks_.at(0).low_price = 44;
 					int method_id = 1;
 					connection_.async_write(method_id,
 							boost::bind(&client::handle_write, this,
@@ -82,7 +81,7 @@ namespace pop {
 			{
 				if (!e)
 				{
-					connection_.async_read(stocks_,
+					connection_.async_read(tup,
 							boost::bind(&client::handle_read, this,
 								boost::asio::placeholders::error));
 				}
@@ -102,20 +101,9 @@ namespace pop {
 				if (!e)
 				{
 					// Print out the data that was received.
-					for (std::size_t i = 0; i < stocks_.size(); ++i)
-					{
-						std::cout << "Stock number " << i << "\n";
-						std::cout << "  code: " << stocks_[i].code << "\n";
-						std::cout << "  name: " << stocks_[i].name << "\n";
-						std::cout << "  open_price: " << stocks_[i].open_price << "\n";
-						std::cout << "  high_price: " << stocks_[i].high_price << "\n";
-						std::cout << "  low_price: " << stocks_[i].low_price << "\n";
-						std::cout << "  last_price: " << stocks_[i].last_price << "\n";
-						std::cout << "  buy_price: " << stocks_[i].buy_price << "\n";
-						std::cout << "  buy_quantity: " << stocks_[i].buy_quantity << "\n";
-						std::cout << "  sell_price: " << stocks_[i].sell_price << "\n";
-						std::cout << "  sell_quantity: " << stocks_[i].sell_quantity << "\n";
-					}
+					std::cout<<"received "<<std::endl;
+					bufout oa(cout);
+					oa << tup;
 				}
 				else
 				{
@@ -132,7 +120,8 @@ namespace pop {
 			connection connection_;
 
 			/// The data received from the server.
-			std::vector<stock> stocks_;
+			//interface iface;
+			std::tuple<int,int,double,string> tup;
 	};
 
 } // namespace
