@@ -82,6 +82,37 @@ namespace pop {
 					boost::asio::async_write(socket_, buffers, handler);
 				}
 
+				void sync_write(std::istream& iss)
+				{
+					// Serialize the data first so we know how large it is.
+					// std::ostringstream archive_stream;
+					// boost::archive::text_oarchive archive(archive_stream);
+					std::istreambuf_iterator<char> eos;
+					std::string outbound_data(std::istreambuf_iterator<char>(iss), eos);
+
+					std::cout << "write " << outbound_data.size() << " " << outbound_data << std::endl;
+
+					// Format the header.
+					std::ostringstream header_stream;
+					header_stream << std::setw(header_length)
+						<< std::hex << outbound_data.size();
+					if (!header_stream || header_stream.str().size() != header_length)
+					{
+						// Something went wrong, inform the caller.
+						boost::system::error_code error(boost::asio::error::invalid_argument);
+						std::cerr << "error in header" << std::endl;
+						return;
+					}
+					outbound_header_ = header_stream.str();
+
+					// Write the serialized data to the socket. We use "gather-write" to send
+					// both the header and the data in a single write operation.
+					std::vector<boost::asio::const_buffer> buffers;
+					buffers.push_back(boost::asio::buffer(outbound_header_));
+					buffers.push_back(boost::asio::buffer(outbound_data));
+					boost::asio::write(socket_, buffers);
+				}
+
 			/// Asynchronously read a data structure from the socket.
 			template <typename T, typename Handler>
 				void async_read(T& t, Handler handler)
@@ -123,7 +154,7 @@ namespace pop {
 				{
 					std::cout<<"read length " << inbound_data_.size() << std::endl;
 					std::string archive_data(&inbound_data_[0], inbound_data_.size());
-					std::istringstream archive_stream(archive_data);
+					// std::istringstream archive_stream(archive_data);
 					// boost::archive::text_iarchive archive(archive_stream);
 					// archive >> ia;
 					ost << archive_data;

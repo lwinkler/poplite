@@ -67,6 +67,7 @@ namespace pop {
 				std::tuple<int,int,double,string> tup;
 					cout << "mid" << method_id << endl;
 
+					std::stringstream ss2;
 					conn->sync_read(ss2);
 					bufin ia2(ss2);
 					ia2 >> tup;
@@ -93,6 +94,7 @@ namespace pop {
 					
 				std::tuple<int,int,double,string> tup;
 
+#ifdef ASYNC
 					conn->async_write(tup,
 							boost::bind(&server::handle_write, this,
 								boost::asio::placeholders::error, conn));
@@ -102,6 +104,20 @@ namespace pop {
 					acceptor_.async_accept(new_conn->socket(),
 							boost::bind(&server::handle_accept, this,
 								boost::asio::placeholders::error, new_conn));
+#else
+					std::stringstream ss;
+					bufout oa(ss);
+					oa << tup;
+					conn->sync_write(ss);
+					boost::system::error_code error;
+					handle_write(error, conn);
+
+					connection_ptr new_conn(new connection(acceptor_.get_io_service()));
+					acceptor_.async_accept(new_conn->socket(),
+							boost::bind(&server::handle_accept, this,
+								boost::asio::placeholders::error, new_conn));
+#endif
+
 			}
 
 			/// Handle completion of a write operation.
