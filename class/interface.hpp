@@ -12,8 +12,9 @@ class interface
 	public:
 		interface(const boost::asio::ip::tcp::resolver::query & query) :
 			query_(query),
-			connection_(query)
+			client_(query_)
 		{
+				std::cout<<__LINE__<<std::endl;
 		}
 
 
@@ -21,16 +22,24 @@ class interface
 		{
 			try
 			{
-				std::stringstream oss;
-				bufout oa(oss);
-				oa << x_method_id;
-				oa << tup;
+				std::stringstream oss1;
+				bufout oa1(oss1);
+				oa1 << x_method_id;
+				client_.connec().sync_write(oss1);
 
-				connection_.sync_write(oss);
+				std::stringstream oss2;
+				bufout oa2(oss2);
+				oa2 << tup;
+				client_.connec().sync_write(oss2);
+
+				std::cout << "send to broker" << std::endl;
 
 				std::stringstream iss;
+				client_.connec().sync_read(iss);
+				cout << __LINE__ << endl;
 				bufin ia(iss);
-				connection_.sync_read(iss);
+				cout << __LINE__ << endl;
+				std::cout << "received from broker" << std::endl;
 
 				ia >> tup;
 			}
@@ -41,7 +50,7 @@ class interface
 		}
 	private:
 		boost::asio::ip::tcp::resolver::query query_;
-		pop::connection connection_;
+		pop::client client_;
 		boost::asio::ip::tcp::endpoint endpoint_;
 		// bufin&  ia;
 		// bufout& oa;

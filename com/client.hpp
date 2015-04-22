@@ -20,6 +20,9 @@
 #include <boost/serialization/vector.hpp>
 #include "class/interface.hpp"
 
+
+#error
+
 namespace pop {
 
 	/// Downloads stock quote information from a server.

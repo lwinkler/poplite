@@ -2,7 +2,7 @@
 FLAGS=-std=c++11 -g -I.
 LIBS=-lboost_serialization -lboost_system -lboost_thread -lboost_serialization -lboost_context -lpthread
 
-TARGETS=com/server com/client example/main
+TARGETS=com/server com/client
 
 all: ${TARGETS}
 clean:

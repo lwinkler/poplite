@@ -70,6 +70,7 @@ namespace pop {
 					conn->sync_read(ss2);
 					bufin ia2(ss2);
 					ia2 >> tup;
+					cout << "received tuple" << endl;
 					boost::system::error_code error;
 					handle_read(error, conn);
 #endif
@@ -107,7 +108,9 @@ namespace pop {
 					std::stringstream ss;
 					bufout oa(ss);
 					oa << tup;
+					std::cout << "send tuple " << std::endl;
 					conn->sync_write(ss);
+					std::cout << "sent tuple " << std::endl;
 					boost::system::error_code error;
 					handle_write(error, conn);
 

@@ -27,9 +27,13 @@ int main(int argc, char* argv[])
 		// boost::asio::io_service io_service;
 		// pop::client client(io_service, argv[1], argv[2]);
 		// io_service.run();
+				std::cout<<"handleasdfasdf connect"<<std::endl;
 		boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
+				std::cout<<__LINE__<<std::endl;
 		pop::interface iface(query);
+				std::cout<<__LINE__<<std::endl;
 		std::tuple<int,int,double,string> tup0;
+				std::cout<<__LINE__<<std::endl;
 		iface.call_sync<int,int,double,string>(0, tup0);
 	}
 	catch (std::exception& e)
