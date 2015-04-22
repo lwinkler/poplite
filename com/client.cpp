@@ -8,7 +8,9 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "client.hpp"
+// #include "client.hpp"
+// #include "class/system.hpp"
+#include "class/interface.hpp"
 
 
 int main(int argc, char* argv[])
@@ -22,9 +24,13 @@ int main(int argc, char* argv[])
 			return 1;
 		}
 
-		boost::asio::io_service io_service;
-		pop::client client(io_service, argv[1], argv[2]);
-		io_service.run();
+		// boost::asio::io_service io_service;
+		// pop::client client(io_service, argv[1], argv[2]);
+		// io_service.run();
+		boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
+		pop::interface iface(query);
+		std::tuple<int,int,double,string> tup0;
+		iface.call_sync<int,int,double,string>(0, tup0);
 	}
 	catch (std::exception& e)
 	{

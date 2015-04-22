@@ -39,17 +39,62 @@ namespace pop {
 	{
 		public:
 			/// Constructor.
-			connection(boost::asio::io_service& io_service)
-				: socket_(io_service)
+			connection(const boost::asio::ip::tcp::resolver::query query)
+				: socket_(io_service_)
 			{
+				boost::asio::ip::tcp::resolver resolver(io_service_);
+				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+
+				// Start an asynchronous connect operation.
+				socket_.async_connect(endpoint, boost::bind(&connection::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator));
+				io_service_.run();
 			}
+
+			/// Handle completion of a connect operation.
+			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+			{
+				if (!e)
+				{
+					// Successfully established connection. Start operation to read the list
+					// of stocks. The connection::async_read() function will automatically
+					// decode the data that is read from the underlying socket.
+					/*
+					int method_id = 1;
+					std::cout<<__LINE__<<std::endl;
+					connection_.async_write(method_id,
+							boost::bind(&client::handle_write0, this,
+								boost::asio::placeholders::error));
+					*/
+					std::cout<<"connected"<<std::endl;
+				}
+				else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
+				{
+					// Try the next endpoint.
+					socket_.close();
+					boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+					socket_.async_connect(endpoint,
+							boost::bind(&connection::handle_connect, this,
+								boost::asio::placeholders::error, ++endpoint_iterator));
+				}
+				else
+				{
+					// An error occurred. Log it and return. Since we are not starting a new
+					// operation the io_service will run out of work to do and the client will
+					// exit.
+					std::cerr << e.message() << std::endl;
+				}
+			}
+
 
 			/// Get the underlying socket. Used for making a connection or for accepting
 			/// an incoming connection.
-			boost::asio::ip::tcp::socket& socket()
+			inline boost::asio::ip::tcp::socket& socket()
 			{
 				return socket_;
 			}
+
+			inline void run(){io_service_.run();}
 
 			/// Asynchronously write a data structure to the socket.
 			template <typename T, typename Handler>
@@ -241,6 +286,9 @@ namespace pop {
 				}
 
 		private:
+
+			boost::asio::io_service io_service_;
+
 			/// The underlying socket.
 			boost::asio::ip::tcp::socket socket_;
 

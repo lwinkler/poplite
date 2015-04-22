@@ -18,7 +18,6 @@
 #include <vector>
 #include "connection.hpp" // Must come before boost/serialization headers.
 #include <boost/serialization/vector.hpp>
-#include "stock.hpp"
 
 #include "class/broker.hpp"
 #include "example/test_class.hpp"
