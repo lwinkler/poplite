@@ -89,8 +89,7 @@ namespace pop {
 					{
 						// Something went wrong, inform the caller.
 						boost::system::error_code error(boost::asio::error::invalid_argument);
-						LOG(error) << "error in header"; // TODO throw
-						return;
+						throw std::runtime_error("error header in sync_write");
 					}
 					outbound_header_ = header_stream.str();
 
@@ -107,14 +106,12 @@ namespace pop {
 				void async_read(T& t, Handler handler)
 				{
 					// Issue a read operation to read exactly the number of bytes in a header.
-					void (connection::*f)(
-							const boost::system::error_code&,
-							T&, boost::tuple<Handler>)
-						= &connection::handle_read_header<T, Handler>;
-					boost::asio::async_read(socket_, boost::asio::buffer(inbound_header_),
-							boost::bind(f,
-								this, boost::asio::placeholders::error, boost::ref(t),
-								boost::make_tuple(handler)));
+					void (connection::*f)(const boost::system::error_code&, T&, boost::tuple<Handler>) = &connection::handle_read_header<T, Handler>;
+					boost::asio::async_read(
+						socket_, 
+						boost::asio::buffer(inbound_header_),
+						boost::bind(f, this, boost::asio::placeholders::error, boost::ref(t), boost::make_tuple(handler))
+					);
 				}
 
 			/// synchronously read a data structure from the socket.
@@ -141,7 +138,6 @@ namespace pop {
 				// Extract the data structure from the data just received.
 				try
 				{
-					LOG(debug)<<"read length " << inbound_data_.size();
 					std::string archive_data(&inbound_data_[0], inbound_data_.size());
 					// std::istringstream archive_stream(archive_data);
 					// boost::archive::text_iarchive archive(archive_stream);
@@ -151,14 +147,13 @@ namespace pop {
 				catch (std::exception& e)
 				{
 					// Unable to decode data.
-					boost::system::error_code error(boost::asio::error::invalid_argument);
-					LOG(error) << "error A";
-					return;
+					LOG(error) << "error in sync_read: " << e.what();
+					throw;
 				}
 
 				// Inform caller that data has been received ok.
 				// boost::get<0>(handler)(e);
-				LOG(debug) << "data read";
+				LOG(debug) << "data read: " << inbound_data_[0];
 			}
 
 			/// Handle a completed read of a message header. The handler is passed using

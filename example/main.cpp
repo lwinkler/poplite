@@ -30,25 +30,39 @@ int main(int argc, char* argv[])
 		pop::interface iface(query);
 
 		// Serialization of objects
-		boost::archive::text_oarchive aout(cout);
 
 
 		LOG(info) << "call GetValues";
 		std::tuple<int,int,double,string> tup0;
 		iface.call_sync<int,int,double,string>(6, tup0);
+		boost::archive::text_oarchive aout(cout);
 		aout << tup0;
 		cout << endl;
+
+		
+		sleep(1);
 
 		LOG(info) << "call SetValues method to set new values";
-		iface.call_sync<int,int,double,string>(6, tup0);
+		tup0 = std::make_tuple(1, 42, 3.14, "new stuff");
+		iface.call_sync<int,int,double,string>(5, tup0);
 		aout << tup0;
 		cout << endl;
-		return 0;
+
+		sleep(1);
 
 		LOG(info) << "call GetValues again";
-		iface.call_sync<int,int,double,string>(6, tup0);
-		aout << tup0;
+		std::tuple<int,int,double,string> tup1;
+		iface.call_sync<int,int,double,string>(6, tup1);
+		aout << tup1;
 		cout << endl;
+
+		sleep(1);
+
+		LOG(info) << "call GetValues again";
+		iface.call_sync<int,int,double,string>(6, tup1);
+		aout << tup1;
+		cout << endl;
+		cout << "end of main" << endl;
 	}
 	catch (std::exception& e)
 	{

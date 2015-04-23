@@ -37,6 +37,15 @@ class interface
 				bufin ia(iss);
 				ia >> tup;
 				LOG(debug) << "received answer from broker";
+
+				std::stringstream iss2;
+				client_.connec().sync_read(iss2);
+				bufin ia2(iss2);
+				std::string ack;
+				ia2 >> ack;
+				LOG(debug) << "received ack=" << ack;
+				if(ack != "ACK")
+					throw std::runtime_error("did not receive ack");
 			}
 			catch(std::exception& e)
 			{

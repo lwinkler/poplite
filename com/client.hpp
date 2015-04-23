@@ -61,7 +61,7 @@ namespace pop {
 				}
 				else
 				{
-					LOG(error) << "connection failed: " << e.message();
+					throw std::runtime_error("connection failed");
 				}
 			}
 
