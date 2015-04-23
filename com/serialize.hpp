@@ -6,6 +6,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 
+#include "class/system.hpp"
 #include "serialize_tuple.hpp"
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
@@ -14,13 +15,6 @@
 namespace pop
 {
 
-#if 1
-typedef boost::archive::text_iarchive bufin;
-typedef boost::archive::text_oarchive bufout;
-#else
-typedef boost::archive::binary_iarchive bufin;
-typedef boost::archive::binary_oarchive bufout;
-#endif
 /*
 
 class method_id

@@ -11,130 +11,64 @@
 #ifndef POP_CLIENT_H
 #define POP_CLIENT_H
 
-#include <boost/asio.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/bind.hpp>
-#include <iostream>
-#include <vector>
 #include "connection.hpp" // Must come before boost/serialization headers.
-#include <boost/serialization/vector.hpp>
-#include "class/interface.hpp"
 
-
-#error
 
 namespace pop {
-
-	/// Downloads stock quote information from a server.
+	/// The connection class provides serialization primitives on top of a socket.
+	/**
+	 * Each message sent using this class consists of:
+	 * @li An 8-byte header containing the length of the serialized data in
+	 * hexadecimal.
+	 * @li The serialized data.
+	 */
 	class client
 	{
 		public:
-			/// Constructor starts the asynchronous connect operation.
-			client(boost::asio::io_service& io_service, const std::string& host, const std::string& service)
-				: connection_(io_service)
+			/// Constructor.
+			client(const boost::asio::ip::tcp::resolver::query& query) :
+				connection_(io_service_),
+				query_(query)
 			{
-				// Resolve the host name into an IP address.
-				boost::asio::ip::tcp::resolver resolver(io_service);
-				boost::asio::ip::tcp::resolver::query query(host, service);
-				boost::asio::ip::tcp::resolver::iterator endpoint_iterator =
-					resolver.resolve(query);
+				boost::asio::ip::tcp::resolver resolver(io_service_);
+				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
 
 				// Start an asynchronous connect operation.
-				connection_.socket().async_connect(endpoint,
-						boost::bind(&client::handle_connect, this,
-							boost::asio::placeholders::error, ++endpoint_iterator));
+				LOG(debug) <<"async connect";
+				connection_.socket().async_connect(endpoint, boost::bind(&client::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator));
+				io_service_.run();
 			}
 
+			inline void run(){io_service_.run();}
+			inline connection& connec(){return connection_;}
+
+
+		private:
 			/// Handle completion of a connect operation.
-			void handle_connect(const boost::system::error_code& e,
-					boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
 			{
 				if (!e)
 				{
-					// Successfully established connection. Start operation to read the list
-					// of stocks. The connection::async_read() function will automatically
-					// decode the data that is read from the underlying socket.
-					int method_id = 1;
-				std::cout<<__LINE__<<std::endl;
-					connection_.async_write(method_id,
-							boost::bind(&client::handle_write0, this,
-								boost::asio::placeholders::error));
+					LOG(debug)<<"connected";
 				}
 				else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
 				{
 					// Try the next endpoint.
 					connection_.socket().close();
 					boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-					connection_.socket().async_connect(endpoint,
-							boost::bind(&client::handle_connect, this,
-								boost::asio::placeholders::error, ++endpoint_iterator));
+					connection_.socket().async_connect(endpoint, boost::bind(&client::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator));
 				}
 				else
 				{
-					// An error occurred. Log it and return. Since we are not starting a new
-					// operation the io_service will run out of work to do and the client will
-					// exit.
-					std::cerr << e.message() << std::endl;
+					LOG(error) << "connection failed: " << e.message();
 				}
 			}
 
-			void handle_write0(const boost::system::error_code& e)
-			{
-					connection_.async_write(tup,
-							boost::bind(&client::handle_write, this,
-								boost::asio::placeholders::error));
-			}
-
-			/// Handle completion of a read operation.
-			void handle_write(const boost::system::error_code& e)
-			{
-				if (!e)
-				{
-				std::cout<<__LINE__<<std::endl;
-					connection_.async_read(tup,
-							boost::bind(&client::handle_read, this,
-								boost::asio::placeholders::error));
-				}
-				else
-				{
-					// An error occurred.
-					std::cerr << e.message() << std::endl;
-				}
-
-				// Since we are not starting a new operation the io_service will run out of
-				// work to do and the client will exit.
-			}
-
-			/// Handle completion of a read operation.
-			void handle_read(const boost::system::error_code& e)
-			{
-				if (!e)
-				{
-					// Print out the data that was received.
-					std::cout<<"received "<<std::endl;
-					bufout oa(cout);
-					oa << tup;
-				}
-				else
-				{
-					// An error occurred.
-					std::cerr << e.message() << std::endl;
-				}
-
-				// Since we are not starting a new operation the io_service will run out of
-				// work to do and the client will exit.
-			}
-
-		private:
-			/// The connection to the server.
+			boost::asio::io_service io_service_;
 			connection connection_;
-
-			/// The data received from the server.
-			//interface iface;
-			std::tuple<int,int,double,string> tup;
+			const boost::asio::ip::tcp::resolver::query& query_;
 	};
-
 } // namespace
 
 #endif

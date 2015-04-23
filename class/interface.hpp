@@ -3,7 +3,7 @@
 
 
 #include "com/serialize.hpp"
-#include "com/connection.hpp"
+#include "com/client.hpp"
 
 namespace pop{
 
@@ -13,9 +13,7 @@ class interface
 		interface(const boost::asio::ip::tcp::resolver::query & query) :
 			query_(query),
 			client_(query_)
-		{
-				std::cout<<__LINE__<<std::endl;
-		}
+		{}
 
 
 		template<typename ...Args> void call_sync(int x_method_id, std::tuple<Args...>& tup)
@@ -32,20 +30,17 @@ class interface
 				oa2 << tup;
 				client_.connec().sync_write(oss2);
 
-				std::cout << "send to broker" << std::endl;
+				LOG(debug) << "send to broker";
 
 				std::stringstream iss;
 				client_.connec().sync_read(iss);
-				cout << __LINE__ << endl;
 				bufin ia(iss);
-				cout << __LINE__ << endl;
-				std::cout << "received from broker" << std::endl;
-
 				ia >> tup;
+				LOG(debug) << "received answer from broker";
 			}
 			catch(std::exception& e)
 			{
-				std::cerr << "exception in call_sync: " << e.what() << std::endl;
+				LOG(error) << "exception in call_sync: " << e.what();
 			}
 		}
 	private:

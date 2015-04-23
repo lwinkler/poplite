@@ -22,9 +22,8 @@
 #include <sstream>
 #include <vector>
 
+#include "class/util.hpp"
 #include "com/serialize.hpp"
-
-using namespace std;
 
 namespace pop {
 
@@ -55,8 +54,7 @@ namespace pop {
 
 					// Format the header.
 					std::ostringstream header_stream;
-					header_stream << std::setw(header_length)
-						<< std::hex << outbound_data_.size();
+					header_stream << std::setw(header_length) << std::hex << outbound_data_.size();
 					if (!header_stream || header_stream.str().size() != header_length)
 					{
 						// Something went wrong, inform the caller.
@@ -82,17 +80,16 @@ namespace pop {
 					std::istreambuf_iterator<char> eos;
 					std::string outbound_data(std::istreambuf_iterator<char>(iss), eos);
 
-					std::cout << "write " << outbound_data.size() << " " << outbound_data << std::endl;
+					LOG(debug) << "sync write " << outbound_data.size() << " " << outbound_data;
 
 					// Format the header.
 					std::ostringstream header_stream;
-					header_stream << std::setw(header_length)
-						<< std::hex << outbound_data.size();
+					header_stream << std::setw(header_length) << std::hex << outbound_data.size();
 					if (!header_stream || header_stream.str().size() != header_length)
 					{
 						// Something went wrong, inform the caller.
 						boost::system::error_code error(boost::asio::error::invalid_argument);
-						std::cerr << "error in header" << std::endl;
+						LOG(error) << "error in header"; // TODO throw
 						return;
 					}
 					outbound_header_ = header_stream.str();
@@ -133,7 +130,7 @@ namespace pop {
 				{
 					// Header doesn't seem to be valid. Inform the caller.
 					boost::system::error_code error(boost::asio::error::invalid_argument);
-					cerr << "read error"<<endl;
+					LOG(error) << "read error";
 					return;
 				}
 
@@ -144,7 +141,7 @@ namespace pop {
 				// Extract the data structure from the data just received.
 				try
 				{
-					std::cout<<"read length " << inbound_data_.size() << std::endl;
+					LOG(debug)<<"read length " << inbound_data_.size();
 					std::string archive_data(&inbound_data_[0], inbound_data_.size());
 					// std::istringstream archive_stream(archive_data);
 					// boost::archive::text_iarchive archive(archive_stream);
@@ -155,13 +152,13 @@ namespace pop {
 				{
 					// Unable to decode data.
 					boost::system::error_code error(boost::asio::error::invalid_argument);
-					cerr << "error A" <<endl;
+					LOG(error) << "error A";
 					return;
 				}
 
 				// Inform caller that data has been received ok.
 				// boost::get<0>(handler)(e);
-				cout << "data read" <<endl;
+				LOG(debug) << "data read";
 			}
 
 			/// Handle a completed read of a message header. The handler is passed using
@@ -252,71 +249,6 @@ namespace pop {
 
 			/// Holds the inbound data.
 			std::vector<char> inbound_data_;
-	};
-
-	/// The connection class provides serialization primitives on top of a socket.
-	/**
-	 * Each message sent using this class consists of:
-	 * @li An 8-byte header containing the length of the serialized data in
-	 * hexadecimal.
-	 * @li The serialized data.
-	 */
-	class client
-	{
-		public:
-			/// Constructor.
-			client(const boost::asio::ip::tcp::resolver::query& query) :
-				connection_(io_service_),
-				query_(query)
-			{
-				std::cout<<__LINE__<<std::endl;
-				boost::asio::ip::tcp::resolver resolver(io_service_);
-				std::cout<<__LINE__<<std::endl;
-				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-				std::cout<<__LINE__<<std::endl;
-				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-				std::cout<<__LINE__<<std::endl;
-
-				// Start an asynchronous connect operation.
-				std::cout<<"async connect"<<std::endl;
-				connection_.socket().async_connect(endpoint, boost::bind(&client::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator));
-				io_service_.run();
-			}
-
-			inline void run(){io_service_.run();}
-			inline connection& connec(){return connection_;}
-
-
-		private:
-			/// Handle completion of a connect operation.
-			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
-			{
-				std::cout<<"handle connect"<<std::endl;
-				if (!e)
-				{
-					std::cout<<"connected"<<std::endl;
-				}
-				else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
-				{
-					// Try the next endpoint.
-					connection_.socket().close();
-					boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-					connection_.socket().async_connect(endpoint,
-							boost::bind(&client::handle_connect, this,
-								boost::asio::placeholders::error, ++endpoint_iterator));
-				}
-				else
-				{
-					// An error occurred. Log it and return. Since we are not starting a new
-					// operation the io_service will run out of work to do and the client will
-					// exit.
-					std::cerr << e.message() << std::endl;
-				}
-			}
-
-			boost::asio::io_service io_service_;
-			connection connection_;
-			const boost::asio::ip::tcp::resolver::query& query_;
 	};
 
 	typedef boost::shared_ptr<connection> connection_ptr;

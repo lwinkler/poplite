@@ -11,7 +11,7 @@
 #include <fstream>
 
 #include "class/broker.hpp"
-#include "class/interface.hpp"
+// #include "class/interface.hpp"
 
 using namespace std;
 using namespace pop;
@@ -51,10 +51,6 @@ class TestClass
 			get<2>(args) = 6.66;
 			get<3>(args) = "something new";
 		}
-		void GetValues(std::tuple<int, int, double, string>& args)
-		{
-			cout<<"Invocation of the real method"<<get<0>(args)<<get<1>(args)<<get<2>(args)<<get<3>(args)<<endl;
-		}
 		void ParMethod2(std::tuple<int, int>& args)
 		{
 			cout<<"Invocation of the real method1"<<get<0>(args)<<get<1>(args)<<endl;
@@ -76,21 +72,45 @@ class TestClass
 			bufout oo(cout);
 			oo<<"Invocation of the real method5 gps:"<<get<0>(args);
 		}
-
-
-	// typedef void (broker<TestClass>::*pt_method_)(pop::bufin& ia, pop::bufout& oa);
-	static const vector<remote::parallel_method<TestClass>>& parallel_methods()
-	{
-		static const vector<remote::parallel_method<TestClass>>meths
+		void SetValues(std::tuple<int, int, double, string>& args)
 		{
-			std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ChangeValues),
-			std::bind(&remote::broker<TestClass>::call_simple<int,int>,               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod2),
-			std::bind(&remote::broker<TestClass>::call_simple<>,                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod3),
-			std::bind(&remote::broker<TestClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
-			std::bind(&remote::broker<TestClass>::call_simple<vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5)
-		};
-		return meths;
-	}
+			cout<<"Invocation of the real method"<<get<0>(args)<<get<1>(args)<<get<2>(args)<<get<3>(args)<<endl;
+			i1  = get<0>(args);
+			i2  = get<1>(args);
+			d   = get<2>(args);
+			str = get<3>(args);
+		}
+		void GetValues(std::tuple<int, int, double, string>& args)
+		{
+			cout<<"Invocation of the real method"<<get<0>(args)<<get<1>(args)<<get<2>(args)<<get<3>(args)<<endl;
+			get<0>(args) = i1;
+			get<1>(args) = i2;
+			get<2>(args) = d;
+			get<3>(args) = str;
+		}
+
+
+		// typedef void (broker<TestClass>::*pt_method_)(pop::bufin& ia, pop::bufout& oa);
+		static const vector<remote::parallel_method<TestClass>>& parallel_methods()
+		{
+			static const vector<remote::parallel_method<TestClass>>meths
+			{
+				std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ChangeValues),
+				std::bind(&remote::broker<TestClass>::call_simple<int,int>,               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod2),
+				std::bind(&remote::broker<TestClass>::call_simple<>,                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod3),
+				std::bind(&remote::broker<TestClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
+				std::bind(&remote::broker<TestClass>::call_simple<vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5),
+				std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
+				std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues)
+			};
+			return meths;
+		}
+
+	private:
+		int i1;
+		int i2;
+		double d;
+		std::string str;
 
 };
 

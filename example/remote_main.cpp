@@ -9,6 +9,7 @@
 //
 
 
+#include <boost/lexical_cast.hpp>
 #include "com/server.hpp"
 #include "example/test_class.hpp"
 
@@ -21,7 +22,7 @@ int main(int argc, char* argv[])
 		// Check command line arguments.
 		if (argc != 2)
 		{
-			std::cerr << "Usage: server <port>" << std::endl;
+			LOG(error) << "Usage: server <port>";
 			return 1;
 		}
 		unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
@@ -33,7 +34,7 @@ int main(int argc, char* argv[])
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		LOG(error) << e.what();
 	}
 
 	return 0;

@@ -1,31 +1,59 @@
-#include "test_class.hpp"
+//
+// client.cpp
+// ~~~~~~~~~~
+//
+// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+// #include "client.hpp"
+// #include "class/system.hpp"
 #include "class/interface.hpp"
 
+using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-	stringstream ofs;// std::ifstream ifs("out");
-	stringstream ifs;// std::ofstream ofs("in");
-	bufout oa(ofs);
-	bufin  ia(ifs);
+	try
+	{
+		// Check command line arguments.
+		if (argc != 3)
+		{
+			LOG(error) << "Usage: client <host> <port>";
+			return 1;
+		}
 
-	pop::interface iface(ia,oa);
+		// Create contact with broker
+		boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
+		pop::interface iface(query);
 
-	cout<<__LINE__<<endl;
-	tuple<int,int,double,string> tup0(345,22,65.898,"blabla");
-	cout<<__LINE__<<endl;
-	iface.call_sync<int,int,double,string>(0, tup0);
-	cout<<__LINE__<<endl;
+		// Serialization of objects
+		boost::archive::text_oarchive aout(cout);
 
-	// tuple<int,int> tup2(345,22);
-	// iface.call_sync<int,int>(1, tup2);
 
-	// tuple<> tup3;
-	// iface.call_sync<>(2, tup3);
+		LOG(info) << "call GetValues";
+		std::tuple<int,int,double,string> tup0;
+		iface.call_sync<int,int,double,string>(6, tup0);
+		aout << tup0;
+		cout << endl;
 
-	// tuple<gps_position> tup4(gps_position(44,44,5.5));
-	// iface.call_sync<gps_position>(3, tup4);
+		LOG(info) << "call SetValues method to set new values";
+		iface.call_sync<int,int,double,string>(6, tup0);
+		aout << tup0;
+		cout << endl;
+		return 0;
 
-	
-	return 0;	
+		LOG(info) << "call GetValues again";
+		iface.call_sync<int,int,double,string>(6, tup0);
+		aout << tup0;
+		cout << endl;
+	}
+	catch (std::exception& e)
+	{
+		LOG(error) << e.what();
+	}
+
+	return 0;
 }
