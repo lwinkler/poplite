@@ -26,11 +26,12 @@ int main(int argc, char* argv[])
 		}
 
 		// Create contact with broker
-		boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
-		pop::interface iface(query);
+		boost::asio::ip::tcp::endpoint ept(boost::asio::ip::tcp::v4(), 0 /*port*/);
+		pop::interface iface(ept);
 
 		// Serialization of objects
 
+		sleep(1);
 
 		LOG(info) << "call GetValues";
 		std::tuple<int,int,double,string> tup0;

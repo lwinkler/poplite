@@ -9,8 +9,7 @@
 //
 
 
-#include <boost/lexical_cast.hpp>
-#include "com/server.hpp"
+#include "com/broker_combox.hpp"
 #include "example/test_class.hpp"
 
 using namespace std;
@@ -25,11 +24,10 @@ int main(int argc, char* argv[])
 			LOG(error) << "Usage: server <port>";
 			return 1;
 		}
-		unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
-
 		boost::asio::io_service io_service;
 		pop::remote::broker<TestClass> brok(TestClass::parallel_methods());
-		pop::server<TestClass> server(io_service, port, brok);
+		boost::asio::ip::tcp::resolver::query query("localhost", argv[1]);
+		pop::broker_combox<TestClass> combox(io_service, brok, query);
 		io_service.run();
 	}
 	catch (std::exception& e)

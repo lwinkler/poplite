@@ -3,16 +3,15 @@
 
 
 #include "com/serialize.hpp"
-#include "com/client.hpp"
+#include "com/interface_combox.hpp"
 
 namespace pop{
 
 class interface
 {
 	public:
-		interface(const boost::asio::ip::tcp::resolver::query & query) :
-			query_(query),
-			client_(query_)
+		interface(boost::asio::ip::tcp::endpoint& _endpoint) :
+			client_(_endpoint)
 		{}
 
 
@@ -53,8 +52,7 @@ class interface
 			}
 		}
 	private:
-		boost::asio::ip::tcp::resolver::query query_;
-		pop::client client_;
+		pop::interface_combox client_;
 		boost::asio::ip::tcp::endpoint endpoint_;
 		// bufin&  ia;
 		// bufout& oa;

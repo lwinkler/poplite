@@ -34,6 +34,7 @@ class broker
 			(obj.*xp_meth)(tup);
 			oa << tup;
 		}
+		// inline void process(){}
 
 	private:
 
