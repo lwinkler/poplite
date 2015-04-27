@@ -73,6 +73,7 @@ namespace pop {
 				}
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
+				bool quit = false;
 				LOG(debug) << "method id " << conn->method_id;
 
 				std::stringstream ss2;
@@ -82,7 +83,12 @@ namespace pop {
 				std::stringstream ss3;
 				bufout oa(ss3);
 				LOG(debug) << "call remote method " << conn->method_id;
-				brok_.remote_call(conn->method_id, ia2, oa);
+
+				if(conn->method_id == -1)
+					quit = true;
+				else
+					brok_.remote_call(conn->method_id, ia2, oa);
+
 				LOG(debug) << "finish calling remote method " << conn->method_id;
 				conn->sync_write(ss3);
 
@@ -94,6 +100,11 @@ namespace pop {
 				conn->sync_write(ss4);
 				LOG(debug) << "send ack";
 
+				if(quit)
+				{
+					LOG(debug) << "received end signal";
+					return;
+				}
 				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 

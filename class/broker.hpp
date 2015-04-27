@@ -19,7 +19,6 @@ template<class ParClass>
 class broker
 {
 	public:
-		// typedef void (broker::*pt_method)(pop::bufin& ia, pop::bufout& oa);
 		broker(const std::vector<parallel_method<ParClass>>& _methods) : 
 			obj_(), 
 			methods_(_methods)

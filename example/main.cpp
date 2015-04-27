@@ -19,8 +19,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		// Create contact with broker
-		boost::asio::ip::tcp::endpoint ept(boost::asio::ip::tcp::v4(), 0 /*port*/);
-		pop::interface iface(ept);
+		pop::interface iface;
 
 		// Serialization of objects
 
@@ -56,6 +55,9 @@ int main(int argc, char* argv[])
 		iface.call_sync<int,int,double,string>(6, tup1);
 		aout << tup1;
 		cout << endl;
+
+		std::tuple<int> tup5;
+		iface.call_sync<int>(-1, tup5);
 		cout << "end of main" << endl;
 	}
 	catch (std::exception& e)
