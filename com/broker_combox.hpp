@@ -27,9 +27,7 @@ namespace pop {
 				/// Constructor opens the acceptor and starts waiting for the first incoming
 				/// connection.
 				broker_combox(boost::asio::io_service& io_service, pop::remote::broker<ParClass>& brok, const boost::asio::ip::tcp::resolver::query & query)
-					: brok_(brok),
-					connection_(io_service),
-					method_id(-1)
+					: brok_(brok)
 			{
 				boost::asio::ip::tcp::resolver resolver(io_service);
 				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
@@ -37,11 +35,12 @@ namespace pop {
 
 				// Start an asynchronous connect operation.
 				LOG(debug) <<"async connect";
-				connection_.socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator));
+				connection_ptr new_conn(new connection(io_service));
+				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 				io_service.run();
 			}
 			/// Handle completion of a connect operation.
-			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator, connection_ptr conn)
 			{
 				if (!e)
 				{
@@ -50,21 +49,25 @@ namespace pop {
 				else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
 				{
 					// Try the next endpoint.
-					connection_.socket().close();
+					conn->socket().close();
 					boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-					connection_.socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator));
+					conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, conn));
 				}
 				else
 				{
 					throw std::runtime_error("connection failed");
 				}
 
-				connection_.async_read(method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, connection_));
+				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
 
-			void handle_read(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+			void handle_read(const boost::system::error_code& e, connection_ptr conn)
 			{
+				if(e)
+				{
+					throw std::runtime_error("handle_read: " + e.message());
+				}
 				// Receive an incomming remote method invocation
 
 
@@ -73,35 +76,28 @@ namespace pop {
 				// serialize the data structure for us.
 				// conn->async_read(stocks_, boost::bind(&interface_combox::handle_read, this, boost::asio::placeholders::error, conn));
 				std::cout << __LINE__ << std::endl;
-				int method_id = -1;
-				std::stringstream ss;
-				std::cout << __LINE__ << std::endl;
-				connection_.sync_read(ss);
-				std::cout << __LINE__ << std::endl;
-				pop::bufin ia(ss);
-				std::cout << __LINE__ << std::endl;
-				ia >> method_id;
-				std::cout << __LINE__ << std::endl;
+				// int method_id = -1;
+				LOG(debug) << "method id " << conn->method_id;
 
 				std::stringstream ss2;
-				connection_.sync_read(ss2);
+				conn->sync_read(ss2);
 				bufin ia2(ss2);
 
 				std::stringstream ss3;
 				bufout oa(ss3);
-				LOG(debug) << "call remote method " << method_id;
-				brok_.remote_call(method_id, ia2, oa);
-				LOG(debug) << "finish calling remote method " << method_id;
-				connection_.sync_write(ss3);
-				// boost::system::error_code error;
-				// handle_read(error, conn);
+				LOG(debug) << "call remote method " << conn->method_id;
+				brok_.remote_call(conn->method_id, ia2, oa);
+				LOG(debug) << "finish calling remote method " << conn->method_id;
+				conn->sync_write(ss3);
 
 				std::string ack("ACK");
 				std::stringstream ss4;
 				bufout oa2(ss4);
 				oa2 << ack;
-				connection_.sync_write(ss4);
+				conn->sync_write(ss4);
 				LOG(debug) << "send ack";
+
+				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
 /*
@@ -125,12 +121,10 @@ namespace pop {
 
 		private:
 			/// The acceptor object used to accept incoming socket connections.
-			connection connection_;
 
 			/// The data to be sent to each client.
 			// std::vector<stock> stocks_;
 			pop::remote::broker<ParClass>& brok_;
-			int method_id;
 	};
 
 } // namespace s11n_example

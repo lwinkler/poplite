@@ -31,7 +31,8 @@ namespace pop {
 	{
 		public:
 			connection(boost::asio::io_service& io_service)
-				: socket_(io_service)
+				: socket_(io_service),
+				method_id(-1)
 				{}
 
 
@@ -106,7 +107,7 @@ namespace pop {
 				void async_read(T& t, Handler handler)
 				{
 					// Issue a read operation to read exactly the number of bytes in a header.
-					void (connection::*f)(const boost::system::error_code&, T&, boost::tuple<Handler>) = &connection::handle_read_header<T, Handler>;
+					auto f = &connection::handle_read_header<T, Handler>;
 					boost::asio::async_read(
 						socket_, 
 						boost::asio::buffer(inbound_header_),
@@ -224,6 +225,7 @@ namespace pop {
 					}
 				}
 
+			int method_id;
 
 		private:
 
@@ -244,6 +246,7 @@ namespace pop {
 
 			/// Holds the inbound data.
 			std::vector<char> inbound_data_;
+			
 	};
 
 	typedef boost::shared_ptr<connection> connection_ptr;

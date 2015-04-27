@@ -31,9 +31,9 @@ namespace pop {
 				connection_(io_service_)
 			{
 				// Start an accept operation for a new connection.
-				connection_ptr new_conn(new connection(acceptor_.get_io_service()));
+				// connection_ptr new_conn();
 				LOG(info) << "Listen on port " << acceptor_.local_endpoint().port();
-				acceptor_.async_accept(new_conn->socket(), boost::bind(&interface_combox::handle_accept, this, boost::asio::placeholders::error, new_conn));
+				acceptor_.async_accept(connection_.socket(), boost::bind(&interface_combox::handle_accept, this, boost::asio::placeholders::error));
 
 				// Handle connection
 				io_service_.run();
@@ -45,7 +45,7 @@ namespace pop {
 
 		private:
 			/// Handle completion of a accept operation.
-			void handle_accept(const boost::system::error_code& e, connection_ptr conn)
+			void handle_accept(const boost::system::error_code& e)
 			{
 				if(e)
 				{

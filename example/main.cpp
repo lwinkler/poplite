@@ -18,20 +18,13 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-		// Check command line arguments.
-		if (argc != 3)
-		{
-			LOG(error) << "Usage: client <host> <port>";
-			return 1;
-		}
-
 		// Create contact with broker
 		boost::asio::ip::tcp::endpoint ept(boost::asio::ip::tcp::v4(), 0 /*port*/);
 		pop::interface iface(ept);
 
 		// Serialization of objects
 
-		sleep(1);
+		sleep(5);
 
 		LOG(info) << "call GetValues";
 		std::tuple<int,int,double,string> tup0;
