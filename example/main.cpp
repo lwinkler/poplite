@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
 		// Serialization of objects
 
-		sleep(5);
+		sleep(1);
 
 		LOG(info) << "call GetValues";
 		std::tuple<int,int,double,string> tup0;

@@ -11,7 +11,7 @@ class interface
 {
 	public:
 		interface(boost::asio::ip::tcp::endpoint& _endpoint) :
-			client_(_endpoint)
+			combox(_endpoint)
 		{}
 
 
@@ -22,23 +22,23 @@ class interface
 				std::stringstream oss1;
 				bufout oa1(oss1);
 				oa1 << x_method_id;
-				client_.connec().sync_write(oss1);
+				combox.connec().sync_write(oss1);
 
 				std::stringstream oss2;
 				bufout oa2(oss2);
 				oa2 << tup;
-				client_.connec().sync_write(oss2);
+				combox.connec().sync_write(oss2);
 
 				LOG(debug) << "send to broker";
 
 				std::stringstream iss;
-				client_.connec().sync_read(iss);
+				combox.connec().sync_read(iss);
 				bufin ia(iss);
 				ia >> tup;
 				LOG(debug) << "received answer from broker";
 
 				std::stringstream iss2;
-				client_.connec().sync_read(iss2);
+				combox.connec().sync_read(iss2);
 				bufin ia2(iss2);
 				std::string ack;
 				ia2 >> ack;
@@ -52,7 +52,7 @@ class interface
 			}
 		}
 	private:
-		pop::interface_combox client_;
+		pop::interface_combox combox;
 		boost::asio::ip::tcp::endpoint endpoint_;
 		// bufin&  ia;
 		// bufout& oa;

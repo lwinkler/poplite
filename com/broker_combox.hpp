@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef POP_CLIENT_H
-#define POP_CLIENT_H
+#ifndef POP_BROKER_COMBOX_H
+#define POP_BROKER_COMBOX_H
 
 #include "class/util.hpp"
 #include "connection.hpp" // Must come before boost/serialization headers.
@@ -19,25 +19,25 @@
 
 namespace pop {
 
+
 	/// Serves stock quote information to any client that connects to it.
-	template<class ParClass>
-		class broker_combox
-		{
-			public:
-				/// Constructor opens the acceptor and starts waiting for the first incoming
-				/// connection.
-				broker_combox(boost::asio::io_service& io_service, pop::remote::broker<ParClass>& brok, const boost::asio::ip::tcp::resolver::query & query)
-					: brok_(brok)
+	template<class ParClass>class broker_combox
+	{
+		public:
+			/// Constructor opens the acceptor and starts waiting for the first incoming
+			/// connection.
+			broker_combox(boost::asio::io_service& _io_service, pop::remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query)
+				: brok_(_brok)
 			{
-				boost::asio::ip::tcp::resolver resolver(io_service);
-				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+				boost::asio::ip::tcp::resolver resolver(_io_service);
+				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_query);
 				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
 
 				// Start an asynchronous connect operation.
 				LOG(debug) <<"async connect";
-				connection_ptr new_conn(new connection(io_service));
+				connection_ptr new_conn(new connection(_io_service));
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
-				io_service.run();
+				_io_service.run();
 			}
 			/// Handle completion of a connect operation.
 			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator, connection_ptr conn)
@@ -69,14 +69,8 @@ namespace pop {
 					throw std::runtime_error("handle_read: " + e.message());
 				}
 				// Receive an incomming remote method invocation
-
-
-				// Successfully accepted a new connection. Send the list of stocks to the
-				// client. The connection::async_write() function will automatically
-				// serialize the data structure for us.
-				// conn->async_read(stocks_, boost::bind(&interface_combox::handle_read, this, boost::asio::placeholders::error, conn));
+				// Successfully accepted a new connection. Call method by id
 				std::cout << __LINE__ << std::endl;
-				// int method_id = -1;
 				LOG(debug) << "method id " << conn->method_id;
 
 				std::stringstream ss2;
@@ -100,30 +94,8 @@ namespace pop {
 				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
-/*
-			/// Handle completion of a write operation.
-			void handle_read(const boost::system::error_code& e, connection_ptr conn)
-			{
-				std::tuple<int,int,double,std::string> tup;
-
-				std::stringstream ss;
-				bufout oa(ss);
-				oa << tup;
-				LOG(debug) << "send data";
-				conn->sync_write(ss);
-				boost::system::error_code error;
-
-				// LOG(debug) << "create new connection";
-				// connection_ptr new_conn(new connection(acceptor_.get_io_service()));
-				// acceptor_.async_accept(new_conn->socket(), boost::bind(&broker_combox::handle_accept, this, boost::asio::placeholders::error, new_conn));
-			}
-			*/
-
 		private:
-			/// The acceptor object used to accept incoming socket connections.
-
 			/// The data to be sent to each client.
-			// std::vector<stock> stocks_;
 			pop::remote::broker<ParClass>& brok_;
 	};
 
