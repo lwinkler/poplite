@@ -17,18 +17,18 @@ class interface
 		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
 
 
-		template<typename ...Args> void call_sync(int x_method_id, std::tuple<Args...>& tup)
+		template<typename ...Args> void call_sync(int _method_id, std::tuple<Args...>& _tup)
 		{
 			try
 			{
 				std::stringstream oss1;
 				bufout oa1(oss1);
-				oa1 << x_method_id;
+				oa1 << _method_id;
 				combox_.connec().sync_write(oss1);
 
 				std::stringstream oss2;
 				bufout oa2(oss2);
-				oa2 << tup;
+				oa2 << _tup;
 				combox_.connec().sync_write(oss2);
 
 				LOG(debug) << "send to broker";
@@ -36,7 +36,7 @@ class interface
 				std::stringstream iss;
 				combox_.connec().sync_read(iss);
 				bufin ia(iss);
-				ia >> tup;
+				ia >> _tup;
 				LOG(debug) << "received answer from broker";
 
 				std::stringstream iss2;
@@ -47,6 +47,9 @@ class interface
 				LOG(debug) << "received ack=" << ack;
 				if(ack != "ACK")
 					throw std::runtime_error("did not receive ack");
+				if(_method_id == -1)
+					combox_.connec().socket().close();
+
 			}
 			catch(std::exception& e)
 			{
@@ -56,8 +59,6 @@ class interface
 	private:
 		pop::interface_combox combox_;
 		boost::asio::ip::tcp::endpoint endpoint_;
-		// bufin&  ia;
-		// bufout& oa;
 };
 
 

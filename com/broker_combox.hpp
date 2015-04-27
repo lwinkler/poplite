@@ -103,6 +103,7 @@ namespace pop {
 				if(quit)
 				{
 					LOG(debug) << "received end signal";
+					conn->socket().close();
 					return;
 				}
 				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));

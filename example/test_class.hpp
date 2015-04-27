@@ -43,6 +43,8 @@ class gps_position
 class TestClass
 {
 	public:
+		TestClass(std::tuple<int>& _i) {}
+		static TestClass* __constr(std::tuple<int>& _i){return new TestClass(_i);}
 		void ChangeValues(std::tuple<int, int, double, string>& args)
 		{
 			cout<<"Invocation of the real method"<<endl;
@@ -95,6 +97,7 @@ class TestClass
 		{
 			static const vector<remote::parallel_method<TestClass>>meths
 			{
+				std::bind(&remote::broker<TestClass>::call_constr<int>,                   std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::__constr),
 				std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ChangeValues),
 				std::bind(&remote::broker<TestClass>::call_simple<int,int>,               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod2),
 				std::bind(&remote::broker<TestClass>::call_simple<>,                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod3),
