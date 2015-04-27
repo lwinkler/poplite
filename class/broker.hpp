@@ -37,7 +37,6 @@ class broker
 
 	private:
 
-		enum { header_length = 8 };
 		const std::vector<parallel_method<ParClass>> methods_;
 		ParClass obj_;
 };

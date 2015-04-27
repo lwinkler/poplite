@@ -26,19 +26,22 @@ namespace pop {
 		public:
 			/// Constructor opens the acceptor and starts waiting for the first incoming
 			/// connection.
-			broker_combox(boost::asio::io_service& _io_service, pop::remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query)
+			broker_combox(pop::remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query)
 				: brok_(_brok)
 			{
-				boost::asio::ip::tcp::resolver resolver(_io_service);
+				boost::asio::ip::tcp::resolver resolver(io_service_);
 				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_query);
 				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
 
 				// Start an asynchronous connect operation.
 				LOG(debug) <<"async connect";
-				connection_ptr new_conn(new connection(_io_service));
+				connection_ptr new_conn(new connection(io_service_));
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
-				_io_service.run();
+				io_service_.run();
 			}
+			/// Run io server
+			inline void run(){io_service_.run();}
+
 			/// Handle completion of a connect operation.
 			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator, connection_ptr conn)
 			{
@@ -70,7 +73,6 @@ namespace pop {
 				}
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
-				std::cout << __LINE__ << std::endl;
 				LOG(debug) << "method id " << conn->method_id;
 
 				std::stringstream ss2;
@@ -84,6 +86,7 @@ namespace pop {
 				LOG(debug) << "finish calling remote method " << conn->method_id;
 				conn->sync_write(ss3);
 
+				// TODO: probably not needed
 				std::string ack("ACK");
 				std::stringstream ss4;
 				bufout oa2(ss4);
@@ -97,6 +100,7 @@ namespace pop {
 		private:
 			/// The data to be sent to each client.
 			pop::remote::broker<ParClass>& brok_;
+			boost::asio::io_service io_service_;
 	};
 
 } // namespace s11n_example

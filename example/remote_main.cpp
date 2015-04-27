@@ -24,11 +24,10 @@ int main(int argc, char* argv[])
 			LOG(error) << "Usage: server <port>";
 			return 1;
 		}
-		boost::asio::io_service io_service;
 		pop::remote::broker<TestClass> brok(TestClass::parallel_methods());
 		boost::asio::ip::tcp::resolver::query query("localhost", argv[1]);
-		pop::broker_combox<TestClass> combox(io_service, brok, query);
-		io_service.run();
+		pop::broker_combox<TestClass> combox(brok, query);
+		combox.run();
 	}
 	catch (std::exception& e)
 	{
