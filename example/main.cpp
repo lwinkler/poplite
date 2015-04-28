@@ -24,42 +24,28 @@ int main(int argc, char* argv[])
 		// Serialization of objects
 
 		sleep(1);
+		int i1 = 11, i2 = 22;
+		double d = 88;
+		string s = "bla";
 
-		LOG(info) << "call GetValues";
-		std::tuple<int,int,double,string> tup0;
-		iface.call_sync<int>(0, tup0);
-		boost::archive::text_oarchive aout(cout);
-		aout << tup0;
-		cout << endl;
-
+		LOG(info) << "call constructor";
+		iface.call_sync<int>(0, i1);
+		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 		
 		sleep(1);
 
 		LOG(info) << "call SetValues method to set new values";
-		tup0 = std::make_tuple(1, 42, 3.14, "new stuff");
-		iface.call_sync<int,int,double,string>(6, tup0);
-		aout << tup0;
-		cout << endl;
+		iface.call_sync<int,int,double,string>(6, 11, 42, 3.14, "new stuff");
 
 		sleep(1);
 
 		LOG(info) << "call GetValues again";
-		std::tuple<int,int,double,string> tup1;
-		iface.call_sync<int,int,double,string>(7, tup1);
-		aout << tup1;
-		cout << endl;
+		iface.call_sync<int&,int&,double&,string&>(7, i1, i2, d, s);
+		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
 		sleep(1);
 
-		LOG(info) << "call GetValues again";
-		iface.call_sync<int,int,double,string>(7, tup1);
-		aout << tup1;
-		cout << endl;
-
-		sleep(1);
-
-		std::tuple<int> tup5(8);
-		iface.call_sync<int>(-1, tup5);
+		iface.call_sync<>(-1);
 		cout << "end of main" << endl;
 	}
 	catch (std::exception& e)

@@ -17,10 +17,11 @@ class interface
 		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
 
 
-		template<typename ...Args> void call_sync(int _method_id, std::tuple<Args...>& _tup)
+		template<typename ...Args> void call_sync(int _method_id, Args ...args)
 		{
 			try
 			{
+				std::tuple<Args...> tup(std::forward_as_tuple(args...));
 				std::stringstream oss1;
 				bufout oa1(oss1);
 				oa1 << _method_id;
@@ -28,7 +29,7 @@ class interface
 
 				std::stringstream oss2;
 				bufout oa2(oss2);
-				oa2 << _tup;
+				oa2 << tup;
 				combox_.connec().sync_write(oss2);
 
 				LOG(debug) << "send to broker";
@@ -36,7 +37,7 @@ class interface
 				std::stringstream iss;
 				combox_.connec().sync_read(iss);
 				bufin ia(iss);
-				ia >> _tup;
+				ia >> tup;
 				LOG(debug) << "received answer from broker";
 
 				std::stringstream iss2;

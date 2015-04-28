@@ -82,7 +82,7 @@ class TestClass
 			d   = get<2>(args);
 			str = get<3>(args);
 		}
-		void GetValues(std::tuple<int, int, double, string>& args)
+		void GetValues(std::tuple<int&, int&, double&, string&>& args)
 		{
 			cout<<"Invocation of the real method"<<get<0>(args)<<get<1>(args)<<get<2>(args)<<get<3>(args)<<endl;
 			get<0>(args) = i1;
@@ -104,7 +104,7 @@ class TestClass
 				std::bind(&remote::broker<TestClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
 				std::bind(&remote::broker<TestClass>::call_simple<vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5),
 				std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
-				std::bind(&remote::broker<TestClass>::call_simple<int,int,double,string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues)
+				std::bind(&remote::broker<TestClass>::call_simple<int&,int&,double&,string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues)
 			};
 			return meths;
 		}
