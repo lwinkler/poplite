@@ -33,15 +33,12 @@ namespace pop {
 			connection(boost::asio::io_service& io_service)
 				: socket_(io_service),
 				method_id(-1)
-				{}
+			{}
 
 
 			/// Get the underlying socket. Used for making a connection or for accepting
 			/// an incoming connection.
-			inline boost::asio::ip::tcp::socket& socket()
-			{
-				return socket_;
-			}
+			inline boost::asio::ip::tcp::socket& socket(){return socket_;}
 
 			/// Asynchronously write a data structure to the socket.
 			template <typename T, typename Handler>
@@ -73,34 +70,34 @@ namespace pop {
 					boost::asio::async_write(socket_, buffers, handler);
 				}
 
-				void sync_write(std::istream& iss)
+			void sync_write(std::istream& iss)
+			{
+				// Serialize the data first so we know how large it is.
+				// std::ostringstream archive_stream;
+				// boost::archive::text_oarchive archive(archive_stream);
+				std::istreambuf_iterator<char> eos;
+				std::string outbound_data(std::istreambuf_iterator<char>(iss), eos);
+
+				LOG(debug) << "sync write " << outbound_data.size() << " " << outbound_data;
+
+				// Format the header.
+				std::ostringstream header_stream;
+				header_stream << std::setw(header_length) << std::hex << outbound_data.size();
+				if (!header_stream || header_stream.str().size() != header_length)
 				{
-					// Serialize the data first so we know how large it is.
-					// std::ostringstream archive_stream;
-					// boost::archive::text_oarchive archive(archive_stream);
-					std::istreambuf_iterator<char> eos;
-					std::string outbound_data(std::istreambuf_iterator<char>(iss), eos);
-
-					LOG(debug) << "sync write " << outbound_data.size() << " " << outbound_data;
-
-					// Format the header.
-					std::ostringstream header_stream;
-					header_stream << std::setw(header_length) << std::hex << outbound_data.size();
-					if (!header_stream || header_stream.str().size() != header_length)
-					{
-						// Something went wrong, inform the caller.
-						boost::system::error_code error(boost::asio::error::invalid_argument);
-						throw std::runtime_error("error header in sync_write");
-					}
-					outbound_header_ = header_stream.str();
-
-					// Write the serialized data to the socket. We use "gather-write" to send
-					// both the header and the data in a single write operation.
-					std::vector<boost::asio::const_buffer> buffers;
-					buffers.push_back(boost::asio::buffer(outbound_header_));
-					buffers.push_back(boost::asio::buffer(outbound_data));
-					boost::asio::write(socket_, buffers);
+					// Something went wrong, inform the caller.
+					boost::system::error_code error(boost::asio::error::invalid_argument);
+					throw std::runtime_error("error header in sync_write");
 				}
+				outbound_header_ = header_stream.str();
+
+				// Write the serialized data to the socket. We use "gather-write" to send
+				// both the header and the data in a single write operation.
+				std::vector<boost::asio::const_buffer> buffers;
+				buffers.push_back(boost::asio::buffer(outbound_header_));
+				buffers.push_back(boost::asio::buffer(outbound_data));
+				boost::asio::write(socket_, buffers);
+			}
 
 			/// Asynchronously read a data structure from the socket.
 			template <typename T, typename Handler>
@@ -246,7 +243,7 @@ namespace pop {
 
 			/// Holds the inbound data.
 			std::vector<char> inbound_data_;
-			
+
 	};
 
 	typedef boost::shared_ptr<connection> connection_ptr;

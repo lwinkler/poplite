@@ -27,8 +27,7 @@ namespace pop {
 		public:
 			/// Constructor.
 			interface_combox() :
-				endpoint_(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/)), // free socket
-				acceptor_(io_service_, endpoint_),
+				acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/)),
 				connection_(io_service_)
 			{
 				// Start an accept operation for a new connection.
@@ -54,7 +53,6 @@ namespace pop {
 			}
 
 
-		boost::asio::ip::tcp::endpoint endpoint_; // TODO: remove
 		boost::asio::io_service io_service_;
 		connection connection_;
 		boost::asio::ip::tcp::acceptor acceptor_;
