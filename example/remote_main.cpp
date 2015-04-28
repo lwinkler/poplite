@@ -19,13 +19,14 @@ int main(int argc, char* argv[])
 	try
 	{
 		// Check command line arguments.
-		if (argc != 2)
+		if (argc != 3)
 		{
-			LOG(error) << "Usage: server <port>";
-			return 1;
+
+			LOG(error) << argc << "Usage: " << argv[0] << " <hostname of interface> <port of interface>";
+			return -1;
 		}
 		pop::remote::broker<TestClass> brok(TestClass::parallel_methods());
-		boost::asio::ip::tcp::resolver::query query("localhost", argv[1]);
+		boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
 		pop::broker_combox<TestClass> combox(brok, query);
 		combox.run();
 	}

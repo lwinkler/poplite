@@ -35,13 +35,11 @@ namespace pop {
 				// connection_ptr new_conn();
 				LOG(info) << "Listen on port " << acceptor_.local_endpoint().port();
 				acceptor_.async_accept(connection_.socket(), boost::bind(&interface_combox::handle_accept, this, boost::asio::placeholders::error));
-
-				// Handle connection
-				io_service_.run();
 			}
 
 			inline void run(){io_service_.run();}
 			inline connection& connec(){return connection_;}
+			inline boost::asio::ip::tcp::endpoint endpoint() const {return acceptor_.local_endpoint();}
 
 
 		private:
@@ -56,7 +54,7 @@ namespace pop {
 			}
 
 
-		boost::asio::ip::tcp::endpoint endpoint_;
+		boost::asio::ip::tcp::endpoint endpoint_; // TODO: remove
 		boost::asio::io_service io_service_;
 		connection connection_;
 		boost::asio::ip::tcp::acceptor acceptor_;

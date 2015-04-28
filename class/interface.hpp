@@ -4,15 +4,21 @@
 
 #include "com/serialize.hpp"
 #include "com/interface_combox.hpp"
+#include "alloc/local.hpp"
 
 namespace pop{
 
 class interface
 {
 	public:
-		interface() :
+		interface(const pop::local_allocator& _allocator) :
 			combox_()
-		{}
+	{
+
+		_allocator.allocate("remote_main", combox_.endpoint());
+		// Handle connection
+		combox_.run();
+	}
 
 		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
 
@@ -59,7 +65,6 @@ class interface
 		}
 	private:
 		pop::interface_combox combox_;
-		boost::asio::ip::tcp::endpoint endpoint_;
 };
 
 

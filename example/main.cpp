@@ -8,9 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-// #include "client.hpp"
-// #include "class/system.hpp"
 #include "class/interface.hpp"
+#include "alloc/local.hpp"
 
 using namespace std;
 
@@ -19,7 +18,9 @@ int main(int argc, char* argv[])
 	try
 	{
 		// Create contact with broker
-		pop::interface iface;
+		pop::local_allocator allocator;
+		pop::interface iface(allocator);
+
 
 		// Serialization of objects
 
