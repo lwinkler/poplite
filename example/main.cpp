@@ -10,6 +10,7 @@
 
 #include "class/interface.hpp"
 #include "alloc/local.hpp"
+#include "alloc/ssh.hpp"
 
 using namespace std;
 
@@ -18,7 +19,8 @@ int main(int argc, char* argv[])
 	try
 	{
 		// Create contact with broker
-		pop::local_allocator allocator;
+		// pop::local_allocator allocator;
+		pop::ssh_allocator allocator(argv[1]);
 		pop::interface iface(allocator);
 
 

@@ -2,16 +2,13 @@
 #define POP_ALLOC_LOCAL_H
 
 
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <boost/asio/ip/tcp.hpp>
+#include "alloc/alloc.hpp"
 
 #define MAX_STR 512
 
 namespace pop{
 
-class local_allocator
+class local_allocator : public allocator
 {
 	public:
 	local_allocator(){}

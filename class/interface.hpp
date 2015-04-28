@@ -11,7 +11,7 @@ namespace pop{
 class interface
 {
 	public:
-		interface(const pop::local_allocator& _allocator) :
+		interface(const pop::allocator& _allocator) :
 			combox_()
 	{
 
