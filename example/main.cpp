@@ -8,9 +8,12 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+/*
 #include "class/interface.hpp"
 #include "alloc/local.hpp"
 #include "alloc/ssh.hpp"
+*/
+#include "test_class.hpp"
 
 using namespace std;
 
@@ -18,10 +21,12 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		/*
 		// Create contact with broker
 		pop::local_allocator allocator;
 		// pop::ssh_allocator allocator(argv[1]);
 		pop::interface iface(allocator);
+		*/
 
 
 		// Serialization of objects
@@ -32,23 +37,26 @@ int main(int argc, char* argv[])
 		string s = "bla";
 
 		LOG(info) << "call constructor";
-		iface.call_sync<int>(0, i1);
+		// iface.call_sync<int>(0, i1);
+		TestClassInterface testClass(i1);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 		
 		sleep(1);
 
 		LOG(info) << "call SetValues method to set new values";
-		iface.call_sync<int,int,double,string>(1, 11, 42, 3.14, "new stuff");
+		// iface.call_sync<int,int,double,string>(1, 11, 42, 3.14, "new stuff");
+		testClass.SetValues(11, 42, 3.14, "new stuff");
 
 		sleep(1);
 
 		LOG(info) << "call GetValues again";
-		iface.call_sync<int&,int&,double&,string&>(1, i1, i2, d, s);
+		// iface.call_sync<int&,int&,double&,string&>(1, i1, i2, d, s);
+		// testClass.GetValues(i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
 		sleep(1);
 
-		iface.call_sync<>(-1);
+		// iface.call_sync<>(-1);
 		cout << "end of main" << endl;
 	}
 	catch (std::exception& e)

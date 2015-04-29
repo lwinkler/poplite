@@ -11,7 +11,7 @@
 #include <fstream>
 
 #include "class/broker.hpp"
-// #include "class/interface.hpp"
+#include "class/interface.hpp"
 
 using namespace pop;
 
@@ -124,6 +124,25 @@ class TestClass
 		double d_;
 		std::string s_;
 
+};
+
+class TestClassInterface
+{
+	public:
+	TestClassInterface(int i1):
+		interface_(pop::local_allocator())
+	{
+		// Create contact with broker
+		pop::local_allocator allocator;
+		// pop::ssh_allocator allocator(argv[1]);
+
+		interface_.call_sync<int>(0, i1);
+	}
+	inline void SetValues(int _i1, int _i2, double _d, std::string _s)    {interface_.call_sync<int , int , double, std::string>(1, _i1, _i2, _d, _s);}
+	// inline void GetValues(int& _i1, int& _i2, double& _d, std::string& _s){interface_.call_sync<int&, int&, double, std::string>(2, _i1, _i2, _d, _s);}
+
+	private:
+	pop::interface interface_;
 };
 
 #endif
