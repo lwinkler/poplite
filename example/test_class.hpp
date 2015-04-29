@@ -42,7 +42,7 @@ class gps_position
 class TestClass
 {
 	public:
-		TestClass(int _i) {}
+		TestClass(int _i) {std::cout << "call constr with " << _i << std::endl;}
 		static TestClass* __constr(int _i){return new TestClass(_i);}
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)
@@ -88,6 +88,7 @@ class TestClass
 			i2_ = _i2;
 			d_  = _d;
 			s_  = _s;
+			std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 		}
 		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s)
 		{
