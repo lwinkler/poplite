@@ -4,7 +4,7 @@
 
 #include "com/serialize.hpp"
 #include "com/interface_combox.hpp"
-#include "alloc/local.hpp"
+#include "alloc/alloc.hpp"
 
 namespace pop{
 
@@ -13,12 +13,17 @@ class interface
 	public:
 		interface(const pop::allocator& _allocator) :
 			combox_()
-	{
+		{
 
-		_allocator.allocate("remote_main", combox_.endpoint());
-		// Handle connection
-		combox_.run();
-	}
+			_allocator.allocate("remote_main", combox_.endpoint());
+			// Handle connection
+			combox_.run();
+		}
+
+		~interface()
+		{
+			call_sync<>(-1);
+		}
 
 		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
 
@@ -27,6 +32,7 @@ class interface
 		{
 			try
 			{
+				LOG(debug) << "call sync "<< _method_id;
 				std::tuple<Args...> tup(std::forward_as_tuple(args...));
 				std::stringstream oss1;
 				bufout oa1(oss1);
@@ -43,7 +49,8 @@ class interface
 				std::stringstream iss;
 				combox_.connec().sync_read(iss);
 				bufin ia(iss);
-				ia >> tup;
+				if(std::tuple_size<std::tuple<Args...>>::value)
+					ia >> tup;
 				LOG(debug) << "received answer from broker";
 
 				std::stringstream iss2;

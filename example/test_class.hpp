@@ -12,6 +12,7 @@
 
 #include "class/broker.hpp"
 #include "class/interface.hpp"
+#include "alloc/manual.hpp"
 
 using namespace pop;
 
@@ -130,12 +131,8 @@ class TestClassInterface : public pop::interface
 {
 	public:
 	TestClassInterface(int i1):
-		pop::interface(pop::local_allocator())
+		pop::interface(pop::manual_allocator())
 	{
-		// Create contact with broker
-		pop::local_allocator allocator;
-		// pop::ssh_allocator allocator(argv[1]);
-
 		call_sync<int>(0, i1);
 	}
 	inline void SetValues(int _i1, int _i2, double _d, std::string _s)    {call_sync<int , int , double, std::string>(1, _i1, _i2, _d, _s);}

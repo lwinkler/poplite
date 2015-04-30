@@ -8,11 +8,6 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-/*
-#include "class/interface.hpp"
-#include "alloc/local.hpp"
-#include "alloc/ssh.hpp"
-*/
 #include "test_class.hpp"
 
 using namespace std;
@@ -21,17 +16,6 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-		/*
-		// Create contact with broker
-		pop::local_allocator allocator;
-		// pop::ssh_allocator allocator(argv[1]);
-		pop::interface iface(allocator);
-		*/
-
-
-		// Serialization of objects
-
-		sleep(1);
 		int i1 = 11, i2 = 22;
 		double d = 88;
 		string s = "bla";
