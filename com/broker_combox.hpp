@@ -26,8 +26,10 @@ namespace pop {
 		public:
 			/// Constructor opens the acceptor and starts waiting for the first incoming
 			/// connection.
-			broker_combox(pop::remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query)
-				: brok_(_brok)
+			broker_combox(pop::remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query) :
+				brok_(_brok),
+				contact_acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/)),
+				contact_connection_(io_service_)
 			{
 				boost::asio::ip::tcp::resolver resolver(io_service_);
 				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_query);
@@ -38,10 +40,14 @@ namespace pop {
 				connection_ptr new_conn(new connection(io_service_));
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 				io_service_.run();
+
+				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error));
 			}
 			/// Run io server
 			inline void run(){io_service_.run();}
+			inline const boost::asio::ip::tcp::endpoint& contact() const {return contact_acceptor_.local_endpoint();}
 
+		private:
 			/// Handle completion of a connect operation.
 			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator, connection_ptr conn)
 			{
@@ -109,12 +115,28 @@ namespace pop {
 				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
+			/// Handle contact by a second interface
+			void handle_accept_contact(const boost::system::error_code& e)
+			{
+				if(e)
+				{
+					throw std::runtime_error(e.message());
+				}
+				LOG(debug) << "Interface combox connected";
+				std::stringstream ss;
+				ss << contact_acceptor_.local_endpoint().address() << contact_acceptor_.local_endpoint().port();
+				contact_connection_.sync_write(ss);
+				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error));
+			}
+
 		private:
 			/// The data to be sent to each client.
 			pop::remote::broker<ParClass>& brok_;
 			boost::asio::io_service io_service_;
+			connection contact_connection_;
+			boost::asio::ip::tcp::acceptor contact_acceptor_;
 	};
 
-} // namespace s11n_example
+} // namespace 
 
 #endif

@@ -12,7 +12,7 @@
 
 #include "class/broker.hpp"
 #include "class/interface.hpp"
-#include "alloc/manual.hpp"
+#include "alloc/local.hpp"
 
 using namespace pop;
 
@@ -23,13 +23,13 @@ class gps_position
 		// When the class Archive corresponds to an output archive, the
 		// & operator is defined similar to <<.  Likewise, when the class Archive
 		// is a type of input archive the & operator is defined similar to >>.
-		template<class Archive>
-			void serialize(Archive & ar, const unsigned int version)
-			{
-				ar & degrees;
-				ar & minutes;
-				ar & seconds;
-			}
+		template<class Archive> void serialize(Archive & ar, const unsigned int version)
+		{
+			ar & degrees;
+			ar & minutes;
+			ar & seconds;
+		}
+
 	public:
 		int degrees;
 		int minutes;
@@ -37,7 +37,7 @@ class gps_position
 		gps_position(){};
 		gps_position(int d, int m, float s) :
 			degrees(d), minutes(m), seconds(s)
-	{}
+		{}
 };
 
 class TestClass
@@ -131,7 +131,7 @@ class TestClassInterface : public pop::interface
 {
 	public:
 	TestClassInterface(int i1):
-		pop::interface(pop::manual_allocator())
+		pop::interface(pop::local_allocator())
 	{
 		call_sync<int>(0, i1);
 	}

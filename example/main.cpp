@@ -23,6 +23,15 @@ int main(int argc, char* argv[])
 		LOG(info) << "call constructor";
 		// iface.call_sync<int>(0, i1);
 		TestClassInterface testClass(i1);
+
+/*
+		boost::asio::ip::tcp::endpoint& ep(testClass.contact());
+		std::string inbound_header_;
+		boost::asio::read(socket_, boost::asio::buffer(inbound_header_));
+		cout << "asdfasdf " << inbound_header_ << endl;
+		*/
+
+
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 		
 		sleep(1);
