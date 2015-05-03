@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "call GetValues again";
 		// iface.call_sync<int&,int&,double&,string&>(1, i1, i2, d, s);
-		// testClass.GetValues(i1, i2, d, s);
+		testClass.GetValues(i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
 		sleep(1);

@@ -54,7 +54,7 @@ class broker
 		{
 			if(!_p_obj)
 				throw std::runtime_error("Constructor has not been called");
-			std::tuple<Args...> tup;
+			std::tuple<typename std::remove_reference<Args>::type...> tup;
 			ia >> tup;
 			// (_p_obj->*_p_meth)(tup);
 			applyTuple(_p_obj, _p_meth, tup);
