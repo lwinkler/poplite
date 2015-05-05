@@ -23,8 +23,8 @@ namespace pop
 			template < typename T, typename... ArgsF, typename... ArgsT, typename... Args >
 				static T* applyTupleConstr(
 						T* (*f)( ArgsF... ),
-						const std::tuple<ArgsT...>& t,
-						Args... args )
+						std::tuple<ArgsT...>& t,
+						Args&... args )
 				{
 					return apply_func_constr<N-1>::applyTupleConstr(f, t, std::get<N-1>( t ), args... );
 				}
@@ -46,8 +46,8 @@ namespace pop
 		template < typename T, typename... ArgsF, typename... ArgsT, typename... Args >
 			static T* applyTupleConstr(
 					T* (*f)( ArgsF... ),
-					const std::tuple<ArgsT...>& /* t */,
-					Args... args )
+					std::tuple<ArgsT...>& /* t */,
+					Args&... args )
 			{
 				return (*f)( args... );
 			}
@@ -59,7 +59,7 @@ namespace pop
 	 * Object Function Call Forwarding Using Tuple Pack Parameters
 	 */
 	// Actual apply function
-	template < typename T, typename... ArgsF, typename... ArgsT > T* applyTupleConstr(T* (*f)( ArgsF... ), std::tuple<ArgsT...> const& t )
+	template < typename T, typename... ArgsF, typename... ArgsT > T* applyTupleConstr(T* (*f)( ArgsF... ), std::tuple<ArgsT...> & t )
 	{
 		return apply_func_constr<sizeof...(ArgsT)>::applyTupleConstr(f, t );
 	}
