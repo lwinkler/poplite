@@ -23,8 +23,8 @@ namespace pop
 			template < typename T, typename... ArgsF, typename... ArgsT, typename... Args >
 				static void applyTuple( T* pObj,
 						void (T::*f)( ArgsF... ),
-						const std::tuple<ArgsT...>& t,
-						Args... args )
+						std::tuple<ArgsT...>& t,
+						Args&... args )
 				{
 					apply_obj_func<N-1>::applyTuple( pObj, f, t, std::get<N-1>( t ), args... );
 				}
@@ -47,8 +47,8 @@ namespace pop
 			template < typename T, typename... ArgsF, typename... ArgsT, typename... Args >
 				static void applyTuple( T* pObj,
 						void (T::*f)( ArgsF... ),
-						const std::tuple<ArgsT...>& /* t */,
-						Args... args )
+						std::tuple<ArgsT...>& /* t */,
+						Args&... args )
 				{
 					(pObj->*f)( args... );
 				}
@@ -63,7 +63,7 @@ namespace pop
 	template < typename T, typename... ArgsF, typename... ArgsT >
 		void applyTuple( T* pObj,
 				void (T::*f)( ArgsF... ),
-				std::tuple<ArgsT...> const& t )
+				std::tuple<ArgsT...> & t )
 		{
 			apply_obj_func<sizeof...(ArgsT)>::applyTuple( pObj, f, t );
 		}
@@ -86,8 +86,8 @@ namespace pop
 		{
 			template < typename... ArgsF, typename... ArgsT, typename... Args >
 				static void applyTuple( void (*f)( ArgsF... ),
-						const std::tuple<ArgsT...>& t,
-						Args... args )
+						std::tuple<ArgsT...>& t,
+						Args&... args )
 				{
 					apply_func<N-1>::applyTuple( f, t, std::get<N-1>( t ), args... );
 				}
@@ -109,8 +109,8 @@ namespace pop
 		{
 			template < typename... ArgsF, typename... ArgsT, typename... Args >
 				static void applyTuple( void (*f)( ArgsF... ),
-						const std::tuple<ArgsT...>& /* t */,
-						Args... args )
+						std::tuple<ArgsT...>& /* t */,
+						Args&... args )
 				{
 					f( args... );
 				}
@@ -124,7 +124,7 @@ namespace pop
 	// Actual apply function
 	template < typename... ArgsF, typename... ArgsT >
 		void applyTuple( void (*f)(ArgsF...),
-				std::tuple<ArgsT...> const& t )
+				std::tuple<ArgsT...> & t )
 		{
 			apply_func<sizeof...(ArgsT)>::applyTuple( f, t );
 		}

@@ -28,12 +28,12 @@ class interface
 		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
 
 
-		template<typename ...Args> void call_sync(int _method_id, Args ...args)
+		template<typename ...Args> void call_sync(int _method_id, Args& ...args)
 		{
 			try
 			{
 				LOG(debug) << "call sync "<< _method_id;
-				std::tuple<Args...> tup(std::forward_as_tuple(args...));
+				std::tuple<Args&...> tup(std::forward_as_tuple(args...));
 				std::stringstream oss1;
 				bufout oa1(oss1);
 				oa1 << _method_id;
