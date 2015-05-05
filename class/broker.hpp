@@ -44,7 +44,6 @@ class broker
 				throw std::runtime_error("Constructor has been called twice");
 			std::tuple<Args...> tup;
 			_ia >> tup;
-			// _p_obj = (*_p_meth)(tup);
 			_p_obj = applyTupleConstr(_p_meth, tup);
 			_oa << tup;
 		}
@@ -54,7 +53,7 @@ class broker
 		{
 			if(!_p_obj)
 				throw std::runtime_error("Constructor has not been called");
-			std::tuple<typename std::remove_reference<Args>::type...> tup;
+			std::tuple<typename std::decay<Args>::type...> tup;
 			ia >> tup;
 			// (_p_obj->*_p_meth)(tup);
 			applyTuple(_p_obj, _p_meth, tup);
@@ -62,31 +61,7 @@ class broker
 		}
 
 
-
-
 	private:
-	/*
-		template<typename ...Args> static void call(ParClass*& _p_obj, std::tuple<Args...>& args, void (ParClass::*_p_meth)(Args...))
-		{
-			
-		}
-		
-		template<typename... Is> static void call(ParClass*& _p_obj, std::tuple<>& args, void (ParClass::*_p_meth)())
-		{
-			(_p_obj->*_p_meth)(tup);
-		}
-			// struct seq { };
-
-		template<typename N, typename... Is> static void call(ParClass*& _p_obj, std::tuple<>& args, void (ParClass::*_p_meth)())
-		{
-			(_p_obj->*_p_meth)(tup);
-		}
-			struct gen_seq : gen_seq<N - 1, N - 1, Is...> { };
-
-		template<int... Is>
-			struct gen_seq<0, Is...> : seq<Is...> { };
-			*/
-
 		const std::vector<parallel_method<ParClass>> methods_;
 		ParClass* p_obj_;
 };

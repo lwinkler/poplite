@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "call SetValues method to set new values";
 		// iface.call_sync<int,int,double,string>(1, 11, 42, 3.14, "new stuff");
-		testClass.SetValues(11, 42, 3.14, "new stuff");
+		testClass.SetValues(2.7, 42, 3.14, "new stuff");
 
 		sleep(1);
 
