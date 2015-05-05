@@ -22,13 +22,13 @@ class interface
 
 		~interface()
 		{
-			call_sync<>(-1);
+			call_sync<void>(-1);
 		}
 
 		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
 
 
-		template<typename ...Args> void call_sync(int _method_id, Args& ...args)
+		template<typename R, typename ...Args> R call_sync(int _method_id, Args& ...args)
 		{
 			try
 			{
@@ -51,6 +51,7 @@ class interface
 				bufin ia(iss);
 				if(std::tuple_size<std::tuple<Args...>>::value)
 					ia >> tup;
+				// TODO: serialize R
 				LOG(debug) << "received answer from broker";
 
 				std::stringstream iss2;
@@ -69,6 +70,7 @@ class interface
 			{
 				LOG(error) << "exception in call_sync: " << e.what();
 			}
+			return R(); // TODO
 		}
 	private:
 		pop::interface_combox combox_;

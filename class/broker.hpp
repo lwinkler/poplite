@@ -49,7 +49,7 @@ class broker
 		}
 
 		/// A simple call to a method 
-		template<typename ...Args> static void call_simple(bufin& ia, bufout& oa, ParClass*& _p_obj, void (ParClass::*_p_meth)(Args...))
+		template<typename R, typename ...Args> static void call_simple(bufin& ia, bufout& oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...)) // TODO: Args by ref ?
 		{
 			if(!_p_obj)
 				throw std::runtime_error("Constructor has not been called");

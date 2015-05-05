@@ -98,6 +98,7 @@ class TestClass
 			_d  = d_;
 			_s  = s_;
 		}
+		std::string GetStr() {return s_;}
 
 
 		// typedef void (broker<TestClass>::*pt_method_)(pop::bufin& ia, pop::bufout& oa);
@@ -113,8 +114,9 @@ class TestClass
 				std::bind(&remote::broker<TestClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
 				std::bind(&remote::broker<TestClass>::call_simple<std::vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5),
 				*/
-				std::bind(&remote::broker<TestClass>::call_simple<const int&,int,double,const std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
-				std::bind(&remote::broker<TestClass>::call_simple<int&,int&,double&,std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues)
+				std::bind(&remote::broker<TestClass>::call_simple<void, const int&,int,double,const std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
+				std::bind(&remote::broker<TestClass>::call_simple<void, int&,int&,double&,std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues),
+				std::bind(&remote::broker<TestClass>::call_simple<std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetStr)
 			};
 			return meths;
 		}
@@ -135,8 +137,9 @@ class TestClassInterface : public pop::interface
 	{
 		call_sync<int>(0, i1);
 	}
-	inline void SetValues(int _i1, int _i2, double _d, std::string _s)    {call_sync<int , int , double, std::string>(1, _i1, _i2, _d, _s);} // TODO : handle const
-	inline void GetValues(int& _i1, int& _i2, double& _d, std::string& _s){call_sync<int&, int&, double, std::string>(2, _i1, _i2, _d, _s);}
+	inline void SetValues(int _i1, int _i2, double _d, std::string _s)    {call_sync<void, int , int , double, std::string>(1, _i1, _i2, _d, _s);} // TODO : handle const
+	inline void GetValues(int& _i1, int& _i2, double& _d, std::string& _s){call_sync<void, int&, int&, double, std::string>(2, _i1, _i2, _d, _s);}
+	inline std::string GetStr(){return call_sync<std::string>(3);}
 };
 
 #endif
