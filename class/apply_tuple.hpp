@@ -3,6 +3,7 @@
 
 
 // based on: http://stackoverflow.com/questions/687490/how-do-i-expand-a-tuple-into-variadic-template-functions-arguments
+// TODO: Avoid useless copy of return values
 
 namespace pop
 {
@@ -24,7 +25,7 @@ namespace pop
 				static R applyTuple( T* pObj,
 						R (T::*f)( ArgsF... ),
 						std::tuple<ArgsT...>& t,
-						Args&... args )
+						Args&&... args )
 				{
 					return apply_obj_func<N-1>::applyTuple( pObj, f, t, std::get<N-1>( t ), args... );
 				}
@@ -48,7 +49,7 @@ namespace pop
 				static R applyTuple( T* pObj,
 						R (T::*f)( ArgsF... ),
 						std::tuple<ArgsT...>& /* t */,
-						Args&... args )
+						Args&&... args )
 				{
 					return (pObj->*f)( args... );
 				}
@@ -87,7 +88,7 @@ namespace pop
 			template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 				static R applyTuple( R (*f)( ArgsF... ),
 						std::tuple<ArgsT...>& t,
-						Args&... args )
+						Args&&... args )
 				{
 					return apply_func<N-1>::applyTuple( f, t, std::get<N-1>( t ), args... );
 				}
@@ -110,7 +111,7 @@ namespace pop
 			template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 				static R applyTuple( R (*f)( ArgsF... ),
 						std::tuple<ArgsT...>& /* t */,
-						Args&... args )
+						Args&&... args )
 				{
 					return f( args... );
 				}
