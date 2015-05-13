@@ -1,0 +1,7 @@
+#! /bin/bash
+
+TMPFILE="_iface.$1"
+echo '#include "parse_interface.hpp"' > $TMPFILE
+sed -n 's|.\s//##||p' $1              >> $TMPFILE
+g++ -I../parser -E $TMPFILE > iface.$1
+# rm $TMPFILE

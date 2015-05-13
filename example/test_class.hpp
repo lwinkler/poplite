@@ -76,6 +76,7 @@ class TestClass
 			oo<<"Invocation of the real method5 gps:"<<get<0>(args);
 		}
 		*/
+		//##POP_METH(call_sync, call_simple, void, SetValues, (const int&, _i1), (int, _i2), (double, _d), (const std::string&, _s))
 		void SetValues(const int& _i1, int _i2, double _d, const std::string& _s)
 		{
 			/*
