@@ -44,7 +44,7 @@ class TestClass
 {
 	public:
 		TestClass(int _i) {std::cout << "call constr with " << _i << std::endl;}
-		//##POP_CONSTR(call_sync, call_simple, pop::local_allocator(), TestClass, int)
+		//##POP_CONSTR(call_sync, call_simple, pop::local_allocator(), int)
 		static TestClass* __constr(int _i){return new TestClass(_i);}
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)
@@ -77,8 +77,8 @@ class TestClass
 			oo<<"Invocation of the real method5 gps:"<<get<0>(args);
 		}
 		*/
-		//##POP_METH(call_sync, call_simple, void, SetValues, const int&, int, double, const std::string&)
-		void SetValues(const int& _i1, int _i2, double _d, const std::string& _s)
+		//##POP_METH(call_sync, call_simple, void, SetValues, int, int, double, std::string)
+		void SetValues(int _i1, int _i2, double _d, std::string _s)
 		{
 			/*
 			cout<<"Invocation of the real method"<<get<0>(args)<<get<1>(args)<<get<2>(args)<<get<3>(args)<<endl;
@@ -119,7 +119,7 @@ class TestClass
 				std::bind(&remote::broker<TestClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
 				std::bind(&remote::broker<TestClass>::call_simple<std::vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5),
 				*/
-				std::bind(&remote::broker<TestClass>::call_simple<void, const int&,int,double,const std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
+				std::bind(&remote::broker<TestClass>::call_simple<void, int,int,double,std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
 				std::bind(&remote::broker<TestClass>::call_simple<void, int&,int&,double&,std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues),
 				std::bind(&remote::broker<TestClass>::call_simple<std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetStr)
 			};
@@ -134,6 +134,7 @@ class TestClass
 
 };
 
+/*
 class TestClassInterface : public pop::interface
 {
 	public:
@@ -142,5 +143,6 @@ class TestClassInterface : public pop::interface
 	inline void GetValues(int& _i1, int& _i2, double& _d, std::string& _s){call_sync<void, int&, int&, double, std::string>(2, _i1, _i2, _d, _s);}
 	inline std::string GetStr(){return call_sync<std::string>(3);}
 };
+*/
 
 #endif

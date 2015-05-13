@@ -8,7 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "test_class.hpp"
+#include "iface.test_class.hpp"
 
 using namespace std;
 
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "call constructor";
 		// iface.call_sync<int>(0, i1);
-		TestClassInterface testClass(i1);
+		pop::TestClass testClass(i1);
 
 /*
 		boost::asio::ip::tcp::endpoint& ep(testClass.contact());
