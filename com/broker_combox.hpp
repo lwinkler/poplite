@@ -67,7 +67,7 @@ namespace pop {
 					throw std::runtime_error("connection failed");
 				}
 
-				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
+				conn->async_read(conn->iss_, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
 
@@ -80,7 +80,11 @@ namespace pop {
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
 				bool quit = false;
-				LOG(debug) << "method id " << conn->method_id;
+				bufin ia1(conn->iss_);
+				int method_id = -1;
+				ia1 >> method_id;
+
+				LOG(debug) << "method id " << method_id;
 
 				std::stringstream ss2;
 				conn->sync_read(ss2);
@@ -88,14 +92,14 @@ namespace pop {
 
 				std::stringstream ss3;
 				bufout oa(ss3);
-				LOG(debug) << "call remote method " << conn->method_id;
+				LOG(debug) << "call remote method " << method_id;
 
-				if(conn->method_id == -1)
+				if(method_id == -1)
 					quit = true;
 				else
-					brok_.remote_call(conn->method_id, ia2, oa);
+					brok_.remote_call(method_id, ia2, oa);
 
-				LOG(debug) << "finish calling remote method " << conn->method_id;
+				LOG(debug) << "finish calling remote method " << method_id;
 				conn->sync_write(ss3);
 
 				// TODO: probably not needed
@@ -112,7 +116,7 @@ namespace pop {
 					conn->socket().close();
 					return;
 				}
-				conn->async_read(conn->method_id, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
+				conn->async_read(conn->iss_, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
 			/// Handle contact by a second interface
