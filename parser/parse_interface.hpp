@@ -46,4 +46,8 @@
 #define POP_METH(_calli_, _callb_, _ret_, _meth_, ...) POP_METH_(_calli_, _callb_, _ret_, _meth_, APPLY(ADDNAME, __VA_ARGS__))
 #define POP_METH_(_calli_, _callb_, _ret_, _meth_, ...) inline void _meth_(APPLY(PAIR, __VA_ARGS__))    {call_sync<APPLY(STRIP1, __VA_ARGS__)>(APPLY(STRIP2, __VA_ARGS__));}
 
+// Constructor 
+#define POP_CONSTR(_calli_, _callb_, _alloc_, _meth_, ...) POP_CONSTR_(_calli_, _callb_, _alloc_, _meth_, APPLY(ADDNAME, __VA_ARGS__))
+#define POP_CONSTR_(_calli_, _callb_, _alloc_, _meth_, ...) _meth_(APPLY(PAIR, __VA_ARGS__)):pop::interface(_alloc_){call_sync<APPLY(STRIP1, __VA_ARGS__)>(0, APPLY(STRIP2, __VA_ARGS__));}
+
 

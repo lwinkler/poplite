@@ -44,6 +44,7 @@ class TestClass
 {
 	public:
 		TestClass(int _i) {std::cout << "call constr with " << _i << std::endl;}
+		//##POP_CONSTR(call_sync, call_simple, pop::local_allocator(), TestClass, int)
 		static TestClass* __constr(int _i){return new TestClass(_i);}
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)
@@ -136,11 +137,7 @@ class TestClass
 class TestClassInterface : public pop::interface
 {
 	public:
-	TestClassInterface(int i1):
-		pop::interface(pop::local_allocator())
-	{
-		call_sync<int>(0, i1);
-	}
+	TestClassInterface(int i1):pop::interface(pop::local_allocator()){call_sync<int>(0, i1);}
 	inline void SetValues(int _i1, int _i2, double _d, std::string _s)    {call_sync<void, int , int , double, std::string>(1, _i1, _i2, _d, _s);} // TODO : handle const
 	inline void GetValues(int& _i1, int& _i2, double& _d, std::string& _s){call_sync<void, int&, int&, double, std::string>(2, _i1, _i2, _d, _s);}
 	inline std::string GetStr(){return call_sync<std::string>(3);}
