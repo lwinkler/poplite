@@ -76,7 +76,7 @@ class TestClass
 			oo<<"Invocation of the real method5 gps:"<<get<0>(args);
 		}
 		*/
-		//##POP_METH(call_sync, call_simple, void, SetValues, (const int&, _i1), (int, _i2), (double, _d), (const std::string&, _s))
+		//##POP_METH(call_sync, call_simple, void, SetValues, const int&, int, double, const std::string&)
 		void SetValues(const int& _i1, int _i2, double _d, const std::string& _s)
 		{
 			/*
@@ -92,6 +92,7 @@ class TestClass
 			s_  = _s;
 			std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 		}
+		//##POP_METH(call_sync, call_simple, void, GetValues, int&, int&, double&, std::string&)
 		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s)
 		{
 			_i1 = i1_;
@@ -99,6 +100,8 @@ class TestClass
 			_d  = d_;
 			_s  = s_;
 		}
+
+		//##POP_METH(call_sync, call_simple, std::string, GetStr)
 		std::string GetStr() {return s_;}
 
 
