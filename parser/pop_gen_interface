@@ -1,6 +1,9 @@
-#! /bin/sh
+#! /bin/bash
 
 OPTIND=1
+
+# abort on error
+set -e
 
 # Initialize our variables:
 VERBOSE=0
@@ -9,10 +12,13 @@ TARGET=iface.$1
 PARCLASS=TestClass
 
 
-
 # Generate the temporary file to expand macros
 TMPFILE="_iface.$1"
-echo '#include "parse_interface.hpp"'                       >  $TMPFILE
+echo "#ifndef _${PARCLASS}_IFACE_H"                         >  $TMPFILE
+echo "#define _${PARCLASS}_IFACE_H"                         >> $TMPFILE
+echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE
+echo '#include "parse.hpp"'                                 >> $TMPFILE
+echo '#include "parse_interface.hpp"'                       >> $TMPFILE
 echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE
 echo 'namespace pop{'                                       >> $TMPFILE
 echo 'class _parclass_ : public pop::interface'             >> $TMPFILE
@@ -21,10 +27,13 @@ echo 'public:'                                              >> $TMPFILE
 sed -n 's|.\s//##||p' $1                                    >> $TMPFILE
 echo '};'                                                   >> $TMPFILE
 echo '}'                                                    >> $TMPFILE
+echo "#endif"                                               >> $TMPFILE
 
 # Generate the interface file
 echo '#include "class/interface.hpp"'       >  $TARGET
 echo '#include "'$1'"'                      >> $TARGET
+
+## Only lines starting with //## are used for parsing
 c++ -I../parser -E $TMPFILE | grep -v "^# " >> $TARGET
 
 rm $TMPFILE

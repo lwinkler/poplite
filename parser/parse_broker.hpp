@@ -1,5 +1,5 @@
-#ifndef _POP_PARSE_IFACE_HPP
-#define _POP_PARSE_IFACE_HPP
+#ifndef _POP_PARSE_BROKER_HPP
+#define _POP_PARSE_BROKER_HPP
 
 // Methods for interface
 #define POP_METH(_calli_, _callb_, _ret_, _meth_, ...) POP_METH_(_calli_, _callb_, _ret_, _meth_, APPLY(ADDNAME, __VA_ARGS__))
