@@ -13,6 +13,7 @@
 #include "class/broker.hpp"
 #include "class/interface.hpp"
 #include "alloc/local.hpp"
+#include "alloc/manual.hpp"
 
 using namespace pop;
 
@@ -44,7 +45,7 @@ class TestClass
 {
 	public:
 		TestClass(int _i) {std::cout << "call constr with " << _i << std::endl;}
-		//##POP_CONSTR(call_sync, call_simple, pop::local_allocator(), int)
+		//##POP_CONSTR(call_sync, call_simple, pop::manual_allocator(), int)
 		static TestClass* __constr(int _i){return new TestClass(_i);}
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)
@@ -126,6 +127,8 @@ class TestClass
 		std::string s_;
 
 };
+
+static const std::vector<remote::parallel_method<TestClass>> TestClass_methods;
 
 /*
 class TestClassInterface : public pop::interface

@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 		testClass.GetValues(i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
-		cout << "s=" << testClass.GetStr() << endl;
+		// cout << "s=" << testClass.GetStr() << endl; // TODO: Fix return value
 
 		sleep(1);
 

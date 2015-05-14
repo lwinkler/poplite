@@ -8,11 +8,10 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include "brok.test_class.hpp"
 
 #include "com/broker_combox.hpp"
 #include "example/test_class.hpp"
-
-using namespace std;
 
 int main(int argc, char* argv[])
 {

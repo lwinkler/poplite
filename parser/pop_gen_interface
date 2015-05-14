@@ -10,10 +10,12 @@ VERBOSE=0
 NOCLEAN=0
 TARGET_M=ids.$1
 TARGET_I=iface.$1
-TARGET_B=broker.$1
+TARGET_B=brok.$1
 PARCLASS=TestClass
 
 # Generate the temporary file to be expanded by macros (method ids)
+# notes:
+#   - The line number will be reseted at the start of the enum. This is needed since the enum names use __LINE__
 TMPFILE_M="_meth.$1"
 echo "Generating $TMPFILE_M"
 echo "#ifndef _POP_${PARCLASS}_METH_H"                      >  $TMPFILE_M
@@ -24,7 +26,7 @@ echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE_M
 echo 'namespace pop{'                                       >> $TMPFILE_M
 echo 'namespace broker{'                                    >> $TMPFILE_M
 echo "enum ${PARCLASS}_method_ids{"                         >> $TMPFILE_M
-echo '#0 "reset_lines_for_method_ids" 0'                    >> $TMPFILE_M
+echo '#0 "reset_lines_for_method_ids" 1'                    >> $TMPFILE_M
 sed -n 's|.\s//##||p' $1                                    >> $TMPFILE_M
 echo '__destr'                                              >> $TMPFILE_M
 echo '};'                                                   >> $TMPFILE_M
@@ -43,7 +45,7 @@ c++ -I../parser -E $TMPFILE_M | grep -v "^# "               >> $TARGET_M
 echo "#endif"                                               >> $TARGET_M
 
 echo "Deleting $TMPFILE_M"
-# rm $TMPFILE_M
+rm $TMPFILE_M
 
 astyle -nToO --style=allman $TARGET_M
 
@@ -59,7 +61,7 @@ echo 'namespace pop{'                                       >> $TMPFILE_I
 echo 'class _parclass_ : public pop::interface'             >> $TMPFILE_I
 echo '{'                                                    >> $TMPFILE_I
 echo 'public:'                                              >> $TMPFILE_I
-echo '#0 "reset_lines_for_method_ids" 0'                    >> $TMPFILE_I
+echo '#0 "reset_lines_for_method_ids" 1'                    >> $TMPFILE_I
 sed -n 's|.\s//##||p' $1                                    >> $TMPFILE_I
 echo '};'                                                   >> $TMPFILE_I
 echo '}'                                                    >> $TMPFILE_I
@@ -79,6 +81,42 @@ echo "#endif"                                               >> $TARGET_I
 
 echo "Deleting $TMPFILE_I"
 rm $TMPFILE_I
-#----------------------------------------------------------------
 
 astyle -nToO --style=allman $TARGET_I
+
+#----------------------------------------------------------------
+
+# Generate the temporary file to be expanded by macros (broker)
+# notes:
+#   - The position in method vector will match the method ids
+#   - The vector will end with a nullptr for convenience. This can be a code for the destruction
+TMPFILE_B="_brok.$1"
+echo "Generating $TMPFILE_B"
+echo '#include "parse.hpp"'                                                                >  $TMPFILE_B
+echo '#include "parse_broker.hpp"'                                                         >> $TMPFILE_B
+echo "#define _parclass_ $PARCLASS"                                                        >> $TMPFILE_B
+echo 'namespace pop{'                                                                      >> $TMPFILE_B
+echo 'namespace broker{'                                                                   >> $TMPFILE_B
+echo "const std::vector<remote::parallel_method<TestClass>>${PARCLASS}_methods{"           >> $TMPFILE_B
+sed -n 's|.\s//##||p' $1                                                                   >> $TMPFILE_B
+echo 'nullptr'                                                                             >> $TMPFILE_B
+echo '};'                                                                                  >> $TMPFILE_B
+echo '}'                                                                                   >> $TMPFILE_B
+echo '}'                                                                                   >> $TMPFILE_B
+
+# Generate the interface file
+echo "Generate $TARGET_B headers"
+echo "#ifndef _POP_${PARCLASS}_BROKER_H"                    >  $TARGET_B
+echo "#define _POP_${PARCLASS}_BROKER_H"                    >> $TARGET_B
+echo '#include "class/broker.hpp"'                          >> $TARGET_B
+echo '#include "'$1'"'                                      >> $TARGET_B
+
+## Only lines starting with //## are used for parsing
+echo "Preprocess $TMPFILE_B->$TARGET_B"
+c++ -I../parser -E $TMPFILE_B | grep -v "^# "               >> $TARGET_B
+echo "#endif"                                               >> $TARGET_B
+
+echo "Deleting $TMPFILE_B"
+# rm $TMPFILE_B
+
+astyle -nToO --style=allman $TARGET_B

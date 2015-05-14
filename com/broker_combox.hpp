@@ -26,7 +26,7 @@ namespace pop {
 		public:
 			/// Constructor opens the acceptor and starts waiting for the first incoming
 			/// connection.
-			broker_combox(pop::remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query) :
+			broker_combox(remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query) :
 				brok_(_brok),
 				contact_acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/)),
 				contact_connection_(io_service_)
