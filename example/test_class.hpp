@@ -80,13 +80,6 @@ class TestClass
 		//##POP_METH(call_sync, call_simple, void, SetValues, int, int, double, std::string)
 		void SetValues(int _i1, int _i2, double _d, std::string _s)
 		{
-			/*
-			cout<<"Invocation of the real method"<<get<0>(args)<<get<1>(args)<<get<2>(args)<<get<3>(args)<<endl;
-			i1  = get<0>(args);
-			i2  = get<1>(args);
-			d   = get<2>(args);
-			str = get<3>(args);
-			*/
 			i1_ = _i1;
 			i2_ = _i2;
 			d_  = _d;

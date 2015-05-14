@@ -14,6 +14,7 @@ PARCLASS=TestClass
 
 # Generate the temporary file to expand macros
 TMPFILE="_iface.$1"
+echo "Generating $TMPFILE"
 echo "#ifndef _${PARCLASS}_IFACE_H"                         >  $TMPFILE
 echo "#define _${PARCLASS}_IFACE_H"                         >> $TMPFILE
 echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE
@@ -30,12 +31,15 @@ echo '}'                                                    >> $TMPFILE
 echo "#endif"                                               >> $TMPFILE
 
 # Generate the interface file
+echo "Generate $TARGET headers"
 echo '#include "class/interface.hpp"'       >  $TARGET
 echo '#include "'$1'"'                      >> $TARGET
 
 ## Only lines starting with //## are used for parsing
+echo "Preprocess $TMPFILE->$TARGET"
 c++ -I../parser -E $TMPFILE | grep -v "^# " >> $TARGET
 
+echo "Deleting $TMPFILE"
 rm $TMPFILE
 
 astyle -nToO --style=allman $TARGET
