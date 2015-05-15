@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 			LOG(error) << argc << "Usage: " << argv[0] << " <hostname of interface> <port of interface>";
 			return -1;
 		}
-		pop::remote::broker<TestClass> brok(TestClass::parallel_methods());
+		pop::remote::broker<TestClass> brok;
 		boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
 		pop::broker_combox<TestClass> combox(brok, query);
 		combox.run();

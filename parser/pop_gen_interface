@@ -96,8 +96,8 @@ echo '#include "parse.hpp"'                                                     
 echo '#include "parse_broker.hpp"'                                                         >> $TMPFILE_B
 echo "#define _parclass_ $PARCLASS"                                                        >> $TMPFILE_B
 echo 'namespace pop{'                                                                      >> $TMPFILE_B
-echo 'namespace broker{'                                                                   >> $TMPFILE_B
-echo "const std::vector<remote::parallel_method<TestClass>>${PARCLASS}_methods{"           >> $TMPFILE_B
+echo 'namespace remote{'                                                                   >> $TMPFILE_B
+echo "template<> const std::vector<remote::parallel_method<TestClass>> broker<${PARCLASS}>::methods_{" >> $TMPFILE_B
 sed -n 's|.\s//##||p' $1                                                                   >> $TMPFILE_B
 echo 'nullptr'                                                                             >> $TMPFILE_B
 echo '};'                                                                                  >> $TMPFILE_B
