@@ -8,7 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include "iface.test_class.hpp"
+#include "iface.TestClass.hpp"
 
 using namespace std;
 
