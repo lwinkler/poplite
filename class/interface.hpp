@@ -22,13 +22,13 @@ class interface
 
 		~interface()
 		{
-			call_sync<void>(-1);
+			sync<void>(-1);
 		}
 
 		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
 
 
-		template<typename R, typename ...Args> R call_sync(int _method_id, Args& ...args)
+		template<typename R, typename ...Args> R sync(int _method_id, Args& ...args)
 		{
 			try
 			{
@@ -68,7 +68,7 @@ class interface
 			}
 			catch(std::exception& e)
 			{
-				LOG(error) << "exception in call_sync: " << e.what();
+				LOG(error) << "exception in sync: " << e.what();
 			}
 			return R(); // TODO
 		}
