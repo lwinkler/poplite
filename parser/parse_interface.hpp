@@ -7,6 +7,6 @@
 
 // Constructor 
 #define POP_CONSTR(_calli_, _callb_, _alloc_, ...) POP_CONSTR_(_calli_, _callb_, _alloc_, APPLY(ADDNAME, __VA_ARGS__))
-#define POP_CONSTR_(_calli_, _callb_, _alloc_, ...) _parclass_(APPLY(PAIR, __VA_ARGS__)):pop::interface(_alloc_){call_sync<APPLY(STRIP1, __VA_ARGS__)>(CAT(broker::_parclass_,__LINE__) APPLYC(STRIP2, __VA_ARGS__));}
+#define POP_CONSTR_(_calli_, _callb_, _alloc_, ...) _parclass_(APPLY(PAIR, __VA_ARGS__)):pop::interface(_executable_, _alloc_){call_sync<APPLY(STRIP1, __VA_ARGS__)>(CAT(broker::_parclass_,__LINE__) APPLYC(STRIP2, __VA_ARGS__));}
 
 #endif

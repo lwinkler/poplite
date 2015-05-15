@@ -11,11 +11,11 @@ namespace pop{
 class interface
 {
 	public:
-		interface(const pop::allocator& _allocator) :
+		interface(const std::string& _executable, const pop::allocator& _allocator) :
 			combox_()
 		{
 
-			_allocator.allocate("main.TestClass", combox_.endpoint()); // TODO: pass file name
+			_allocator.allocate(_executable, combox_.endpoint());
 			// Handle connection
 			combox_.run();
 		}

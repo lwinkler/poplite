@@ -73,6 +73,7 @@ echo "Generating $TMPFILE_I"
 echo '#include "parse.hpp"'                                 >  $TMPFILE_I
 echo '#include "parse_interface.hpp"'                       >> $TMPFILE_I
 echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE_I
+echo "#define _executable_ \"main.$PARCLASS\""              >> $TMPFILE_I
 echo 'namespace pop{'                                       >> $TMPFILE_I
 echo 'class _parclass_ : public pop::interface'             >> $TMPFILE_I
 echo '{'                                                    >> $TMPFILE_I
