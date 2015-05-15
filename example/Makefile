@@ -1,8 +1,8 @@
 
-FLAGS=-std=c++11 -g -I..
+FLAGS=-std=c++11 -g -I. -I.. -Igenerated
 LIBS=-lboost_serialization -lboost_system -lboost_thread -lboost_serialization -lboost_context -lboost_log -lpthread
 
-TARGETS=main remote_main
+TARGETS=main main.TestClass
 
 all: ${TARGETS}
 clean:
@@ -15,5 +15,5 @@ clean:
 main : main.o
 	c++ ${FLAGS} $< -o $@ ${LIBS}
 
-remote_main : remote_main.o
+main.TestClass : generated/main.TestClass.o
 	c++ ${FLAGS} $< -o $@ ${LIBS}

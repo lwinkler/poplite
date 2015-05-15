@@ -15,7 +15,7 @@ class interface
 			combox_()
 		{
 
-			_allocator.allocate("remote_main", combox_.endpoint());
+			_allocator.allocate("main.TestClass", combox_.endpoint()); // TODO: pass file name
 			// Handle connection
 			combox_.run();
 		}

@@ -8,15 +8,23 @@ set -e
 # Initialize our variables:
 VERBOSE=0
 NOCLEAN=0
-TARGET_M=ids.$1
-TARGET_I=iface.$1
-TARGET_B=brok.$1
 PARCLASS=TestClass
+DIR=generated
+NAME_M=ids.$1
+NAME_I=iface.$1
+NAME_B=brok.$1
+NAME_O=main.${PARCLASS}.cpp
+TARGET_M=${DIR}/${NAME_M}
+TARGET_I=${DIR}/${NAME_I}
+TARGET_B=${DIR}/${NAME_B}
+TARGET_O=${DIR}/${NAME_O}
+
+mkdir -p $DIR
 
 # Generate the temporary file to be expanded by macros (method ids)
 # notes:
 #   - The line number will be reseted at the start of the enum. This is needed since the enum names use __LINE__
-TMPFILE_M="_meth.$1"
+TMPFILE_M="${DIR}/_meth.$1"
 echo "Generating $TMPFILE_M"
 echo "#ifndef _POP_${PARCLASS}_METH_H"                      >  $TMPFILE_M
 echo "#define _POP_${PARCLASS}_METH_H"                      >> $TMPFILE_M
@@ -37,7 +45,7 @@ echo "#endif"                                               >> $TMPFILE_M
 # Generate the interface file
 echo "Generate $TARGET_M headers"
 
-## Only lines starting with //## are used for parsing
+# Only lines starting with '//##' are used for parsing
 echo "Preprocess $TMPFILE_M->$TARGET_M"
 echo "#ifndef _POP_${PARCLASS}_METH_IDS_H"                  >  $TARGET_M
 echo "#define _POP_${PARCLASS}_METH_IDS_H"                  >> $TARGET_M
@@ -52,7 +60,7 @@ astyle -nToO --style=allman $TARGET_M
 #----------------------------------------------------------------
 
 # Generate the temporary file to be expanded by macros (interface)
-TMPFILE_I="_iface.$1"
+TMPFILE_I="${DIR}/_iface.$1"
 echo "Generating $TMPFILE_I"
 echo '#include "parse.hpp"'                                 >  $TMPFILE_I
 echo '#include "parse_interface.hpp"'                       >> $TMPFILE_I
@@ -71,10 +79,10 @@ echo "Generate $TARGET_I headers"
 echo "#ifndef _POP_${PARCLASS}_IFACE_H"                     >  $TARGET_I
 echo "#define _POP_${PARCLASS}_IFACE_H"                     >> $TARGET_I
 echo '#include "class/interface.hpp"'                       >> $TARGET_I
-echo '#include "'${TARGET_M}'"'                             >> $TARGET_I
+echo '#include "'${NAME_M}'"'                               >> $TARGET_I
 echo '#include "'$1'"'                                      >> $TARGET_I
 
-## Only lines starting with //## are used for parsing
+# Only lines starting with '//##' are used for parsing
 echo "Preprocess $TMPFILE_I->$TARGET_I"
 c++ -I../parser -E $TMPFILE_I | grep -v "^# "               >> $TARGET_I
 echo "#endif"                                               >> $TARGET_I
@@ -90,7 +98,7 @@ astyle -nToO --style=allman $TARGET_I
 # notes:
 #   - The position in method vector will match the method ids
 #   - The vector will end with a nullptr for convenience. This can be a code for the destruction
-TMPFILE_B="_brok.$1"
+TMPFILE_B="${DIR}/_brok.$1"
 echo "Generating $TMPFILE_B"
 echo '#include "parse.hpp"'                                                                >  $TMPFILE_B
 echo '#include "parse_broker.hpp"'                                                         >> $TMPFILE_B
@@ -111,12 +119,21 @@ echo "#define _POP_${PARCLASS}_BROKER_H"                    >> $TARGET_B
 echo '#include "class/broker.hpp"'                          >> $TARGET_B
 echo '#include "'$1'"'                                      >> $TARGET_B
 
-## Only lines starting with //## are used for parsing
+# Only lines starting with '//##' are used for parsing
 echo "Preprocess $TMPFILE_B->$TARGET_B"
 c++ -I../parser -E $TMPFILE_B | grep -v "^# "               >> $TARGET_B
 echo "#endif"                                               >> $TARGET_B
 
 echo "Deleting $TMPFILE_B"
-# rm $TMPFILE_B
+rm $TMPFILE_B
 
 astyle -nToO --style=allman $TARGET_B
+
+#----------------------------------------------------------------
+
+# Generate the main routine of the remote object
+
+echo "Generating $TARGET_O"
+echo '#include "'${NAME_B}'"'                                 >  $TARGET_O
+sed ../parser/remote_main.cpp -e "s/_parclass_/${PARCLASS}/g" >> $TARGET_O
+
