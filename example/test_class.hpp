@@ -13,6 +13,7 @@
 #include "class/broker.hpp"
 #include "class/interface.hpp"
 #include "alloc/local.hpp"
+#include "alloc/manual.hpp"
 
 using namespace pop;
 
@@ -44,6 +45,7 @@ class TestClass
 {
 	public:
 		TestClass(int _i) {std::cout << "call constr with " << _i << std::endl;}
+		//##POP_CONSTR(sync, conc, pop::local_allocator(), int)
 		static TestClass* __constr(int _i){return new TestClass(_i);}
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)
@@ -76,21 +78,16 @@ class TestClass
 			oo<<"Invocation of the real method5 gps:"<<get<0>(args);
 		}
 		*/
-		void SetValues(const int& _i1, int _i2, double _d, const std::string& _s)
+		//##POP_METH(sync, conc, void, SetValues, int, int, double, std::string)
+		void SetValues(int _i1, int _i2, double _d, std::string _s)
 		{
-			/*
-			cout<<"Invocation of the real method"<<get<0>(args)<<get<1>(args)<<get<2>(args)<<get<3>(args)<<endl;
-			i1  = get<0>(args);
-			i2  = get<1>(args);
-			d   = get<2>(args);
-			str = get<3>(args);
-			*/
 			i1_ = _i1;
 			i2_ = _i2;
 			d_  = _d;
 			s_  = _s;
 			std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 		}
+		//##POP_METH(sync, conc, void, GetValues, int&, int&, double&, std::string&)
 		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s)
 		{
 			_i1 = i1_;
@@ -98,28 +95,30 @@ class TestClass
 			_d  = d_;
 			_s  = s_;
 		}
+
+		//##POP_METH(sync, conc, std::string, GetStr)
 		std::string GetStr() {return s_;}
 
 
 		// typedef void (broker<TestClass>::*pt_method_)(pop::bufin& ia, pop::bufout& oa);
+		/*
 		static const std::vector<remote::parallel_method<TestClass>>& parallel_methods()
 		{
 			static const std::vector<remote::parallel_method<TestClass>>meths
 			{
 				std::bind(&remote::broker<TestClass>::call_constr<int>,                   std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::__constr),
-				/*
-				std::bind(&remote::broker<TestClass>::call_simple<int,int,double,std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ChangeValues),
-				std::bind(&remote::broker<TestClass>::call_simple<int,int>,               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod2),
-				std::bind(&remote::broker<TestClass>::call_simple<>,                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod3),
-				std::bind(&remote::broker<TestClass>::call_simple<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
-				std::bind(&remote::broker<TestClass>::call_simple<std::vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5),
-				*/
-				std::bind(&remote::broker<TestClass>::call_simple<void, const int&,int,double,const std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
-				std::bind(&remote::broker<TestClass>::call_simple<void, int&,int&,double&,std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues),
-				std::bind(&remote::broker<TestClass>::call_simple<std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetStr)
+				// std::bind(&remote::broker<TestClass>::conc<int,int,double,std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ChangeValues),
+				// std::bind(&remote::broker<TestClass>::conc<int,int>,               std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod2),
+				// std::bind(&remote::broker<TestClass>::conc<>,                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod3),
+				// std::bind(&remote::broker<TestClass>::conc<gps_position>,          std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod4),
+				// std::bind(&remote::broker<TestClass>::conc<std::vector<int>>,           std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::ParMethod5),
+				std::bind(&remote::broker<TestClass>::conc<void, int,int,double,std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::SetValues),
+				std::bind(&remote::broker<TestClass>::conc<void, int&,int&,double&,std::string&>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetValues),
+				std::bind(&remote::broker<TestClass>::conc<std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &TestClass::GetStr)
 			};
 			return meths;
 		}
+		*/
 
 	private:
 		int i1_;
@@ -129,17 +128,16 @@ class TestClass
 
 };
 
+
+/*
 class TestClassInterface : public pop::interface
 {
 	public:
-	TestClassInterface(int i1):
-		pop::interface(pop::local_allocator())
-	{
-		call_sync<int>(0, i1);
-	}
-	inline void SetValues(int _i1, int _i2, double _d, std::string _s)    {call_sync<void, int , int , double, std::string>(1, _i1, _i2, _d, _s);} // TODO : handle const
-	inline void GetValues(int& _i1, int& _i2, double& _d, std::string& _s){call_sync<void, int&, int&, double, std::string>(2, _i1, _i2, _d, _s);}
-	inline std::string GetStr(){return call_sync<std::string>(3);}
+	TestClassInterface(int i1):pop::interface(pop::local_allocator()){sync<int>(0, i1);}
+	inline void SetValues(int _i1, int _i2, double _d, std::string _s)    {sync<void, int , int , double, std::string>(1, _i1, _i2, _d, _s);} // TODO : handle const
+	inline void GetValues(int& _i1, int& _i2, double& _d, std::string& _s){sync<void, int&, int&, double, std::string>(2, _i1, _i2, _d, _s);}
+	inline std::string GetStr(){return sync<std::string>(3);}
 };
+*/
 
 #endif

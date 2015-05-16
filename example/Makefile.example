@@ -1,0 +1,24 @@
+
+POPLITE_DIR=..
+FLAGS=-std=c++11 -g -I. -I${POPLITE_DIR} -Igenerated
+LIBS=-lboost_serialization -lboost_system -lboost_thread -lboost_serialization -lboost_context -lboost_log -lpthread
+TARGETS=main main.TestClass
+
+%.o : %.cpp
+	c++ ${FLAGS} -c $< -o $@
+
+
+all: ${TARGETS}
+
+generate:
+	$(POPLITE_DIR)/parser/pop_gen_src TestClass test_class.hpp
+
+
+clean:
+	rm -f *.o */*.o ${TARGETS}
+
+main : main.o
+	c++ ${FLAGS} $< -o $@ ${LIBS}
+
+main.TestClass : generated/main.TestClass.o
+	c++ ${FLAGS} $< -o $@ ${LIBS}
