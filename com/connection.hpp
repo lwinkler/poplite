@@ -30,10 +30,8 @@ namespace pop {
 	class connection
 	{
 		public:
-			connection(boost::asio::io_service& io_service)
-				: socket_(io_service)
-			{}
-
+			/// Constructor
+			connection(boost::asio::io_service& io_service) : socket_(io_service) {}
 
 			/// Get the underlying socket. Used for making a connection or for accepting
 			/// an incoming connection.
@@ -96,12 +94,12 @@ namespace pop {
 			template <typename Handler>void async_read(std::ostream& oss, Handler _handler)
 			{
 				// Issue a read operation to read exactly the number of bytes in a header.
-				auto f = &connection::handle_read_header<std::ostream&, Handler>;
+				auto f = &connection::handle_read_header<Handler>;
 				boost::asio::async_read(
 					socket_, 
 					boost::asio::buffer(inbound_header_),
 					boost::bind(f, this, boost::asio::placeholders::error, boost::ref(oss), boost::make_tuple(_handler))
-				);//TODO: Maybe use boost::cref
+				);
 			}
 
 			/// Synchronously read a data structure from the socket.
@@ -142,7 +140,7 @@ namespace pop {
 			/// Handle a completed read of a message header. The handler is passed using
 			/// a tuple since boost::bind seems to have trouble binding a function object
 			/// created using boost::bind as a parameter.
-			template <typename T, typename Handler>
+			template <typename Handler>
 				void handle_read_header(const boost::system::error_code& _e, std::ostream& _oss, boost::tuple<Handler> _handler)
 				{
 					if (_e)
@@ -165,16 +163,15 @@ namespace pop {
 						// Start an asynchronous call to receive the data.
 						inbound_data_.resize(inbound_data_size);
 						void (connection::*f)(const boost::system::error_code&, std::ostream&, boost::tuple<Handler>)
-							= &connection::handle_read_data<T, Handler>;
+							= &connection::handle_read_data<Handler>;
 						boost::asio::async_read(socket_, boost::asio::buffer(inbound_data_),
 							boost::bind(f, this, boost::asio::placeholders::error, boost::ref(_oss), _handler));
 					}
 				}
 
 			/// Handle a completed read of message data.
-			template <typename T, typename Handler>
-				void handle_read_data(const boost::system::error_code& e,
-						std::ostream& _oss, boost::tuple<Handler> _handler)
+			template <typename Handler>
+				void handle_read_data(const boost::system::error_code& e, std::ostream& _oss, boost::tuple<Handler> _handler)
 				{
 					if (e)
 					{
@@ -185,7 +182,6 @@ namespace pop {
 						// Extract the data structure from the data just received.
 						try
 						{
-							// _oss << inbound_data_[0];
 							copy(inbound_data_.begin(), inbound_data_.end(), std::ostream_iterator<unsigned char>(_oss));
 							/*
 							std::string archive_data(&inbound_data_[0], inbound_data_.size());
