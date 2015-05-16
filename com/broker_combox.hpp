@@ -66,7 +66,7 @@ namespace pop {
 				{
 					throw std::runtime_error("connection failed");
 				}
-
+// TODO: Use heap allocated iss
 				conn->async_read(conn->iss_, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
@@ -109,6 +109,9 @@ namespace pop {
 				oa2 << ack;
 				conn->sync_write(ss4);
 				LOG(debug) << "send ack";
+
+				conn->iss_.str("");
+				conn->iss_.clear();
 
 				if(quit)
 				{

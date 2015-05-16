@@ -45,7 +45,7 @@ class TestClass
 {
 	public:
 		TestClass(int _i) {std::cout << "call constr with " << _i << std::endl;}
-		//##POP_CONSTR(sync, conc, pop::local_allocator(), int)
+		//##POP_CONSTR(sync, conc, pop::manual_allocator(), int)
 		static TestClass* __constr(int _i){return new TestClass(_i);}
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)

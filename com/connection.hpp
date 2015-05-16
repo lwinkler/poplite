@@ -40,10 +40,10 @@ namespace pop {
 			inline boost::asio::ip::tcp::socket& socket(){return socket_;}
 
 			/// Asynchronously write a data structure to the socket.
-			template <typename Handler> void async_write(std::istream& iss, Handler handler)
+			template <typename Handler> void async_write(std::istream& _iss, Handler _handler)
 			{
 				std::istreambuf_iterator<char> eos;
-				std::string outbound_data(std::istreambuf_iterator<char>(iss), eos);
+				std::string outbound_data(std::istreambuf_iterator<char>(_iss), eos);
 
 				// Format the header.
 				std::ostringstream header_stream;
@@ -52,7 +52,7 @@ namespace pop {
 				{
 					// Something went wrong, inform the caller.
 					boost::system::error_code error(boost::asio::error::invalid_argument);
-					socket_.get_io_service().post(boost::bind(handler, error));
+					socket_.get_io_service().post(boost::bind(_handler, error));
 					return;
 				}
 				outbound_header_ = header_stream.str();
@@ -62,14 +62,14 @@ namespace pop {
 				std::vector<boost::asio::const_buffer> buffers;
 				buffers.push_back(boost::asio::buffer(outbound_header_));
 				buffers.push_back(boost::asio::buffer(outbound_data));
-				boost::asio::async_write(socket_, buffers, handler);
+				boost::asio::async_write(socket_, buffers, _handler);
 			}
 
 			// Synchronous write to the socket
-			void sync_write(std::istream& iss)
+			void sync_write(std::istream& _iss)
 			{
 				std::istreambuf_iterator<char> eos;
-				std::string outbound_data(std::istreambuf_iterator<char>(iss), eos);
+				std::string outbound_data(std::istreambuf_iterator<char>(_iss), eos);
 
 				LOG(debug) << "sync write " << outbound_data.size() << " " << outbound_data;
 
@@ -93,15 +93,15 @@ namespace pop {
 			}
 
 			/// Asynchronously read a data structure from the socket.
-			template <typename Handler>void async_read(std::ostream& oss, Handler handler)
+			template <typename Handler>void async_read(std::ostream& oss, Handler _handler)
 			{
 				// Issue a read operation to read exactly the number of bytes in a header.
 				auto f = &connection::handle_read_header<std::ostream&, Handler>;
 				boost::asio::async_read(
 					socket_, 
 					boost::asio::buffer(inbound_header_),
-					boost::bind(f, this, boost::asio::placeholders::error, boost::ref(oss), boost::make_tuple(handler))
-				);
+					boost::bind(f, this, boost::asio::placeholders::error, boost::ref(oss), boost::make_tuple(_handler))
+				);//TODO: Maybe use boost::cref
 			}
 
 			/// Synchronously read a data structure from the socket.
@@ -143,12 +143,11 @@ namespace pop {
 			/// a tuple since boost::bind seems to have trouble binding a function object
 			/// created using boost::bind as a parameter.
 			template <typename T, typename Handler>
-				void handle_read_header(const boost::system::error_code& e,
-						T& t, boost::tuple<Handler> handler)
+				void handle_read_header(const boost::system::error_code& _e, std::ostream& _oss, boost::tuple<Handler> _handler)
 				{
-					if (e)
+					if (_e)
 					{
-						boost::get<0>(handler)(e);
+						boost::get<0>(_handler)(_e);
 					}
 					else
 					{
@@ -159,51 +158,52 @@ namespace pop {
 						{
 							// Header doesn't seem to be valid. Inform the caller.
 							boost::system::error_code error(boost::asio::error::invalid_argument);
-							boost::get<0>(handler)(error);
+							boost::get<0>(_handler)(error);
 							return;
 						}
 
 						// Start an asynchronous call to receive the data.
 						inbound_data_.resize(inbound_data_size);
-						void (connection::*f)(
-								const boost::system::error_code&,
-								T&, boost::tuple<Handler>)
+						void (connection::*f)(const boost::system::error_code&, std::ostream&, boost::tuple<Handler>)
 							= &connection::handle_read_data<T, Handler>;
 						boost::asio::async_read(socket_, boost::asio::buffer(inbound_data_),
-								boost::bind(f, this,
-									boost::asio::placeholders::error, boost::ref(t), handler));
+							boost::bind(f, this, boost::asio::placeholders::error, boost::ref(_oss), _handler));
 					}
 				}
 
 			/// Handle a completed read of message data.
 			template <typename T, typename Handler>
 				void handle_read_data(const boost::system::error_code& e,
-						T& t, boost::tuple<Handler> handler)
+						std::ostream& _oss, boost::tuple<Handler> _handler)
 				{
 					if (e)
 					{
-						boost::get<0>(handler)(e);
+						boost::get<0>(_handler)(e);
 					}
 					else
 					{
 						// Extract the data structure from the data just received.
 						try
 						{
+							// _oss << inbound_data_[0];
+							copy(inbound_data_.begin(), inbound_data_.end(), std::ostream_iterator<unsigned char>(_oss));
+							/*
 							std::string archive_data(&inbound_data_[0], inbound_data_.size());
 							std::istringstream archive_stream(archive_data);
 							boost::archive::text_iarchive archive(archive_stream);
 							archive >> t;
+							*/
 						}
 						catch (std::exception& e)
 						{
 							// Unable to decode data.
 							boost::system::error_code error(boost::asio::error::invalid_argument);
-							boost::get<0>(handler)(error);
+							boost::get<0>(_handler)(error);
 							return;
 						}
 
 						// Inform caller that data has been received ok.
-						boost::get<0>(handler)(e);
+						boost::get<0>(_handler)(e);
 					}
 				}
 
