@@ -34,17 +34,14 @@ class interface
 			{
 				LOG(debug) << "call sync "<< _method_id;
 				std::tuple<Args&...> tup(std::forward_as_tuple(args...));
-				std::stringstream oss1;
-				bufout oa1(oss1);
-				oa1 << _method_id;
-				combox_.connec().sync_write(oss1);
+				std::stringstream oss;
+				bufout oa(oss);
+				oa << _method_id;
 
-				std::stringstream oss2;
-				bufout oa2(oss2);
-				oa2 << tup;
-				combox_.connec().sync_write(oss2);
+				oa << tup;
+				combox_.connec().sync_write(oss);
 
-				LOG(debug) << "send to broker";
+				LOG(debug) << "sent to broker";
 
 				combox_.connec().sync_read();
 				bufin ia(combox_.connec().input_stream());
@@ -53,10 +50,8 @@ class interface
 				// TODO: serialize R
 				LOG(debug) << "received answer from broker";
 
-				combox_.connec().sync_read();
-				bufin ia2(combox_.connec().input_stream());
 				std::string ack;
-				ia2 >> ack;
+				ia >> ack;
 				LOG(debug) << "received ack=" << ack;
 				if(ack != "ACK")
 					throw std::runtime_error("did not receive ack");

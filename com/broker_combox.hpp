@@ -79,34 +79,27 @@ namespace pop {
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
 				bool quit = false;
-				bufin ia1(conn->input_stream());
+				bufin ia(conn->input_stream());
 				int method_id = -1;
-				ia1 >> method_id;
+				ia >> method_id;
 
 				LOG(debug) << "method id " << method_id;
 
-				conn->sync_read();
-				bufin ia2(conn->input_stream());
-
-				std::stringstream ss3;
-				bufout oa(ss3);
+				std::stringstream oss;
+				bufout oa(oss);
 				LOG(debug) << "call remote method " << method_id;
 
 				if(method_id == -1)
 					quit = true;
 				else
-					brok_.remote_call(method_id, ia2, oa);
+					brok_.remote_call(method_id, ia, oa);
 
 				LOG(debug) << "finish calling remote method " << method_id;
-				conn->sync_write(ss3);
 
-				// TODO: probably not needed
 				std::string ack("ACK");
-				std::stringstream ss4;
-				bufout oa2(ss4);
-				oa2 << ack;
-				conn->sync_write(ss4);
-				LOG(debug) << "send ack";
+				oa << ack;
+				conn->sync_write(oss);
+				LOG(debug) << "sent ack";
 
 				if(quit)
 				{

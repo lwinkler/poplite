@@ -21,7 +21,8 @@
    or implied, of Christopher Allen Ogden.
  */
 
-#pragma once
+#ifndef _SERIALIZE_TUPLE_
+#define _SERIALIZE_TUPLE_
 #include <tuple>
 
 namespace boost {
@@ -55,3 +56,4 @@ namespace boost {
 
 	}
 }
+#endif
