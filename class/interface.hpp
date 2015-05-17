@@ -46,17 +46,15 @@ class interface
 
 				LOG(debug) << "send to broker";
 
-				std::stringstream iss;
-				combox_.connec().sync_read(iss);
-				bufin ia(iss);
+				combox_.connec().sync_read();
+				bufin ia(combox_.connec().input_stream());
 				if(std::tuple_size<std::tuple<Args...>>::value)
 					ia >> tup;
 				// TODO: serialize R
 				LOG(debug) << "received answer from broker";
 
-				std::stringstream iss2;
-				combox_.connec().sync_read(iss2);
-				bufin ia2(iss2);
+				combox_.connec().sync_read();
+				bufin ia2(combox_.connec().input_stream());
 				std::string ack;
 				ia2 >> ack;
 				LOG(debug) << "received ack=" << ack;

@@ -66,8 +66,7 @@ namespace pop {
 				{
 					throw std::runtime_error("connection failed");
 				}
-// TODO: Use heap allocated iss
-				conn->async_read(conn->iss_, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
+				conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
 
@@ -80,15 +79,14 @@ namespace pop {
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
 				bool quit = false;
-				bufin ia1(conn->iss_);
+				bufin ia1(conn->input_stream());
 				int method_id = -1;
 				ia1 >> method_id;
 
 				LOG(debug) << "method id " << method_id;
 
-				std::stringstream ss2;
-				conn->sync_read(ss2);
-				bufin ia2(ss2);
+				conn->sync_read();
+				bufin ia2(conn->input_stream());
 
 				std::stringstream ss3;
 				bufout oa(ss3);
@@ -110,16 +108,13 @@ namespace pop {
 				conn->sync_write(ss4);
 				LOG(debug) << "send ack";
 
-				conn->iss_.str("");
-				conn->iss_.clear();
-
 				if(quit)
 				{
 					LOG(debug) << "received end signal";
 					conn->socket().close();
 					return;
 				}
-				conn->async_read(conn->iss_, boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
+				conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 
 			/// Handle contact by a second interface

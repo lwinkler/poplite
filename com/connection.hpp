@@ -37,6 +37,9 @@ namespace pop {
 			/// an incoming connection.
 			inline boost::asio::ip::tcp::socket& socket(){return socket_;}
 
+			/// Return ref to the input stream
+			inline std::istream& input_stream(){return iss_;}
+
 			/// Asynchronously write a data structure to the socket.
 			template <typename Handler> void async_write(std::istream& _iss, Handler _handler)
 			{
@@ -91,20 +94,28 @@ namespace pop {
 			}
 
 			/// Asynchronously read a data structure from the socket.
-			template <typename Handler>void async_read(std::ostream& oss, Handler _handler)
+			template <typename Handler>void async_read(Handler _handler)
 			{
+				// Reset the stringstream
+				iss_.str("");
+				iss_.clear();
+
 				// Issue a read operation to read exactly the number of bytes in a header.
 				auto f = &connection::handle_read_header<Handler>;
 				boost::asio::async_read(
 					socket_, 
 					boost::asio::buffer(inbound_header_),
-					boost::bind(f, this, boost::asio::placeholders::error, boost::ref(oss), boost::make_tuple(_handler))
+					boost::bind(f, this, boost::asio::placeholders::error, boost::ref(iss_), boost::make_tuple(_handler))
 				);
 			}
 
 			/// Synchronously read a data structure from the socket.
-			void sync_read(std::ostream& oss)
+			void sync_read()
 			{
+				// Reset the stringstream
+				iss_.str("");
+				iss_.clear();
+
 				// Issue a read operation to read exactly the number of bytes in a header.
 				boost::asio::read(socket_, boost::asio::buffer(inbound_header_));
 				// Determine the length of the serialized data.
@@ -126,7 +137,7 @@ namespace pop {
 				try
 				{
 					std::string archive_data(&inbound_data_[0], inbound_data_.size());
-					oss << archive_data;
+					iss_ << archive_data;
 				}
 				catch (std::exception& e)
 				{
@@ -203,9 +214,9 @@ namespace pop {
 					}
 				}
 
-			std::stringstream iss_; // TODO: decide type
-
 		private:
+			// A stream that we use to conveniently read the input
+			std::stringstream iss_;
 
 			/// The underlying socket.
 			boost::asio::ip::tcp::socket socket_;
@@ -224,8 +235,6 @@ namespace pop {
 
 			/// Holds the inbound data.
 			std::vector<char> inbound_data_;
-
-
 	};
 
 	typedef boost::shared_ptr<connection> connection_ptr;
