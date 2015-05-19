@@ -5,6 +5,6 @@
 #define POP_METH(_calli_, _callb_, _ret_, _meth_, ...) CAT(_meth_, __LINE__) ,
 
 // Constructor 
-#define POP_CONSTR(_calli_, _callb_, _alloc_, ...) CAT(_parclass_, __LINE__) ,
+#define POP_CONSTR(_alloc_, ...) CAT(_parclass_, __LINE__) ,
 
 #endif

@@ -45,9 +45,8 @@ class gps_position
 class TestClass
 {
 	public:
-		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
-		//##POP_CONSTR(sync, conc, pop::ssh_allocator(_arg0), std::string)
-		static TestClass* __constr(std::string _s){return new TestClass(_s);} // TODO: generate in parser // TODO: give name to arguments in parser
+		//##POP_CONSTR(pop::local_allocator(), int)
+		TestClass(int _s) {std::cout << "call constr with " << _s << std::endl;}
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)
 		{

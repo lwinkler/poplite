@@ -34,15 +34,17 @@ class broker
 		}
 
 		inline void remote_call(int _nb, bufin& _ia, bufout& _oa) {(methods_.at(_nb))(_ia, _oa, p_obj_);}
+	private:
 
 		/// A call to constructor
-		template<typename ...Args> static void call_constr(bufin& _ia, bufout& _oa, ParClass*& _p_obj, ParClass* (*_p_meth)(Args...))
+		template<typename ...Args> static ParClass* __constr(Args... args){return new ParClass(args...);}
+		template<typename ...Args> static void call_constr(bufin& _ia, bufout& _oa, ParClass*& _p_obj)
 		{
 			if(_p_obj)
 				throw std::runtime_error("Constructor has been called twice");
 			std::tuple<Args...> tup;
 			_ia >> tup;
-			_p_obj = applyTupleConstr(_p_meth, tup);
+			_p_obj = applyTupleConstr(__constr<Args...>, tup);
 			_oa << tup;
 		}
 

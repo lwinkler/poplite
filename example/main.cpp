@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "call constructor";
 		// iface.call_sync<int>(0, i1);
-		pop::TestClass testClass("localhost");
+		pop::TestClass testClass(4);
 
 /*
 		boost::asio::ip::tcp::endpoint& ep(testClass.contact());
