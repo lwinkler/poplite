@@ -47,37 +47,7 @@ class TestClass
 	public:
 		//##POP_CONSTR(pop::local_allocator(), int)
 		TestClass(int _s) {std::cout << "call constr with " << _s << std::endl;}
-		/*
-		void ChangeValues(std::tuple<int, int, double, std::string>& args)
-		{
-			cout<<"Invocation of the real method"<<endl;
-			get<0>(args) = 6354;
-			get<1>(args) = 909;
-			get<2>(args) = 6.66;
-			get<3>(args) = "something new";
-		}
-		void ParMethod2(std::tuple<int, int>& args)
-		{
-			cout<<"Invocation of the real method1"<<get<0>(args)<<get<1>(args)<<endl;
-		}
 
-		void ParMethod3(std::tuple<>& args)
-		{
-			cout<<"Invocation of the real method3"<<endl;
-		}
-
-		void ParMethod4(std::tuple<gps_position>& args)
-		{
-			bufout oo(cout);
-			oo<<"Invocation of the real method4 gps:"<<get<0>(args);
-		}
-
-		void ParMethod5(std::tuple<std::vector<int>>& args)
-		{
-			bufout oo(cout);
-			oo<<"Invocation of the real method5 gps:"<<get<0>(args);
-		}
-		*/
 		//##POP_METH(sync, conc, void, SetValues, int, int, double, std::string)
 		void SetValues(int _i1, int _i2, double _d, std::string _s)
 		{
@@ -87,6 +57,7 @@ class TestClass
 			s_  = _s;
 			std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 		}
+
 		//##POP_METH(sync, conc, void, GetValues, int&, int&, double&, std::string&)
 		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s)
 		{

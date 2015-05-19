@@ -33,7 +33,6 @@ mkdir -p $DIR
 
 # Generate the temporary file to be expanded by macros (method ids)
 # notes:
-#   - The line number will be reseted at the start of the enum. This is needed since the enum names use __LINE__
 echo "Generating $TMPFILE_M"
 echo "#ifndef _POP_${PARCLASS}_METH_H"                      >  $TMPFILE_M
 echo "#define _POP_${PARCLASS}_METH_H"                      >> $TMPFILE_M
@@ -43,7 +42,6 @@ echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE_M
 echo 'namespace pop{'                                       >> $TMPFILE_M
 echo 'namespace broker{'                                    >> $TMPFILE_M
 echo "enum ${PARCLASS}_method_ids{"                         >> $TMPFILE_M
-echo '#0 "reset_lines_for_method_ids" 1'                    >> $TMPFILE_M
 sed -n 's|.\s//##||p' $2                                    >> $TMPFILE_M
 echo '__destr'                                              >> $TMPFILE_M
 echo '};'                                                   >> $TMPFILE_M
@@ -78,7 +76,6 @@ echo 'namespace pop{'                                       >> $TMPFILE_I
 echo 'class _parclass_ : public pop::interface'             >> $TMPFILE_I
 echo '{'                                                    >> $TMPFILE_I
 echo 'public:'                                              >> $TMPFILE_I
-echo '#0 "reset_lines_for_method_ids" 1'                    >> $TMPFILE_I
 sed -n 's|.\s//##||p' $2                                    >> $TMPFILE_I
 echo '};'                                                   >> $TMPFILE_I
 echo '}'                                                    >> $TMPFILE_I
