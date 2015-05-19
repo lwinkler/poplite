@@ -14,6 +14,7 @@
 #include "class/interface.hpp"
 #include "alloc/local.hpp"
 #include "alloc/manual.hpp"
+#include "alloc/ssh.hpp"
 
 using namespace pop;
 
@@ -44,9 +45,9 @@ class gps_position
 class TestClass
 {
 	public:
-		TestClass(int _i) {std::cout << "call constr with " << _i << std::endl;}
-		//##POP_CONSTR(sync, conc, pop::manual_allocator(), int)
-		static TestClass* __constr(int _i){return new TestClass(_i);}
+		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
+		//##POP_CONSTR(sync, conc, pop::ssh_allocator(_arg0), std::string)
+		static TestClass* __constr(std::string _s){return new TestClass(_s);} // TODO: generate in parser // TODO: give name to arguments in parser
 		/*
 		void ChangeValues(std::tuple<int, int, double, std::string>& args)
 		{

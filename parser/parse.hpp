@@ -59,4 +59,25 @@
 #define APPLYC_15 , APPLY_15
 #define APPLYC_16 , APPLY_16
 
+/* Allow to return a sequence of type + arguments */
+#define  ARGS(...) CAT(ARGS_, NARGS(__VA_ARGS__))(__VA_ARGS__)
+#define  ARGS_0()
+#define  ARGS_1(t0 )                                                                   (t0 , _arg0)
+#define  ARGS_2(t0 , t1)                                                               (t0 , _arg0), (t1, _arg1)
+#define  ARGS_3(t0 , t1, t2)                                                           (t0 , _arg0), (t1, _arg1), (t2, _arg2)
+#define  ARGS_4(t0 , t1, t2, t3)                                                       (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3)
+#define  ARGS_5(t0 , t1, t2, t3, t4)                                                   (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4)
+#define  ARGS_6(t0 , t1, t2, t3, t4, t5)                                               (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5)
+#define  ARGS_7(t0 , t1, t2, t3, t4, t5, t6)                                           (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6)
+#define  ARGS_8(t0 , t1, t2, t3, t4, t5, t6, t7)                                       (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7)
+#define  ARGS_9(t0 , t1, t2, t3, t4, t5, t6, t7, t8)                                   (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8)
+#define ARGS_10(t0 , t1, t2, t3, t4, t5, t6, t7, t8, t9)                               (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8), (t9, _arg9)
+#define ARGS_11(t0 , t1, t2, t3, t4, t5, t6, t7, t8, t9, t10)                          (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8), (t9, _arg9), (t10, _arg10)
+#define ARGS_12(t0 , t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11)                     (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8), (t9, _arg9), (t10, _arg10), (t11, _arg11)
+#define ARGS_13(t0 , t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12)                (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8), (t9, _arg9), (t10, _arg10), (t11, _arg11), (t12, _arg12)
+#define ARGS_14(t0 , t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13)           (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8), (t9, _arg9), (t10, _arg10), (t11, _arg11), (t12, _arg12), (t13, _arg13)
+#define ARGS_15(t0 , t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14)      (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8), (t9, _arg9), (t10, _arg10), (t11, _arg11), (t12, _arg12), (t13, _arg13), (t14, _arg14)
+#define ARGS_16(t0 , t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) (t0 , _arg0), (t1, _arg1), (t2, _arg2), (t3, _arg3), (t4, _arg4), (t5, _arg5), (t6, _arg6), (t7, _arg7), (t8, _arg8), (t9, _arg9), (t10, _arg10), (t11, _arg11), (t12, _arg12), (t13, _arg13), (t14, _arg14), (t15, _arg15)
+
+
 #endif
