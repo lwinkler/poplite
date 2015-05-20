@@ -16,12 +16,6 @@
 
 namespace pop {
 	/// The connection class provides serialization primitives on top of a socket.
-	/**
-	 * Each message sent using this class consists of:
-	 * @li An 8-byte header containing the length of the serialized data in
-	 * hexadecimal.
-	 * @li The serialized data.
-	 */
 	class interface_combox
 	{
 		public:
@@ -38,8 +32,21 @@ namespace pop {
 
 			inline void run(){io_service_.run();}
 			inline connection& connec(){return connection_;}
-			inline boost::asio::ip::tcp::endpoint endpoint() const {return acceptor_.local_endpoint();}
+			inline const boost::asio::ip::tcp::endpoint endpoint() const {return acceptor_.local_endpoint();}
 
+			void send_contact(const boost::asio::ip::tcp::endpoint& _contact_endpoint)
+			{
+				// Send the address to the broker
+				std::stringstream oss;
+				bufout oa(oss);
+				std::string host_name = acceptor_.local_endpoint().address().to_string();
+				std::string service_name = std::to_string(acceptor_.local_endpoint().port());
+				oa << host_name;
+				oa << service_name;
+
+				connection contact_connection(io_service_);
+				contact_connection.sync_write(oss);
+			}
 
 		private:
 			/// Handle completion of a accept operation.
@@ -51,6 +58,7 @@ namespace pop {
 				}
 				LOG(debug) << "Interface combox connected";
 			}
+
 
 
 		boost::asio::io_service io_service_;

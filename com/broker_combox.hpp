@@ -41,7 +41,8 @@ namespace pop {
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 				io_service_.run();
 
-				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error));
+				connection_ptr contact_conn(new connection(io_service_));
+				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error, contact_conn));
 			}
 			/// Run io server
 			inline void run(){io_service_.run();}
@@ -111,17 +112,31 @@ namespace pop {
 			}
 
 			/// Handle contact by a second interface
-			void handle_accept_contact(const boost::system::error_code& e)
+			void handle_accept_contact(const boost::system::error_code& e, connection_ptr conn)
 			{
 				if(e)
 				{
 					throw std::runtime_error(e.message());
 				}
-				LOG(debug) << "Interface combox connected";
-				std::stringstream ss;
-				ss << contact_acceptor_.local_endpoint().address() << contact_acceptor_.local_endpoint().port();
-				contact_connection_.sync_write(ss);
-				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error));
+				LOG(debug) << "Interface combox contacted";
+				std::string host_name;
+				std::string service_name;
+				bufin ia(conn->input_stream());
+				ia >> host_name;
+				ia >> service_name;
+				LOG(debug) << "Call iface on "<< host_name << " " << service_name;
+
+				boost::asio::ip::tcp::resolver::query query(host_name, service_name);
+
+				boost::asio::ip::tcp::resolver resolver(io_service_);
+				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
+
+				// Start an asynchronous connect operation.
+				LOG(debug) <<"async connect";
+				connection_ptr new_conn(new connection(io_service_));
+				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
+				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error, conn));
 			}
 
 		private:

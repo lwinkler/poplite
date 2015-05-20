@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "call constructor";
 		// iface.call_sync<int>(0, i1);
-		pop::TestClass testClass(4);
+		pop::TestClass testClass("localhost");
 
 /*
 		boost::asio::ip::tcp::endpoint& ep(testClass.contact());
@@ -48,11 +48,18 @@ int main(int argc, char* argv[])
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
 		// cout << "s=" << testClass.GetStr() << endl; // TODO: Fix return value
+		// TODO: forbid copies of interfaces
 
 		sleep(1);
 
+		LOG(info) << "create a second interface";
+		pop::interface testClass2(testClass.endpoint());
+		testClass2.sync<void , int&, int&, double&, std::string&>(broker::GetValues2 , i1, i2, d, s);
+		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+
 		// iface.call_sync<>(-1);
 		cout << "end of main" << endl;
+		sleep(3);
 	}
 	catch (std::exception& e)
 	{

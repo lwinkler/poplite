@@ -25,8 +25,18 @@ class interface
 			sync<void>(-1);
 		}
 
-		// interface(boost::asio::ip::tcp::endpoint& _endpoint) :
+		interface(const interface& _iface) : interface(_iface.endpoint())
+		{
+		}
 
+		interface(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : combox_()
+		{
+			// Send our endpoint
+			combox_.send_contact(_contact_endpoint);
+			
+			// Wait for the broker to call us back
+			combox_.run();
+		}
 
 		template<typename R, typename ...Args> R sync(int _method_id, Args& ...args)
 		{
@@ -48,14 +58,14 @@ class interface
 				if(std::tuple_size<std::tuple<Args...>>::value)
 					ia >> tup;
 				// TODO: serialize R
-				LOG(debug) << "received answer from broker";
+				LOG(debug) << "received answer from broker" << &combox_.connec();
 
 				std::string ack;
 				ia >> ack;
 				LOG(debug) << "received ack=" << ack;
 				if(ack != "ACK")
 					throw std::runtime_error("did not receive ack");
-				if(_method_id == -1)
+				if(_method_id == -1) // TODO: use code
 					combox_.connec().socket().close();
 
 			}
@@ -65,6 +75,15 @@ class interface
 			}
 			return R(); // TODO
 		}
+
+		void contact(const boost::asio::ip::tcp::resolver::query& _query_broker)
+		{
+			//LOG(debug) << "contact "<< _endpoint_broker.address();
+		}
+
+		inline const boost::asio::ip::tcp::endpoint endpoint() const {return combox_.endpoint();}
+
+
 	private:
 		pop::interface_combox combox_;
 };
