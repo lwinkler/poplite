@@ -12,6 +12,7 @@
 #define POP_CLIENT_H
 
 #include "connection.hpp" // Must come before boost/serialization headers.
+#include "accesspoint.hpp"
 
 
 namespace pop {
@@ -21,7 +22,7 @@ namespace pop {
 		public:
 			/// Constructor.
 			interface_combox() :
-				acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/)),
+				acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))),
 				connection_(io_service_)
 			{
 				// Start an accept operation for a new connection.
@@ -33,6 +34,7 @@ namespace pop {
 			inline void run(){io_service_.run();}
 			inline connection& connec(){return connection_;}
 			inline const boost::asio::ip::tcp::endpoint endpoint() const {return acceptor_.local_endpoint();}
+			inline const pop::accesspoint& contact(){return contact_;}
 
 			void send_contact(const boost::asio::ip::tcp::endpoint& _contact_endpoint)
 			{
@@ -56,6 +58,10 @@ namespace pop {
 				{
 					throw std::runtime_error(e.message());
 				}
+
+				connection_.sync_read();
+				bufin ia(connection_.input_stream());
+				ia >> contact_;
 				LOG(debug) << "Interface combox connected";
 			}
 
@@ -64,6 +70,7 @@ namespace pop {
 		boost::asio::io_service io_service_;
 		connection connection_;
 		boost::asio::ip::tcp::acceptor acceptor_;
+		pop::accesspoint contact_;
 	};
 } // namespace
 

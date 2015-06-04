@@ -21,7 +21,7 @@ namespace pop
 		using parallel_method = std::function<void(bufin&, bufout&, ParClass*&)>;
 
 template<class ParClass>
-class broker
+class broker : private boost::noncopyable
 {
 	public:
 		broker() : p_obj_(nullptr)
@@ -48,7 +48,7 @@ class broker
 			_oa << tup;
 		}
 
-		/// A simple call to a method 
+		/// A simple concurrent call to a method 
 		template<typename R, typename ...Args> static void conc(bufin& ia, bufout& oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...)) // TODO: Args by ref ?
 		{
 			if(!_p_obj)

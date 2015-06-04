@@ -1,0 +1,44 @@
+#ifndef POP_ACCESSPOINT_HPP
+#define POP_ACCESSPOINT_HPP
+
+#include <boost/asio.hpp>
+
+#include "class/util.hpp"
+#include "com/serialize.hpp"
+
+namespace pop {
+
+	class accesspoint
+	{
+		public:
+			accesspoint() : host_name_(""), port_(0) {}
+
+			accesspoint(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : 
+				host_name_(boost::asio::ip::host_name()), // TODO: Try with address().to_string()
+				port_(_contact_endpoint.port())
+		{
+			/*
+			   while(_iterator != boost::asio::ip::tcp::resolver::iterator())
+			   {
+			//resol.resolve(*_iterator);
+			LOG(debug) << "address:" << _iterator->endpoint().address().to_string();
+			++_iterator;
+			}
+			 */
+		}
+			std::string host_name_;
+			int port_;
+
+		private:
+			friend class boost::serialization::access;
+			template<class Archive>void serialize(Archive & ar, const unsigned int version)
+			{
+				ar & host_name_;
+				ar & port_;
+			}
+
+	};
+
+} // namespace
+
+#endif

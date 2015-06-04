@@ -45,7 +45,7 @@ class gps_position
 class TestClass
 {
 	public:
-		//##POP_CONSTR(pop::manual_allocator(), std::string)
+		//##POP_CONSTR(pop::local_allocator(), std::string)
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
 
 		//##POP_METH(sync, conc, void, SetValues, int, int, double, std::string)

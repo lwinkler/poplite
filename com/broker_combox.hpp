@@ -15,6 +15,7 @@
 #include "connection.hpp" // Must come before boost/serialization headers.
 
 #include "class/broker.hpp"
+#include "com/accesspoint.hpp"
 
 
 namespace pop {
@@ -35,14 +36,18 @@ namespace pop {
 				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_query);
 				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
 
-				// Start an asynchronous connect operation.
+				// Start a connection as a point of contact
+				// connection_ptr contact_conn(new connection(io_service_));
+				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error));
+// LOG(debug) << "ep " << boost::asio::ip::host_name();
+// LOG(debug) << " " << contact_acceptor_.local_endpoint().port();//  contact_acceptor_.local_endpoint().address().to_string();
+
+				// Start an asynchronous connect operation for the connecting interface
 				LOG(debug) <<"async connect";
 				connection_ptr new_conn(new connection(io_service_));
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
-				io_service_.run();
 
-				connection_ptr contact_conn(new connection(io_service_));
-				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error, contact_conn));
+				io_service_.run();
 			}
 			/// Run io server
 			inline void run(){io_service_.run();}
@@ -54,6 +59,19 @@ namespace pop {
 			{
 				if (!e)
 				{
+					LOG(debug) << "send contact from broker" << contact_acceptor_.local_endpoint().port();
+					pop::accesspoint ap(contact_acceptor_.local_endpoint());
+					std::stringstream ss;
+					LOG(debug) << "send contact from broker";
+					bufout ia(ss);
+					LOG(debug) << "send contact from broker";
+					ia << ap;
+					LOG(debug) << "send contact from broker";
+					LOG(debug) << ss.str();
+					LOG(debug) << "send contact from broker";
+					conn->sync_write(ss);
+					LOG(debug) << "send contact from broker";
+
 					LOG(debug)<<"connected";
 				}
 				else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
@@ -112,18 +130,16 @@ namespace pop {
 			}
 
 			/// Handle contact by a second interface
-			void handle_accept_contact(const boost::system::error_code& e, connection_ptr conn)
+			void handle_accept_contact(const boost::system::error_code& e)
 			{
 				if(e)
 				{
 					throw std::runtime_error(e.message());
 				}
 				LOG(debug) << "Interface combox contacted";
-				std::string host_name;
-				std::string service_name;
-				bufin ia(conn->input_stream());
-				ia >> host_name;
-				ia >> service_name;
+				pop::accesspoint ap;
+				bufin ia(contact_connection_.input_stream());
+				ia >> ap;
 				LOG(debug) << "Call iface on "<< host_name << " " << service_name;
 
 				boost::asio::ip::tcp::resolver::query query(host_name, service_name);
@@ -134,9 +150,9 @@ namespace pop {
 
 				// Start an asynchronous connect operation.
 				LOG(debug) <<"async connect";
-				connection_ptr new_conn(new connection(io_service_));
-				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
-				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error, conn));
+				//connection_ptr new_conn(new connection(io_service_));
+				//new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
+				contact_acceptor_.async_accept(contact_connection_.socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error));
 			}
 
 		private:

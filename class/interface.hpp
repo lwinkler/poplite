@@ -8,28 +8,33 @@
 
 namespace pop{
 
-class interface
+class interface : private boost::noncopyable
 {
 	public:
-		interface(const std::string& _executable, const pop::allocator& _allocator) :
-			combox_()
+		interface(const std::string& _executable, const pop::allocator& _allocator, bool _linkLife = true) :
+			combox_(),
+			linkLife_(_linkLife)
 		{
 
 			_allocator.allocate(_executable, combox_.endpoint());
 			// Handle connection
 			combox_.run();
 		}
-
-		~interface()
+		inline void destructor()
 		{
 			sync<void>(-1);
 		}
 
-		interface(const interface& _iface) : interface(_iface.endpoint())
+		~interface()
 		{
+			if(linkLife_)
+				sync<void>(-1);
 		}
 
-		interface(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : combox_()
+public:
+		interface(const pop::accesspoint& _contact) :
+			combox_(),
+			linkLife_(false)
 		{
 			// Send our endpoint
 			combox_.send_contact(_contact_endpoint);
@@ -76,16 +81,13 @@ class interface
 			return R(); // TODO
 		}
 
-		void contact(const boost::asio::ip::tcp::resolver::query& _query_broker)
-		{
-			//LOG(debug) << "contact "<< _endpoint_broker.address();
-		}
-
-		inline const boost::asio::ip::tcp::endpoint endpoint() const {return combox_.endpoint();}
+		// inline const boost::asio::ip::tcp::endpoint endpoint() const {return combox_.endpoint();}
+		inline const pop::accesspoint& contact(){return combox_.contact();}
 
 
 	private:
 		pop::interface_combox combox_;
+		bool linkLife_;
 };
 
 
