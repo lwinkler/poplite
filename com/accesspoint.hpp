@@ -29,6 +29,13 @@ namespace pop {
 			std::string host_name_;
 			int port_;
 
+
+			boost::asio::ip::tcp::resolver::query create_query() const
+			{
+				boost::asio::ip::tcp::resolver::query q(host_name_, std::to_string(port_));
+				return q;
+			}
+
 		private:
 			friend class boost::serialization::access;
 			template<class Archive>void serialize(Archive & ar, const unsigned int version)

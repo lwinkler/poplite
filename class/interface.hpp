@@ -37,7 +37,7 @@ public:
 			linkLife_(false)
 		{
 			// Send our endpoint
-			combox_.send_contact(_contact_endpoint);
+			combox_.send_my_contact(combox_.endpoint(), _contact);
 			
 			// Wait for the broker to call us back
 			combox_.run();

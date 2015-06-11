@@ -20,7 +20,7 @@ namespace pop {
 	class interface_combox
 	{
 		public:
-			/// Constructor.
+			/// Constructor
 			interface_combox() :
 				acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))),
 				connection_(io_service_)
@@ -30,28 +30,30 @@ namespace pop {
 				LOG(info) << "Listen on port " << acceptor_.local_endpoint().port();
 				acceptor_.async_accept(connection_.socket(), boost::bind(&interface_combox::handle_accept, this, boost::asio::placeholders::error));
 			}
+			~interface_combox(){io_service_.stop();}
 
 			inline void run(){io_service_.run();}
 			inline connection& connec(){return connection_;}
 			inline const boost::asio::ip::tcp::endpoint endpoint() const {return acceptor_.local_endpoint();}
 			inline const pop::accesspoint& contact(){return contact_;}
 
-			void send_contact(const boost::asio::ip::tcp::endpoint& _contact_endpoint)
+			void send_my_contact(const pop::accesspoint& _contact, const pop::accesspoint& _to)
 			{
+				boost::asio::ip::tcp::resolver resolver(io_service_);
+				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_to.create_query());
+
+				connection contact_connection(io_service_);
+				boost::asio::connect(contact_connection.socket(), endpoint_iterator);
+
 				// Send the address to the broker
 				std::stringstream oss;
 				bufout oa(oss);
-				std::string host_name = acceptor_.local_endpoint().address().to_string();
-				std::string service_name = std::to_string(acceptor_.local_endpoint().port());
-				oa << host_name;
-				oa << service_name;
-
-				connection contact_connection(io_service_);
+				oa << _contact;
 				contact_connection.sync_write(oss);
 			}
 
 		private:
-			/// Handle completion of a accept operation.
+			/// Handle completion of a accept operation
 			void handle_accept(const boost::system::error_code& e)
 			{
 				if(e)
