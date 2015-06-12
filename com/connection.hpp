@@ -119,7 +119,7 @@ namespace pop {
 				iss_.str("");
 				iss_.clear();
 
-				// Issue a read operation to read exactly the number of bytes in a header.
+				// Issue a read operation to read exactly the number of bytes in a header
 				auto f = &connection::handle_read_header<Handler>;
 				boost::asio::async_read(
 					socket_, 
@@ -128,31 +128,39 @@ namespace pop {
 				);
 			}
 
-			/// Synchronously read a data structure from the socket.
+			/// Synchronously read a data structure from the socket into an object
+			template<typename T>void sync_read(T& _obj)
+			{
+				sync_read();
+				bufin ia(input_stream());
+				ia >> _obj;
+			}
+
+			/// Synchronously read a data structure from the socket
 			void sync_read()
 			{
 				// Reset the stringstream
 				iss_.str("");
 				iss_.clear();
 
-				// Issue a read operation to read exactly the number of bytes in a header.
+				// Issue a read operation to read exactly the number of bytes in a header
 				boost::asio::read(socket_, boost::asio::buffer(inbound_header_));
-				// Determine the length of the serialized data.
+				// Determine the length of the serialized data
 				std::istringstream is(std::string(inbound_header_, header_length));
 				std::size_t inbound_data_size = 0;
 				if (!(is >> std::hex >> inbound_data_size))
 				{
-					// Header doesn't seem to be valid. Inform the caller.
+					// Header doesn't seem to be valid. Inform the caller
 					boost::system::error_code error(boost::asio::error::invalid_argument);
 					LOG(error) << "read error";
 					return;
 				}
 
-				// Start an asynchronous call to receive the data.
+				// Start an asynchronous call to receive the data
 				inbound_data_.resize(inbound_data_size);
 				boost::asio::read(socket_, boost::asio::buffer(inbound_data_));
 
-				// Extract the data structure from the data just received.
+				// Extract the data structure from the data just received
 				try
 				{
 					std::string archive_data(&inbound_data_[0], inbound_data_.size());

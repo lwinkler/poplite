@@ -58,10 +58,11 @@ public:
 
 				LOG(debug) << "sent to broker";
 
-				combox_.connec().sync_read();
+				combox_.connec().sync_read(); //TODO: try sync_read(tup)
 				bufin ia(combox_.connec().input_stream());
 				if(std::tuple_size<std::tuple<Args...>>::value)
 					ia >> tup;
+
 				// TODO: serialize R
 				LOG(debug) << "received answer from broker" << &combox_.connec();
 

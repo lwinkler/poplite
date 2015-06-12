@@ -58,9 +58,7 @@ namespace pop {
 					throw std::runtime_error(e.message());
 				}
 
-				connection_.sync_read();
-				bufin ia(connection_.input_stream());
-				ia >> contact_;
+				connection_.sync_read(contact_);
 				LOG(debug) << "Interface combox connected";
 			}
 
