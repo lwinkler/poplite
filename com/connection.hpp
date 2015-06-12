@@ -40,8 +40,18 @@ namespace pop {
 			/// Return ref to the input stream
 			inline std::istream& input_stream(){return iss_;}
 
+
 			/// Asynchronously write a data structure to the socket.
-			template <typename Handler> void async_write(std::istream& _iss, Handler _handler)
+			template <typename T, typename Handler> void async_write(const T& _obj, Handler _handler)
+			{
+					std::stringstream ss;
+					bufout ia(ss);
+					ia << _obj;
+					async_write_ss(ss, _handler);
+			}
+
+			/// Asynchronously write a stringstream to the socket.
+			template <typename Handler> void async_write_ss(std::istream& _iss, Handler _handler)
 			{
 				std::istreambuf_iterator<char> eos;
 				std::string outbound_data(std::istreambuf_iterator<char>(_iss), eos);
@@ -66,8 +76,17 @@ namespace pop {
 				boost::asio::async_write(socket_, buffers, _handler);
 			}
 
+			// Synchronous write an object to the socket
+			template <typename T> void sync_write(const T& _obj)
+			{
+					std::stringstream ss;
+					bufout ia(ss);
+					ia << _obj;
+					sync_write_ss(ss);
+			}
+
 			// Synchronous write to the socket
-			void sync_write(std::istream& _iss)
+			void sync_write_ss(std::istream& _iss)
 			{
 				std::istreambuf_iterator<char> eos;
 				std::string outbound_data(std::istreambuf_iterator<char>(_iss), eos);

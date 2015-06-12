@@ -46,10 +46,7 @@ namespace pop {
 				boost::asio::connect(contact_connection.socket(), endpoint_iterator);
 
 				// Send the address to the broker
-				std::stringstream oss;
-				bufout oa(oss);
-				oa << _contact;
-				contact_connection.sync_write(oss);
+				contact_connection.sync_write(_contact);
 			}
 
 		private:

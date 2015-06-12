@@ -59,10 +59,7 @@ namespace pop {
 				{
 					pop::accesspoint ap(contact_acceptor_.local_endpoint());
 					LOG(debug) << "send contact from broker"; // << ap;
-					std::stringstream ss;
-					bufout ia(ss);
-					ia << ap;
-					conn->sync_write(ss);
+					conn->sync_write(ap);
 
 					LOG(debug)<<"connected";
 				}
@@ -109,7 +106,7 @@ namespace pop {
 
 				std::string ack("ACK");
 				oa << ack;
-				conn->sync_write(oss);
+				conn->sync_write_ss(oss);
 				LOG(debug) << "sent ack";
 
 				if(quit)

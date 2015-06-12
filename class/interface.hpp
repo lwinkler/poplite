@@ -54,7 +54,7 @@ public:
 				oa << _method_id;
 
 				oa << tup;
-				combox_.connec().sync_write(oss);
+				combox_.connec().sync_write_ss(oss);
 
 				LOG(debug) << "sent to broker";
 
