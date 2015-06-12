@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 	catch (std::exception& e)
 	{
 		LOG(error) << e.what();
+		return 1;
 	}
 
 	return 0;
