@@ -6,6 +6,7 @@
 
 namespace pop{
 
+/// Class to allocate object manually: the command has to be run by the user on any platform
 class manual_allocator : public allocator
 {
 	public:

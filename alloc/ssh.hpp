@@ -6,6 +6,7 @@
 
 #define MAX_STR 512
 
+/// Class to allocate an object via ssh
 namespace pop{
 
 	class ssh_allocator : public allocator

@@ -3,18 +3,20 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
-
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-// #include <boost/archive/binary_oarchive.hpp>
-// #include <boost/archive/binary_iarchive.hpp>
+
 
 namespace pop
 {
 #if 1
+// use text serialization
 typedef boost::archive::text_iarchive bufin;
 typedef boost::archive::text_oarchive bufout;
 #else
+// use binary serialization
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 typedef boost::archive::binary_iarchive bufin;
 typedef boost::archive::binary_oarchive bufout;
 #endif

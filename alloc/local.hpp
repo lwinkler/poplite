@@ -8,6 +8,7 @@
 
 namespace pop{
 
+/// Class to allocate object locally, as a fork of the process
 class local_allocator : public allocator
 {
 	public:
