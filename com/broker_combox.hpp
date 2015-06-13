@@ -13,9 +13,7 @@
 #ifndef POP_BROKER_COMBOX_H
 #define POP_BROKER_COMBOX_H
 
-#include "class/util.hpp"
 #include "connection.hpp" // Must come before boost/serialization headers.
-
 #include "class/broker.hpp"
 #include "com/accesspoint.hpp"
 

@@ -11,11 +11,16 @@
 #ifndef POPLITE_SYSTEM_H
 #define POPLITE_SYSTEM_H
 
+
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
+// Lines for boost log
+#define BOOST_LOG_DYN_LINK
+#include <boost/log/trivial.hpp>
+#define LOG BOOST_LOG_TRIVIAL
 
 namespace pop
 {
@@ -30,6 +35,7 @@ typedef boost::archive::text_oarchive bufout;
 typedef boost::archive::binary_iarchive bufin;
 typedef boost::archive::binary_oarchive bufout;
 #endif
+
 
 }
 

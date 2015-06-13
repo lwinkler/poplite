@@ -24,7 +24,6 @@
 #include <sstream>
 #include <vector>
 
-#include "class/util.hpp"
 #include "com/serialize.hpp"
 
 namespace pop {

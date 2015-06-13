@@ -12,7 +12,6 @@
 
 #include <boost/asio.hpp>
 
-#include "class/util.hpp"
 #include "com/serialize.hpp"
 
 namespace pop {
