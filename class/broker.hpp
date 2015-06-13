@@ -1,3 +1,12 @@
+//
+// broker.hpp
+// ~~~~~~~~~~
+//
+// Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+// 
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
 #ifndef POPLITE_BROKER_H
 #define POPLITE_BROKER_H
 
@@ -15,6 +24,7 @@ namespace pop
 	{
 		template<class ParClass> using parallel_method = std::function<void(bufin&, bufout&, ParClass*&)>;
 
+		/// A broker is the (remote) part that contains the instanciation of the parallel object
 		template<class ParClass> class broker : private boost::noncopyable
 		{
 			public:

@@ -1,8 +1,17 @@
+//
+// interface_combox.hpp
+// ~~~~~~~~~~~~~~~~~~~~~
+//
+// Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+// 
+// based on: http://stackoverflow.com/questions/687490/how-do-i-expand-a-tuple-into-variadic-template-functions-arguments
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
 #ifndef POPLITE_APPLY_TUPLE_CONSTR_H
 #define POPLITE_APPLY_TUPLE_CONSTR_H
-
-
-// based on: http://stackoverflow.com/questions/687490/how-do-i-expand-a-tuple-into-variadic-template-functions-arguments
 
 namespace pop
 {

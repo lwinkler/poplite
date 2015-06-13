@@ -1,3 +1,13 @@
+//
+// interface.hpp
+// ~~~~~~~~~~~~~
+//
+// Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+// 
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
 #ifndef POPLITE_INTERFACE_H
 #define POPLITE_INTERFACE_H
 
@@ -8,6 +18,7 @@
 
 namespace pop{
 
+/// Interface is the local part used to communicate with a broker (remote) that contains the instanciation of the parallel object
 class interface : private boost::noncopyable
 {
 	public:

@@ -1,3 +1,13 @@
+//
+// system.hpp
+// ~~~~~~~~~~
+//
+// Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+// 
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
 #ifndef POPLITE_SYSTEM_H
 #define POPLITE_SYSTEM_H
 
@@ -9,7 +19,7 @@
 
 namespace pop
 {
-#if 1
+#ifndef POP_BINARY_SERIALIZATION
 // use text serialization
 typedef boost::archive::text_iarchive bufin;
 typedef boost::archive::text_oarchive bufout;

@@ -1,3 +1,13 @@
+//
+// serialize.hpp
+// ~~~~~~~~~~~~~
+//
+// Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+// 
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
 #ifndef POPLITE_SERIALIZE_H
 #define POPLITE_SERIALIZE_H
 
@@ -14,50 +24,6 @@
 
 namespace pop
 {
-
-/*
-
-class method_id
-{
-	public:
-		method_id(int x_id) : id(x_id)
-		{}
-		int id;
-	private:
-		friend class boost::serialization::access;
-		template<class Archive>
-			void serialize(Archive & ar, const unsigned int version)
-			{
-				ar & id;
-			}
-};
-
-template <typename T> T read(bufin& ia)
-{
-	  T t; ia >> t; return t;
-}
-
-template <typename T> void write(T tuple, bufout& oa)
-{
-	t >> oa;
-}
-*/
-
-/*
-
-template <typename... Args>
-std::tuple<Args...> parse(bufin& ia) 
-{
-	  return std::make_tuple(read<Args>(ia)...);
-}
-
-template <typename... Args>
-std::tuple<Args...> parse(const std::string& str) 
-{
-	  std::istringstream ia(str);
-	  return parse<Args...>(ia);
-}
-*/
 
 // In and out 
 template<typename T> struct in
