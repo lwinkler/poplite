@@ -14,6 +14,7 @@
 
 #include "com/serialize.hpp"
 
+/// A point of access (via communication interface) that is serializable
 namespace pop {
 
 	class accesspoint
@@ -24,16 +25,7 @@ namespace pop {
 			accesspoint(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : 
 				host_name_(boost::asio::ip::host_name()), // TODO: Try with address().to_string()
 				port_(_contact_endpoint.port())
-		{
-			/*
-			   while(_iterator != boost::asio::ip::tcp::resolver::iterator())
-			   {
-			//resol.resolve(*_iterator);
-			LOG(debug) << "address:" << _iterator->endpoint().address().to_string();
-			++_iterator;
-			}
-			 */
-		}
+			{}
 			std::string host_name_;
 			int port_;
 

@@ -127,16 +127,12 @@ namespace pop {
 					throw std::runtime_error(e.message());
 				}
 				LOG(debug) << "Interface combox contacted";
-				contact_connection->sync_read();
 				pop::accesspoint ap;
-				bufin ia(contact_connection->input_stream());
-				ia >> ap;
+				contact_connection->sync_read(ap);
 				LOG(debug) << "Call iface on "<< ap.host_name_ << " " << ap.port_;
 
-				boost::asio::ip::tcp::resolver::query query(ap.host_name_, std::to_string(ap.port_));
-
 				boost::asio::ip::tcp::resolver resolver(io_service_);
-				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(ap.create_query());
 				boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
 
 				// Start an asynchronous connect operation and connect to interface
@@ -145,6 +141,7 @@ namespace pop {
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 
 				// Recreate a connection for contact
+				// TODO: is this possible to have a permanent service for contact ?
 				connection_ptr new_conn2(new connection(io_service_));
 				contact_acceptor_.async_accept(new_conn2->socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error, new_conn2));
 			}
