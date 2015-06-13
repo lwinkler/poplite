@@ -34,20 +34,12 @@ mkdir -p $DIR
 # Generate the temporary file to be expanded by macros (method ids)
 # notes:
 echo "Generating $TMPFILE_M"
-echo "#ifndef _POP_${PARCLASS}_METH_H"                      >  $TMPFILE_M
-echo "#define _POP_${PARCLASS}_METH_H"                      >> $TMPFILE_M
-echo '#include "parse.hpp"'                                 >> $TMPFILE_M
+echo '#include "parse.hpp"'                                 >  $TMPFILE_M
 echo '#include "parse_method_ids.hpp"'                      >> $TMPFILE_M
 echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE_M
-echo 'namespace pop{'                                       >> $TMPFILE_M
-echo 'namespace broker{'                                    >> $TMPFILE_M
-echo "enum ${PARCLASS}_method_ids{"                         >> $TMPFILE_M
+echo "POP_HEAD"                                             >> $TMPFILE_M
 sed -n 's|.\s//##||p' $2                                    >> $TMPFILE_M
-echo '__destr'                                              >> $TMPFILE_M
-echo '};'                                                   >> $TMPFILE_M
-echo '}'                                                    >> $TMPFILE_M
-echo '}'                                                    >> $TMPFILE_M
-echo "#endif"                                               >> $TMPFILE_M
+echo "POP_FOOT"                                             >> $TMPFILE_M
 
 # Generate the interface file
 echo "Generate $TARGET_M headers"
@@ -72,13 +64,9 @@ echo '#include "parse.hpp"'                                 >  $TMPFILE_I
 echo '#include "parse_interface.hpp"'                       >> $TMPFILE_I
 echo "#define _parclass_ $PARCLASS"                         >> $TMPFILE_I
 echo "#define _executable_ \"main.$PARCLASS\""              >> $TMPFILE_I
-echo 'namespace pop{'                                       >> $TMPFILE_I
-echo 'class _parclass_ : public pop::interface'             >> $TMPFILE_I
-echo '{'                                                    >> $TMPFILE_I
-echo 'public:'                                              >> $TMPFILE_I
+echo "POP_HEAD"                                             >> $TMPFILE_I
 sed -n 's|.\s//##||p' $2                                    >> $TMPFILE_I
-echo '};'                                                   >> $TMPFILE_I
-echo '}'                                                    >> $TMPFILE_I
+echo "POP_FOOT"                                             >> $TMPFILE_I
 
 # Generate the interface file
 echo "Generate $TARGET_I headers"
@@ -108,14 +96,9 @@ echo "Generating $TMPFILE_B"
 echo '#include "parse.hpp"'                                                                >  $TMPFILE_B
 echo '#include "parse_broker.hpp"'                                                         >> $TMPFILE_B
 echo "#define _parclass_ $PARCLASS"                                                        >> $TMPFILE_B
-echo 'namespace pop{'                                                                      >> $TMPFILE_B
-echo 'namespace remote{'                                                                   >> $TMPFILE_B
-echo "template<> const std::vector<remote::parallel_method<${PARCLASS}>> broker<${PARCLASS}>::methods_{" >> $TMPFILE_B
+echo 'POP_HEAD'                                                                            >> $TMPFILE_B
 sed -n 's|.\s//##||p' $2                                                                   >> $TMPFILE_B
-echo 'nullptr'                                                                             >> $TMPFILE_B
-echo '};'                                                                                  >> $TMPFILE_B
-echo '}'                                                                                   >> $TMPFILE_B
-echo '}'                                                                                   >> $TMPFILE_B
+echo 'POP_FOOT'                                                                            >> $TMPFILE_B
 
 # Generate the interface file
 echo "Generate $TARGET_B headers"

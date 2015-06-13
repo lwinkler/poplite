@@ -13,6 +13,13 @@
 #ifndef _POP_PARSE_BROKER_HPP
 #define _POP_PARSE_BROKER_HPP
 
+
+// header
+#define POP_HEAD                 \
+namespace pop{                   \
+namespace remote{                \
+template<> const std::vector<remote::parallel_method<_parclass_>> broker<_parclass_>::methods_{
+
 // Create a vector of method pointers for broker
 
 #define POP_METH(_calli_, _callb_, _ret_, _meth_, ...) POP_METH_(_calli_, _callb_, _ret_, _meth_, ARGS(__VA_ARGS__))
@@ -23,5 +30,13 @@
 #define POP_CONSTR(_alloc_, ...) POP_CONSTR_(_alloc_, ARGS(__VA_ARGS__))
 #define POP_CONSTR_(_alloc_, ...) std::bind(&remote::broker<_parclass_>::call_constr<APPLY(STRIP1, __VA_ARGS__)>, \
 	std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+
+
+// foot
+#define POP_FOOT \
+nullptr          \
+};               \
+}                \
+}
 
 #endif
