@@ -11,19 +11,10 @@
 #ifndef TEST_CLASS_H
 #define TEST_CLASS_H
 
-#include <iostream>
-#include <cstdlib>
-#include <thread>
-#include <sstream>
-#include <fstream>
-
-#include "class/broker.hpp"
-#include "class/interface.hpp"
+// #include "class/interface.hpp"
 #include "alloc/local.hpp"
 #include "alloc/manual.hpp"
 #include "alloc/ssh.hpp"
-
-using namespace pop;
 
 class gps_position
 {
@@ -79,7 +70,6 @@ class TestClass
 		int i2_;
 		double d_;
 		std::string s_;
-
 };
 
 #endif

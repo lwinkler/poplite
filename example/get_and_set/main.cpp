@@ -1,17 +1,18 @@
 //
-// client.cpp
-// ~~~~~~~~~~
+// main.cpp
+// ~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
+// Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+// 
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #include "iface.TestClass.hpp"
-#include "com/accesspoint.hpp"
 
 using namespace std;
+
+/// A simple example for poplite
 
 int main(int argc, char* argv[])
 {
@@ -55,7 +56,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "create a second interface";
 		pop::interface testClass2(testClass.contact());
-		testClass2.sync<void , int&, int&, double&, std::string&>(broker::GetValues2 , i1, i2, d, s);
+		// testClass2.sync<void , int&, int&, double&, std::string&>(pop::broker::GetValues2 , i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
 		sleep(1);
@@ -63,7 +64,7 @@ int main(int argc, char* argv[])
 		LOG(info) << "create a third interface";
 		pop::interface testClass3(testClass.contact());
 		// pop::interface testClass2(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 20015));
-		testClass3.sync<void , int&, int&, double&, std::string&>(broker::GetValues2 , i1, i2, d, s);
+		// testClass3.sync<void , int&, int&, double&, std::string&>(pop::broker::GetValues2 , i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
 		// iface.call_sync<>(-1);

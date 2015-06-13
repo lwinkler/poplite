@@ -17,7 +17,7 @@
 #define POP_HEAD                 \
 namespace pop{                   \
 namespace broker{                \
-enum _parclass_ ## _method_ids{
+enum class CAT(_parclass_, _method_ids){
 
 // Methods for interface
 #define POP_METH(_calli_, _callb_, _ret_, _meth_, ...) CAT(_meth_, __COUNTER__) ,

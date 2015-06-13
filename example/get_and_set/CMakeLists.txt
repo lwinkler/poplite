@@ -10,19 +10,19 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g")
 set(CMAKE_CXX_FLAGS_RELEASE        "-O3")
 set(CMAKE_CXX_FLAGS_DEBUG          "-O2 -g")
 
-# Add custom target for source generation
-add_custom_target(generate ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
-add_custom_command(OUTPUT generated/main.TestClass.cpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
-
 add_definitions(-std=c++11)
 find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log REQUIRED )
 include_directories( ${Boost_INCLUDE_DIR} )
 include_directories(. ${POPLITE_DIR} generated)
 
+# Add custom target for source generation
+add_custom_target(generate ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
+add_custom_command(OUTPUT generated/main.TestClass.cpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
+
 # add main
 add_executable(main main.cpp)
-target_link_libraries(main ${Boost_LIBRARIES} )
+target_link_libraries(main ${Boost_LIBRARIES})
 
 # add object main
 add_executable(main.TestClass generated/main.TestClass.cpp)
-target_link_libraries(main.TestClass ${Boost_LIBRARIES} )
+target_link_libraries(main.TestClass ${Boost_LIBRARIES})
