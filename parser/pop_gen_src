@@ -29,6 +29,8 @@ TMPFILE_M=${DIR}/_${NAME_M}
 TMPFILE_I=${DIR}/_${NAME_I}
 TMPFILE_B=${DIR}/_${NAME_B}
 
+PARSER_DIR=`dirname $0`
+
 mkdir -p $DIR
 
 # Generate the temporary file to be expanded by macros (method ids)
@@ -48,7 +50,7 @@ echo "Generate $TARGET_M headers"
 echo "Preprocess $TMPFILE_M->$TARGET_M"
 echo "#ifndef _POP_${PARCLASS}_METH_IDS_H"                  >  $TARGET_M
 echo "#define _POP_${PARCLASS}_METH_IDS_H"                  >> $TARGET_M
-c++ -I../parser -E $TMPFILE_M | grep -v "^# "               >> $TARGET_M
+c++ -I$PARSER_DIR -E $TMPFILE_M | grep -v "^# "               >> $TARGET_M
 echo "#endif"                                               >> $TARGET_M
 
 echo "Deleting $TMPFILE_M"
@@ -78,7 +80,7 @@ echo '#include "'$2'"'                                      >> $TARGET_I
 
 # Only lines starting with '//##' are used for parsing
 echo "Preprocess $TMPFILE_I->$TARGET_I"
-c++ -I../parser -E $TMPFILE_I | grep -v "^# "               >> $TARGET_I
+c++ -I$PARSER_DIR -E $TMPFILE_I | grep -v "^# "               >> $TARGET_I
 echo "#endif"                                               >> $TARGET_I
 
 echo "Deleting $TMPFILE_I"
@@ -109,7 +111,7 @@ echo '#include "'$2'"'                                      >> $TARGET_B
 
 # Only lines starting with '//##' are used for parsing
 echo "Preprocess $TMPFILE_B->$TARGET_B"
-c++ -I../parser -E $TMPFILE_B | grep -v "^# "               >> $TARGET_B
+c++ -I$PARSER_DIR -E $TMPFILE_B | grep -v "^# "               >> $TARGET_B
 echo "#endif"                                               >> $TARGET_B
 
 echo "Deleting $TMPFILE_B"
@@ -123,5 +125,5 @@ astyle -nToO --style=allman $TARGET_B
 
 echo "Generating $TARGET_O"
 echo '#include "'${NAME_B}'"'                                 >  $TARGET_O
-sed ../parser/remote_main.cpp -e "s/_parclass_/${PARCLASS}/g" >> $TARGET_O
+sed $PARSER_DIR/remote_main.cpp -e "s/_parclass_/${PARCLASS}/g" >> $TARGET_O
 

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 # Options to be set with ccmake or cmake-gui
 set(CMAKE_BUILD_TYPE       "Debug" CACHE BOOL "Mode of compilation")
-set(POPLITE_DIR            ".."    CACHE PATH "Directory of poplite")
+set(POPLITE_DIR            "../.." CACHE PATH "Directory of poplite")
 
 set(CMAKE_CXX_FLAGS "-Wextra -Wno-unused-parameter -Wno-deprecated-register")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g")
