@@ -11,9 +11,8 @@
 #ifndef WORDLIST_SERVER_HPP
 #define WORDLIST_SERVER_HPP
 
-#include "class/broker.hpp"
-#include "class/interface.hpp"
-#include "alloc/local.hpp"
+#include <string>
+#include <vector>
 
 namespace pop
 {

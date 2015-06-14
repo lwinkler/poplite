@@ -29,7 +29,7 @@ namespace pop {
 			{
 				// Start an accept operation for a new connection.
 				// connection_ptr new_conn();
-				LOG(info) << "Listen on port " << acceptor_.local_endpoint().port();
+				LOG(debug) << "Listen on port " << acceptor_.local_endpoint().port();
 				acceptor_.async_accept(connection_.socket(), boost::bind(&interface_combox::handle_accept, this, boost::asio::placeholders::error));
 			}
 			~interface_combox(){io_service_.stop();}

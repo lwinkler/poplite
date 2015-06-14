@@ -17,31 +17,37 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	if(argc == 1)
+	try
 	{
-		// Create a server
-		pop::server serv;
-		cout << "Users can contact the server by typing:" << endl;
-		printf("%s ", argv[0]);
-		// std::cout << serv.contact() << endl;
+		if(argc == 1)
+		{
+			// Create a server
+			pop::server serv;
+			cout << "Users can contact the server by typing:" << endl;
+			cout << argv[0] << " " << serv.contact().host_name_ << " " << serv.contact().port_ << endl;
 
-		cout << "Create a first client" << endl;
-		pop::client cl(serv.contact());
+			cout << "Create a first client" << endl;
+			pop::client cl(serv.contact());
 
-		cl.run();
+			cl.run();
+		}
+		else if(argc >= 3)
+		{
+			cout << "Create a client and connect to an existing server" << endl;
+			pop::accesspoint ap;
+			ap.host_name_ = argv[1];
+			ap.port_      = atoi(argv[2]);
+
+			pop::server serv(ap);
+			pop::client cl(serv.contact());
+
+			cl.run();
+		}
+
+		return 0;
 	}
-	else if(argc >= 3)
+	catch(exception &e)
 	{
-		cout << "Create a client and connect to an existing server" << endl;
-		pop::accesspoint ap;
-		ap.host_name_ = argv[1];
-		ap.port_      = atoi(argv[2]);
-
-		pop::server serv(ap);
-		pop::client cl(serv.contact());
-
-		cl.run();
+		cerr << "Exception: " << e.what() << endl;
 	}
-
-	return 0;
 }

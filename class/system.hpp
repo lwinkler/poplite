@@ -22,6 +22,7 @@
 #include <boost/log/trivial.hpp>
 #define LOG BOOST_LOG_TRIVIAL
 
+#include "alloc/alloc.hpp"
 #include "alloc/local.hpp"
 #include "alloc/manual.hpp"
 #include "alloc/ssh.hpp"

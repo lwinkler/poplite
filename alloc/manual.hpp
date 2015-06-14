@@ -11,7 +11,7 @@
 #ifndef POP_ALLOC_MANUAL_H
 #define POP_ALLOC_MANUAL_H
 
-#include "alloc/alloc.hpp"
+#include "class/system.hpp"
 
 namespace pop{
 

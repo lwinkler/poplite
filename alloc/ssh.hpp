@@ -12,7 +12,7 @@
 #define POP_ALLOC_SSH_H
 
 
-#include "alloc/alloc.hpp"
+#include "class/system.hpp"
 
 #define MAX_STR 512
 

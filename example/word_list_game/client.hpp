@@ -11,15 +11,15 @@
 #ifndef WORDLIST_CLIENT_HPP
 #define WORDLIST_CLIENT_HPP
 
-#include "alloc/local.hpp"
 #include "com/accesspoint.hpp"
 #include "generated/iface.server.hpp"
+#include "alloc/manual.hpp"
 
 
 class client
 {
 	public:
-		//##POP_CONSTR(pop::local_allocator(), std::string, pop::accesspoint)
+		//##POP_CONSTR(pop::manual_allocator(), std::string, pop::accesspoint)
 		client(std::string _user, pop::accesspoint _server_ap);
 		~client();
 
