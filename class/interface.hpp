@@ -31,18 +31,7 @@ class interface : private boost::noncopyable
 			// Handle connection
 			combox_.run();
 		}
-		inline void destructor()
-		{
-			sync<void>(-1);
-		}
 
-		~interface()
-		{
-			if(linkLife_)
-				sync<void>(-1);
-		}
-
-public:
 		interface(const pop::accesspoint& _contact) :
 			combox_(),
 			linkLife_(false)
@@ -52,6 +41,17 @@ public:
 			
 			// Wait for the broker to call us back
 			combox_.run();
+		}
+
+		~interface()
+		{
+			if(linkLife_)
+				sync<void>(-1);
+		}
+
+		inline void destructor()
+		{
+			sync<void>(-1);
 		}
 
 		template<typename R, typename ...Args> R sync(int _method_id, Args& ...args)

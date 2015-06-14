@@ -23,8 +23,9 @@ namespace pop
 class server
 {
 	public:
-		//##POP_CONSTR(pop::local_allocator(), std::string)
+		//##POP_CONSTR(pop::local_allocator())
 		server() {}
+
 		//##POP_METH(sync, conc, bool, guess, std::string)
 		bool guess(std::string _word);
 

@@ -22,22 +22,23 @@ int main(int argc, char* argv[])
 		// Create a server
 		pop::server serv;
 		cout << "Users can contact the server by typing:" << endl;
-		cout << argv[0] << " " << serv.contact() << endl;
+		printf("%s ", argv[0]);
+		// std::cout << serv.contact() << endl;
 
 		cout << "Create a first client" << endl;
-		client cl(serv);
+		pop::client cl(serv.contact());
 
 		cl.run();
 	}
 	else if(argc >= 3)
 	{
 		cout << "Create a client and connect to an existing server" << endl;
-		accesspoint ap;
+		pop::accesspoint ap;
 		ap.host_name_ = argv[1];
-		ap.port       = atoi(argv[2]);
+		ap.port_      = atoi(argv[2]);
 
-		server serv(ap);
-		client cl(serv);
+		pop::server serv(ap);
+		pop::client cl(serv.contact());
 
 		cl.run();
 	}

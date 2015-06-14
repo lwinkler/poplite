@@ -15,7 +15,7 @@
 
 using namespace std;
 
-client::client(pop::server _server) : points_(0), server_(_server)
+client::client(string _user, pop::accesspoint _server_ap) : points_(0), server_(_server_ap), user_(_user)
 {
 }
 

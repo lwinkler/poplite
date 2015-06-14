@@ -76,7 +76,7 @@ echo "#ifndef _POP_${PARCLASS}_IFACE_H"                     >  $TARGET_I
 echo "#define _POP_${PARCLASS}_IFACE_H"                     >> $TARGET_I
 echo '#include "class/interface.hpp"'                       >> $TARGET_I
 echo '#include "'${NAME_M}'"'                               >> $TARGET_I
-echo '#include "'$2'"'                                      >> $TARGET_I
+# echo '#include "'$2'"'                                      >> $TARGET_I
 
 # Only lines starting with '//##' are used for parsing
 echo "Preprocess $TMPFILE_I->$TARGET_I"

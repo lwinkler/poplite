@@ -18,7 +18,8 @@
 namespace pop{                           \
 class _parclass_ : public pop::interface \
 {                                        \
-public:
+public:                                  \
+_parclass_(pop::accesspoint _ap) : pop::interface(_ap){}
 
 // Methods for interface
 #define POP_METH(_calli_, _callb_, _ret_, _meth_, ...) POP_METH_(_calli_, _callb_, _ret_, _meth_, ARGS(__VA_ARGS__))
@@ -26,7 +27,7 @@ public:
 
 // Constructor 
 #define POP_CONSTR(_alloc_, ...) POP_CONSTR_(_alloc_, ARGS(__VA_ARGS__))
-#define POP_CONSTR_(_alloc_, ...) _parclass_(APPLY(PAIR, __VA_ARGS__)):pop::interface(_executable_, _alloc_){sync<APPLY(STRIP1, __VA_ARGS__)>(static_cast<int>(CAT3(broker::_parclass_,_method_ids::_parclass_,__COUNTER__)) APPLYC(STRIP2, __VA_ARGS__));}
+#define POP_CONSTR_(_alloc_, ...) _parclass_(APPLY(PAIR, __VA_ARGS__)):pop::interface(_executable_, _alloc_){sync<void APPLYC(STRIP1, __VA_ARGS__)>(static_cast<int>(CAT3(broker::_parclass_,_method_ids::_parclass_,__COUNTER__)) APPLYC(STRIP2, __VA_ARGS__));}
 
 // foot
 #define POP_FOOT \

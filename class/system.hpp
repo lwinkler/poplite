@@ -22,6 +22,10 @@
 #include <boost/log/trivial.hpp>
 #define LOG BOOST_LOG_TRIVIAL
 
+#include "alloc/local.hpp"
+#include "alloc/manual.hpp"
+#include "alloc/ssh.hpp"
+
 namespace pop
 {
 #ifndef POP_BINARY_SERIALIZATION

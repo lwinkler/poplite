@@ -16,7 +16,7 @@ include_directories( ${Boost_INCLUDE_DIR} )
 include_directories(. ${POPLITE_DIR} generated)
 
 # Add custom target for source generation
-add_custom_target(generate ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
+# add_custom_target(generate ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
 add_custom_command(OUTPUT generated/main.TestClass.cpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
 
 # add main

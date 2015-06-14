@@ -12,7 +12,7 @@
 #define POP_ALLOC_H
 
 #include <boost/asio/ip/tcp.hpp>
-#include "class/system.hpp"
+// #include "class/system.hpp"
 
 #define MAX_STR 512
 

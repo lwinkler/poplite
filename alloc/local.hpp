@@ -27,7 +27,7 @@ class local_allocator : public allocator
 	{
 		std::stringstream ss;
 		ss << "./" << _obj_name << " " << _endpoint.address() << " " << _endpoint.port();
-		LOG(debug) << "Run object with :" << ss.str();
+		// LOG(debug) << "Run object with :" << ss.str();
 
 		/*Spawn a child to run the program.*/
 		pid_t pid=fork();

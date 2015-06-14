@@ -19,7 +19,7 @@ include_directories(. ${POPLITE_DIR} generated)
 add_custom_target(generate 
 	${POPLITE_DIR}/parser/pop_gen_src client client.hpp && 
 	${POPLITE_DIR}/parser/pop_gen_src server server.hpp)
-add_custom_command(OUTPUT generated/main.client.cpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src client client.hpp)
+add_custom_command(OUTPUT generated/brok.client.hpp generated/ids.client.hpp generated/iface.client.hpp generated/main.client.cpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src client client.hpp)
 add_custom_command(OUTPUT generated/main.server.cpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src server server.hpp)
 
 # add main

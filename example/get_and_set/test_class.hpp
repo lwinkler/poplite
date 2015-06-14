@@ -12,9 +12,6 @@
 #define TEST_CLASS_H
 
 // #include "class/interface.hpp"
-#include "alloc/local.hpp"
-#include "alloc/manual.hpp"
-#include "alloc/ssh.hpp"
 
 class gps_position
 {

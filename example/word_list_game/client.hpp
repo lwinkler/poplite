@@ -19,8 +19,8 @@
 class client
 {
 	public:
-		//##POP_CONSTR(pop::local_allocator(), pop::server)
-		client(pop::server _server);
+		//##POP_CONSTR(pop::local_allocator(), std::string, pop::accesspoint)
+		client(std::string _user, pop::accesspoint _server_ap);
 		~client();
 
 		//##POP_METH(sync, conc, void, message, std::string)
@@ -31,11 +31,14 @@ class client
 
 		//##POP_METH(sync, conc, int, get_points)
 		inline int get_points() {return points_;}
+
+		//##POP_METH(sync, conc, void, run)
 		void run();
 
 	private:
-		pop::server& server_;
+		pop::server server_;
 		int points_;
+		std::string user_;
 };
 
 #endif
