@@ -13,28 +13,39 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <set>
 
 namespace pop
 {
 	class client;
 }
 
+/// A challenge to be completed by the user
+struct challenge
+{
+	int num;
+	char letter;
+	std::string category;
+};
+
+/// The server that handles the game
 class server
 {
 	public:
 		//##POP_CONSTR(pop::local_allocator())
-		server() {}
+		server();
 
 		//##POP_METH(sync, conc, bool, guess, std::string)
 		bool guess(std::string _word);
 
 
-		//  ##POP_METH(sync, conc, std::string, GetStr)
-		// std::string GetStr() {return s_;}
-
 	private:
 		void send_message(const std::string& _msg);
-		std::vector<pop::client*> p_clients_;
+		std::vector<pop::client*>                    p_clients_;
+		std::map<std::string, std::set<std::string>> words_;
+		std::map<std::string, std::vector<challenge>>     game_state_;
+
 };
 
 #endif

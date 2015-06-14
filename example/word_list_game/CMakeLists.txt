@@ -11,7 +11,7 @@ set(CMAKE_CXX_FLAGS_RELEASE        "-O3")
 set(CMAKE_CXX_FLAGS_DEBUG          "-O2 -g")
 
 add_definitions(-std=c++11)
-find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log REQUIRED )
+find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log filesystem REQUIRED )
 include_directories( ${Boost_INCLUDE_DIR} )
 include_directories(. ${POPLITE_DIR} generated)
 

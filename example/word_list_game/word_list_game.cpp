@@ -26,8 +26,12 @@ int main(int argc, char* argv[])
 			cout << "Users can contact the server by typing:" << endl;
 			cout << argv[0] << " " << serv.contact().host_name_ << " " << serv.contact().port_ << endl;
 
+
 			cout << "Create a first client" << endl;
 			pop::client cl(serv.contact());
+			sleep(4);
+
+			return 0;
 
 			cl.run();
 		}
