@@ -18,7 +18,7 @@
 using namespace std;
 
 
-server::server()
+server::server() : seed_(time(NULL))
 {
 	vector<string> languages;
 	int num = 1;
@@ -33,9 +33,9 @@ server::server()
 
 	for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator("data/" + languages.at(num - 1)), {}))
 	{
-		string categ = entry.path().filename().string();
-		cout << "Loading words for category " << categ << endl;
-		set<string>& list(words_[categ]);
+		categories_.push_back(entry.path().filename().string());
+		cout << "Loading words for category " << categories_.back() << endl;
+		set<string>& list(words_[categories_.back()]);
 
 		ifstream txtFile( entry.path().string());
 		string tmpString;
@@ -52,12 +52,44 @@ server::server()
 	}
 }
 
-bool server::guess(string _word){return true;}
+server::~server()
+{
+	// Free client references
+	for(auto& elem : p_clients_)
+		delete elem.second;
+}
+
+bool server::guess(string _user, string _word){return true;}
+
+void server::connect(std::string _user, pop::accesspoint _ap)
+{
+	pop::client* pcl = new pop::client(_ap);
+	p_clients_[_user] = pcl;
+}
 
 void server::send_message(const string& _message)
 {
 	for(auto elem : p_clients_)
-		elem->message(_message);
+		elem.second->message(_message);
+}
+
+challenge server::create_challenge(int nb_)
+{
+	return challenge(nb_, 'A' + rand_r(&seed_) % 26, categories_.at(rand_r(&seed_) % categories_.size()));
+}
+
+void server::start_game()
+{
+	game_state_.clear();
+	// Fill game state arrays with challenges
+	for(int i = 0 ; i < 10 ; i++)
+	{
+		challenge chal = create_challenge(1);
+		for(auto &elem1 : p_clients_)
+		{
+			game_state_[elem1.first].push_back(chal);
+		}
+	}
 }
 
 

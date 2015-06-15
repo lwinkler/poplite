@@ -30,7 +30,7 @@ void client::run()
 	while(true)
 	{
 		cin >> word;
-		if(server_.guess(word))
+		if(server_.guess(user_, word))
 		{
 			cout << "correct" << endl;
 			points_++;
