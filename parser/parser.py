@@ -15,7 +15,7 @@ def init_tu(argv):
 	"""
 	index = cindex.Index.create()
 	src = argv[1]
-	return [src, index.parse(src, argv[2:])]
+	return [src, index.parse(src, ["-D_POP_PARSER_"] + argv[2:])]
 
 def generate_file_name(header, directory, label):
 	""" Generate a filename with path with an added label
