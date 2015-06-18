@@ -130,7 +130,7 @@ def list_args1(parent, comma = False):
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.type.spelling)
-	if comma:
+	if comma and out:
 		return ',' + ','.join(out)
 	else:
 		return ','.join(out)
@@ -139,7 +139,7 @@ def list_args2(parent, comma = False):
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.spelling)
-	if comma:
+	if comma and out:
 		return ',' + ','.join(out)
 	else:
 		return ','.join(out)
@@ -148,7 +148,7 @@ def list_args(parent, comma = False):
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.type.spelling + " " + arg.spelling)
-	if comma:
+	if comma and out:
 		return ',' + ','.join(out)
 	else:
 		return ','.join(out)

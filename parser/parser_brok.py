@@ -2,70 +2,60 @@
 """ Usage: call with <filename> <typename>
 """
 
-import sys
 import clang.cindex as cindex
 
 cindex.Config.set_library_path("/usr/lib/llvm-3.5/lib")
 
-import popparser as parser
+import parser
 
 #--------------------------------------------------------------------------------
 
-def write_head(fout, filename):
+def write_head(fout, filename, filename_in):
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
-#ifndef _POP_%s_METH_IDS_H
-#define _POP_%s_METH_IDS_H
+#ifndef _POP_%s_BROKER_H
+#define _POP_%s_BROKER_H
 
-#include "class/interface.hpp"
-#include "ids.TestClass.hpp"
+#include "class/broker.hpp"
+#include "%s.hpp"
 
 namespace pop
 {
-""" % (filename.upper(), filename.upper()))
+namespace remote
+{
+""" % (filename.upper(), filename.upper(), filename_in))
 
 #--------------------------------------------------------------------------------
 
 def write_foot(fout):
 
-	fout.write("""
-}
-#endif
-""")
+	fout.write("}\n}\n#endif\n")
 
 #--------------------------------------------------------------------------------
 
-def write_constructors(fout, class_node):
+def write_constr(fout, m):
 	
-	fout.write("""
-struct %s_constr_ids
-{
-""" % (class_node.spelling))
+	fout.write("std::bind(&remote::broker<%s>::call_constr<std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % m.spelling)
 
-	constructors = parser.find_constructors(class_node)
-	id = 0
-	for m in constructors:
-		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
-		id += 1
-
-
-	fout.write("};\n")
-
-def write_meth_ids(fout, class_node):
+def write_meth(fout, m, classname):
 	
-	fout.write("""
-struct %s_method_ids
-{
-""" % (class_node.spelling))
+	fout.write("std::bind(&remote::broker<%s>::conc<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+		% (classname, parser.list_args1(m), classname, m.spelling))
 
-	id = 0
-	methods = parser.find_methods(class_node)
-	for m in methods:
-		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
-		id += 1
+#--------------------------------------------------------------------------------
 
+def write_broker(fout, class_node):
+	
+	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_\n{"
+		% (class_node.spelling, class_node.spelling))
 
-	fout.write("};\n")
+	for c in parser.find_constructors(class_node):
+		write_constr(fout, c)
+
+	for m in parser.find_methods(class_node):
+		write_meth(fout, m, class_node.spelling)
+
+	fout.write("nullptr\n};\n")
 
 #--------------------------------------------------------------------------------
 

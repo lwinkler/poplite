@@ -2,7 +2,6 @@
 """ Usage: call with <filename> <typename>
 """
 
-import sys
 import os
 import clang.cindex as cindex
 
@@ -60,7 +59,7 @@ public:
 #--------------------------------------------------------------------------------
 
 def write_constr(fout, c, id):
-	fout.write('%s(%s):pop::interface("main.%s", %s) {constr<%s>(broker::%s_method_ids::%s%d %s);}\n' 
+	fout.write('%s(%s):pop::interface("main.%s", %s) {constr<%s>(%s_method_ids::%s%d %s);}\n' 
 		% (c.spelling, parser.list_args(c), c.spelling, parser.get_allocation(c), parser.list_args1(c), c.spelling, c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
