@@ -7,6 +7,9 @@ import os
 import clang.cindex as cindex
 from subprocess import call
 
+cindex.Config.set_library_path("/usr/lib/llvm-3.5/lib")
+
+
 def init_tu(argv):
 	""" Initialize a translation unit with the clang parser
 	"""

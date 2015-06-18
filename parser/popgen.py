@@ -4,10 +4,6 @@
 
 import sys
 import os
-import clang.cindex as cindex
-
-cindex.Config.set_library_path("/usr/lib/llvm-3.5/lib")
-
 import parser
 import parser_ids
 import parser_brok
