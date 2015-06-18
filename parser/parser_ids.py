@@ -69,49 +69,5 @@ struct %s_method_ids
 
 #--------------------------------------------------------------------------------
 
-def main():
-
-	[filename_in, tu] = parser.init_tu(sys.argv)
-
-	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)
-
-	print "found %d parallel classe(s):" % len(parclasses)
-	for c in parclasses:
-		print "parallel class %s in %s" % (c.spelling, c.location)
-		constructors = parser.find_constructors(c)
-		print "found %d constructors" % len(constructors)
-		for m in constructors:
-			print "\tconstr: %s allocation:%s" % (m.spelling, parser.get_allocation(m))
-			# print_ast(m, 1)
-			arguments = parser.find_arguments(m)
-			for a in arguments:
-				print "\t\targ %s %s" % (a.type.spelling, a.spelling)
-		methods = parser.find_methods(c)
-		print "found %d parallel methods" % len(methods)
-		for m in methods:
-			print "\tmethod: %s %s %s" % (parser.get_invoker(m), m.result_type.spelling, m.spelling)
-			# print_ast(m, 1)
-			arguments = parser.find_arguments(m)
-			for a in arguments:
-				print "\t\targ %s %s" % (a.type.spelling, a.spelling)
-	
-	# Generate the file containing methods and constructors ids
-
-	filename_out = parser.generate_file_name(filename_in, "generated", "ids")
-	with open(filename_out, "w") as fout:
-
-		write_head(fout, filename_in)
-
-		for c in parclasses:
-			write_constr_ids(fout, c)
-			write_meth_ids(fout, c)
-
-		write_foot(fout)
-	
-	parser.align(filename_out)
-
-
-
-
 if __name__ == "__main__":
-	main()
+	print "this file is a Python library: try using popgen instead"

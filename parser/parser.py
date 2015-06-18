@@ -8,11 +8,15 @@ import clang.cindex as cindex
 from subprocess import call
 
 def init_tu(argv):
+	""" Initialize a translation unit with the clang parser
+	"""
 	index = cindex.Index.create()
 	src = argv[1]
 	return [src, index.parse(src, argv[2:])]
 
 def generate_file_name(header, directory, label):
+	""" Generate a filename with path with an added label
+	"""
 	fname, ext = os.path.splitext(os.path.basename(header))
 	if os.path.dirname(header):
 		directory = os.path.dirname(header) + '/' + directory
@@ -122,10 +126,39 @@ def get_allocation(constr_node):
 
 	return "pop::local_allocator()" # our default
 
+def list_args1(parent, comma = False):
+	out = []
+	for arg in find_arguments(parent):
+		out.append(arg.type.spelling)
+	if comma:
+		return ',' + ','.join(out)
+	else:
+		return ','.join(out)
+
+def list_args2(parent, comma = False):
+	out = []
+	for arg in find_arguments(parent):
+		out.append(arg.spelling)
+	if comma:
+		return ',' + ','.join(out)
+	else:
+		return ','.join(out)
+
+def list_args(parent, comma = False):
+	out = []
+	for arg in find_arguments(parent):
+		out.append(arg.type.spelling + " " + arg.spelling)
+	if comma:
+		return ',' + ','.join(out)
+	else:
+		return ','.join(out)
+
+
 def align(filename):
 	call(["astyle", "-nToO", "--style=allman", filename])
 
 def main():
+# TODO remove
 
 	[src, tu] = parser.init_tu(sys.argv)
 	tu = index.parse(src, ["-I."])
@@ -156,4 +189,4 @@ def main():
 
 
 if __name__ == "__main__":
-	main()
+	print "this file is a Python library: try using popgen instead"
