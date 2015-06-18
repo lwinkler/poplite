@@ -14,6 +14,19 @@ In consequence:
 - Method calls must manage access to resources on callee side (conc, seq and mutex methods) to avoid collisions. 
 - References to objects become a network address.
 
+Installation
+------------
+
+Dependencies
+- boost libs ... TODO
+- for the parser
+	- clang 3.5
+	- Python bindings for clang
+	- astyle for alignement
+
+	sudo apt-get install libclang-3.5-dev pip astyle
+	sudo pip install clang
+
 Example of parallel class
 -------------------------
 TODO

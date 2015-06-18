@@ -17,10 +17,11 @@ include_directories(. ${POPLITE_DIR} generated)
 
 # Add custom target for source generation
 # add_custom_target(generate ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
-add_custom_command(OUTPUT generated/main.TestClass.cpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
+add_custom_command(OUTPUT generated/main.TestClass.cpp  COMMAND ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
+add_custom_command(OUTPUT generated/iface.TestClass.hpp COMMAND ${POPLITE_DIR}/parser/pop_gen_src TestClass test_class.hpp)
 
 # add main
-add_executable(main main.cpp)
+add_executable(main main.cpp generated/iface.TestClass.hpp)
 target_link_libraries(main ${Boost_LIBRARIES})
 
 # add object main

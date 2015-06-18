@@ -17,6 +17,8 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
+#include "parser/defs.hpp"
+
 // Lines for boost log
 #define BOOST_LOG_DYN_LINK
 #include <boost/log/trivial.hpp>

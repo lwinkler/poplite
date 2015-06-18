@@ -12,6 +12,7 @@
 #define TEST_CLASS_H
 
 // #include "class/interface.hpp"
+#include "class/system.hpp"
 
 class gps_position
 {
@@ -34,14 +35,13 @@ class gps_position
 		{}
 };
 
-class TestClass
+class parallel TestClass
 {
 	public:
-		//##POP_CONSTR(pop::local_allocator(), std::string)
+		allocation(pop::local_allocator())
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
 
-		//##POP_METH(sync, conc, void, SetValues, int, int, double, std::string)
-		void SetValues(int _i1, int _i2, double _d, std::string _s)
+		void async SetValues(int _i1, int _i2, double _d, std::string _s)
 		{
 			i1_ = _i1;
 			i2_ = _i2;
@@ -50,7 +50,6 @@ class TestClass
 			std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 		}
 
-		//##POP_METH(sync, conc, void, GetValues, int&, int&, double&, std::string&)
 		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s)
 		{
 			_i1 = i1_;
@@ -59,7 +58,6 @@ class TestClass
 			_s  = s_;
 		}
 
-		//##POP_METH(sync, conc, std::string, GetStr)
 		std::string GetStr() {return s_;}
 
 	private:
