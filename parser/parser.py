@@ -25,6 +25,12 @@ def generate_file_name(header, directory, label):
 		directory = os.path.dirname(header) + '/' + directory
 	return directory + '/' + fname + '.' + label + ext
 
+def capitalize(name):
+	""" Return a capitalized version of name for use in ifndef/define
+	"""
+	return name.upper().replace('.', '_')
+
+
 def print_ast(node, indent):
 	""" Print the content of source tree
 	"""

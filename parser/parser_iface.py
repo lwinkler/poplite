@@ -17,7 +17,7 @@ def write_head(fout, filename, mid_file):
 
 namespace pop
 {
-""" % (filename.upper(), filename.upper(), os.path.basename(mid_file)))
+""" % (parser.capitalize(filename), parser.capitalize(filename), os.path.basename(mid_file)))
 
 #--------------------------------------------------------------------------------
 
@@ -55,13 +55,13 @@ public:
 #--------------------------------------------------------------------------------
 
 def write_constr(fout, c, id):
-	fout.write('%s(%s):pop::interface("main.%s", %s) {constr<%s>(%s_method_ids::%s%d %s);}\n' 
+	fout.write('%s(%s):pop::interface("main.%s", %s) {sync<%s>(%s_method_ids::%s%d %s);}\n' 
 		% (c.spelling, parser.list_args(c), c.spelling, parser.get_allocation(c), parser.list_args1(c), c.spelling, c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id, classname):
 	fout.write('inline %s %s(%s) {' %(m.result_type.spelling, m.spelling, parser.list_args(m)) 
-		+ '%s<%s%s>(broker::%s_method_ids::%s%s %s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
+		+ '%s<%s%s>(%s_method_ids::%s%s %s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
 
 #--------------------------------------------------------------------------------
 

@@ -15,7 +15,7 @@ def write_head(fout, filename):
 
 namespace pop
 {
-""" % (filename.upper(), filename.upper()))
+""" % (parser.capitalize(filename), parser.capitalize(filename)))
 
 #--------------------------------------------------------------------------------
 

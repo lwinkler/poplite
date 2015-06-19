@@ -6,17 +6,17 @@
 
 #ifdef _POP_PARSER_
 // Only used to parse the sources and generate files for interface and broker
-#define parallel __attribute__((annotate("parallel")))
-// #define sync     __attribute__((annotate("sync")))
-#define async    __attribute__((annotate("async")))
-#define allocation(x) __attribute__((annotate(#x)))
+#define pop_parallel __attribute__((annotate("parallel")))
+#define pop_sync     __attribute__((annotate("sync")))
+#define pop_async    __attribute__((annotate("async")))
+#define pop_allocation(x) __attribute__((annotate(#x)))
 
 #else
 // Do not use in normal time
-#define parallel
-// #define sync
-#define async
-#define allocation(x)
+#define pop_parallel
+#define pop_sync
+#define pop_async
+#define pop_allocation(x)
 
 #endif
 #endif

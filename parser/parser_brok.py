@@ -19,7 +19,7 @@ namespace pop
 {
 namespace remote
 {
-""" % (filename.upper(), filename.upper(), filename_in))
+""" % (parser.capitalize(filename_in), parser.capitalize(filename_in), filename_in))
 
 #--------------------------------------------------------------------------------
 

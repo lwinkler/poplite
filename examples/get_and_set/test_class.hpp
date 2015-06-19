@@ -35,13 +35,13 @@ class gps_position
 		{}
 };
 
-class parallel TestClass
+class pop_parallel TestClass
 {
 	public:
-		allocation(pop::local_allocator())
+		pop_allocation(pop::local_allocator())
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
 
-		void async SetValues(int _i1, int _i2, double _d, std::string _s)
+		void pop_sync SetValues(int _i1, int _i2, double _d, std::string _s)
 		{
 			i1_ = _i1;
 			i2_ = _i2;
