@@ -33,18 +33,15 @@ struct challenge
 };
 
 /// The server that handles the game
-class server
+class pop_parallel server
 {
 	public:
-		//##POP_CONSTR(pop::local_allocator())
+		pop_allocation(pop::local_allocator())
 		server();
-
 		~server();
 
-		//##POP_METH(sync, conc, bool, guess, std::string, std::string)
 		bool guess(std::string _user, std::string _word);
 
-		//##POP_METH(sync, conc, void, connect, std::string, pop::accesspoint)
 		void connect(std::string _user, pop::accesspoint _ap);
 
 	private:

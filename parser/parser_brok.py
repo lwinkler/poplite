@@ -31,7 +31,7 @@ def write_foot(fout):
 
 def write_constr(fout, m):
 	
-	fout.write("std::bind(&remote::broker<%s>::call_constr<std::string>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % m.spelling)
+	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (m.spelling, parser.list_args1(m)))
 
 def write_meth(fout, m, classname):
 	

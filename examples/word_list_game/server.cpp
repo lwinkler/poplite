@@ -13,7 +13,7 @@
 #include <fstream>
 
 #include "server.hpp"
-#include "generated/iface.client.hpp"
+#include "generated/client.iface.hpp"
 
 using namespace std;
 

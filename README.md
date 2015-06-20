@@ -24,7 +24,7 @@ Dependencies
 	- Python bindings for clang
 	- astyle for alignement
 
-	sudo apt-get install libclang-3.5-dev pip astyle
+	sudo apt-get install libboost-all-dev libclang-3.5-dev pip astyle
 	sudo pip install clang
 
 Example of parallel class

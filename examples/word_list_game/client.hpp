@@ -12,27 +12,24 @@
 #define WORDLIST_CLIENT_HPP
 
 #include "com/accesspoint.hpp"
-#include "generated/iface.server.hpp"
+#include "generated/server.iface.hpp"
 #include "alloc/manual.hpp"
 
 
-class client
+class pop_parallel client
 {
 	public:
-		//##POP_CONSTR(pop::manual_allocator(), std::string, pop::accesspoint)
+		pop_allocation(pop::manual_allocator())
 		client(std::string _user, pop::accesspoint _server_ap);
 		~client();
 
-		//##POP_METH(sync, conc, void, message, std::string)
 		inline void message(std::string msg_)
 		{
 			std::cout << msg_ << std::endl;
 		}
 
-		//##POP_METH(sync, conc, int, get_points)
 		inline int get_points() {return points_;}
 
-		//##POP_METH(sync, conc, void, run)
 		void run();
 
 	private:
