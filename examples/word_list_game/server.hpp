@@ -26,7 +26,7 @@ namespace pop
 struct challenge
 {
 	challenge(int _num, char _letter, std::string _category) : num(_num), letter(_letter), category(_category) {}
-	void print(){std::cout << category << " starting with " << letter << std::endl;}
+	void print(std::ostream & _os) const {_os << "Guess " << num << " word(s) of category " << category << " starting with " << letter << std::endl;}
 	int num;
 	char letter;
 	std::string category;
@@ -36,17 +36,18 @@ struct challenge
 class pop_parallel server
 {
 	public:
-		pop_allocation(pop::manual_allocator())
+		pop_allocation(pop::local_allocator())
 		server();
 		~server();
 
-		bool guess(std::string _user, std::string _word);
+		int guess(std::string _user, std::string _word);
 
 		void connect(std::string _user/*, pop::accesspoint _ap*/);
+		void init_game();
+		void print_game(std::string _username);
 
 	private:
 		void send_message(const std::string& _msg);
-		void start_game();
 		// void end_game();
 		challenge create_challenge(int nb_);
 

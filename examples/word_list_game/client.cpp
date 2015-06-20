@@ -35,11 +35,6 @@ void client::run()
 	LOG(debug) << "guess";
 		cout << "word: ";
 		cin >> word;
-		if(server_.guess(username_, word))
-		{
-			cout << "correct" << endl;
-			points_++;
-		}
-		else cout << "wrong" << endl;
+		points_ += server_.guess(username_, word);
 	}
 }

@@ -11,6 +11,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <fstream>
+#include <boost/algorithm/string.hpp>
 
 #include "server.hpp"
 #include "generated/client.iface.hpp"
@@ -50,32 +51,42 @@ server::server() : seed_(time(NULL))
 
 		cout << "Found " << list.size() << " words" << endl;
 	}
+
+	// pop::accesspoint ap;
+	p_clients_["a"] = nullptr; // TODO remove this hack
 }
 
 server::~server()
 {
 	// Free client references
 	for(auto& elem : p_clients_)
-		delete elem.second;
+		; // TODO delete elem.second;
 }
 
-bool server::guess(string _user, string _word)
+int server::guess(string _user, string _word)
 {
 	bool complete = true;
+	int points = 0;
+	string word = boost::to_upper_copy<std::string>(_word);
 	for(auto& chal : game_state_[_user])
 	{
 		if(chal.num > 0)
 		{
-			if(_word.at(0) == chal.letter)
+			auto& dict(words_[chal.category]);
+			// cout << (_word.at(0) == chal.letter) << (find(dict.begin(), dict.end(), _word) != dict.end())<<endl;
+			if(word.at(0) == chal.letter && find(dict.begin(), dict.end(), word) != dict.end())
 			{
 				send_message(_word + " is a correct answer for " + chal.category);
 				chal.num--;
+				points++;
 			}
 			else complete = false;
 		}
 	}
 	if(complete)
 		send_message("Congratulation, you won !");
+	print_game(_user);
+	return points;
 }
 
 void server::connect(std::string _user /*, pop::accesspoint _ap*/)
@@ -88,6 +99,8 @@ void server::connect(std::string _user /*, pop::accesspoint _ap*/)
 
 void server::send_message(const string& _message)
 {
+	cout << _message << endl;
+	return; //TODO
 	for(auto elem : p_clients_)
 		elem.second->message(_message);
 }
@@ -97,17 +110,28 @@ challenge server::create_challenge(int nb_)
 	return challenge(nb_, 'A' + rand_r(&seed_) % 26, categories_.at(rand_r(&seed_) % categories_.size()));
 }
 
-void server::start_game()
+void server::init_game()
 {
 	game_state_.clear();
 	// Fill game state arrays with challenges
 	for(int i = 0 ; i < 10 ; i++)
 	{
 		challenge chal = create_challenge(1);
+		stringstream ss;
+		send_message(ss.str());
+
 		for(auto &elem1 : p_clients_)
 		{
 			game_state_[elem1.first].push_back(chal);
 		}
+	}
+}
+
+void server::print_game(string _username)
+{
+	for(const auto& elem : game_state_[_username])
+	{
+		elem.print(cout);
 	}
 }
 
