@@ -10,7 +10,7 @@
 
 
 #include "client.hpp"
-#include "generated/server.iface.hpp"
+#include "server.iface.hpp"
 
 
 using namespace std;

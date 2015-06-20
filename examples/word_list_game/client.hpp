@@ -12,7 +12,7 @@
 #define WORDLIST_CLIENT_HPP
 
 #include "com/accesspoint.hpp"
-#include "generated/server.iface.hpp"
+#include "server.iface.hpp"
 #include "alloc/manual.hpp"
 
 

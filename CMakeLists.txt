@@ -13,6 +13,7 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g")
 set(CMAKE_CXX_FLAGS_RELEASE        "-O3")
 set(CMAKE_CXX_FLAGS_DEBUG          "-O2 -g")
 set(CMAKE_INCLUDE_CURRENT_DIR true) # automatically include current dir
+set(POPLITE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 # Function used to add a parallel object to the compilation
@@ -31,11 +32,11 @@ function(pop_add_object object_name header_name)
 	# extra arguments are seen as dependencies
 	set (extra_macro_args ${ARGN})
 
-	# message("Add command to generate generated/${_filename}.ids${_ext} generated/${_filename}.iface${_ext} generated/${_filename}.brok${_ext} generated/main.${object_name}.cpp")
-	add_custom_command(OUTPUT generated/${_filename}.iface${_ext} generated/${_filename}.ids${_ext} generated/${_filename}.brok${_ext} generated/main.${object_name}.cpp
+	# message("Add command to generate gen/${_filename}.ids${_ext} gen/${_filename}.iface${_ext} gen/${_filename}.brok${_ext} gen/main.${object_name}.cpp")
+	add_custom_command(OUTPUT gen/${_filename}.iface${_ext} gen/${_filename}.ids${_ext} gen/${_filename}.brok${_ext} gen/main.${object_name}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${INC_DIRS}
 	DEPENDS ${header_name})
-	add_executable(${object_name}.obj generated/main.${object_name}.cpp ${extra_macro_args})
+	add_executable(${object_name}.obj gen/main.${object_name}.cpp ${extra_macro_args})
 	target_link_libraries(${object_name}.obj ${Boost_LIBRARIES})
 endfunction(pop_add_object)
 

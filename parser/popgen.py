@@ -17,7 +17,7 @@ def main():
 
 	[filename_in, tu] = parser.init_tu(sys.argv)
 	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)
-	gendir = "generated"
+	gendir = "gen"
 
 	print "found %d parallel classe(s):" % len(parclasses)
 	for c in parclasses:

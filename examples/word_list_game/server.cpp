@@ -14,7 +14,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include "server.hpp"
-#include "generated/client.iface.hpp"
+#include "client.iface.hpp"
 
 using namespace std;
 
