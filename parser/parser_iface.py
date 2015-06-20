@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-""" Usage: call with <filename> <typename>
+""" Usage: call with <filename> <typename> # TODO
 """
 
-import os
 import parser
 
 #--------------------------------------------------------------------------------
@@ -17,7 +16,7 @@ def write_head(fout, filename, mid_file):
 
 namespace pop
 {
-""" % (parser.capitalize(filename), parser.capitalize(filename), os.path.basename(mid_file)))
+""" % (parser.capitalize(filename), parser.capitalize(filename), mid_file))
 
 #--------------------------------------------------------------------------------
 

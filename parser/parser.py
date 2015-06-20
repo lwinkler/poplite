@@ -28,7 +28,7 @@ def generate_file_name(header, directory, label):
 def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define
 	"""
-	return name.upper().replace('.', '_')
+	return os.path.basename(name.upper()).replace('.', '_')
 
 
 def print_ast(node, indent):

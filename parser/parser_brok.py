@@ -13,7 +13,7 @@ def write_head(fout, filename, filename_in):
 #define _POP_%s_BROKER_H
 
 #include "class/broker.hpp"
-#include "%s.hpp"
+#include "%s"
 
 namespace pop
 {
@@ -35,8 +35,8 @@ def write_constr(fout, m):
 
 def write_meth(fout, m, classname):
 	
-	fout.write("std::bind(&remote::broker<%s>::conc<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		% (classname, parser.list_args1(m), classname, m.spelling))
+	fout.write("std::bind(&remote::broker<%s>::conc<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+		% (classname, m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling))
 
 #--------------------------------------------------------------------------------
 

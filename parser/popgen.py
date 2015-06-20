@@ -8,6 +8,7 @@ import parser
 import parser_ids
 import parser_brok
 import parser_iface
+from subprocess import call
 
 
 #--------------------------------------------------------------------------------
@@ -44,7 +45,7 @@ def main():
 	print "Generate %s containing the interface" % iface_out
 	with open(iface_out, "w") as fout:
 
-		parser_iface.write_head(fout, filename_in, mid_out)
+		parser_iface.write_head(fout, filename_in, os.path.basename(mid_out))
 
 		for c in parclasses:
 			parser_iface.write_interface(fout, c)
@@ -58,7 +59,7 @@ def main():
 	print "Generate %s containing the remote broker" % brok_out
 	with open(brok_out, "w") as fout:
 
-		parser_brok.write_head(fout, filename_in, iface_out)
+		parser_brok.write_head(fout, filename_in, os.path.basename(filename_in))
 
 		for c in parclasses:
 			parser_brok.write_broker(fout, c)
@@ -67,6 +68,15 @@ def main():
 	
 	parser.align(brok_out)
 
+	# Generate the file containing the remote main used to launch the object
+	for c in parclasses:
+		obj_out = os.path.dirname(filename_in) + gendir + "/main.%s.cpp" % c.spelling
+		with open(obj_out, "w") as fout:
+			fout.write('#include "%s"\n' % os.path.basename(brok_out))
+
+		with open(obj_out, "a") as fout:
+			call(["sed", os.path.dirname(sys.argv[0]) + "/remote_main.cpp", "-e", 's/_parclass_/%s/g' % c.spelling], stdout=fout)
+		
 
 
 
