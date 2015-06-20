@@ -42,7 +42,7 @@ class pop_parallel server
 
 		int guess(std::string _user, std::string _word);
 
-		void connect(std::string _user/*, pop::accesspoint _ap*/);
+		void connect_client(std::string _user, pop::accesspoint _client_contact);
 		void init_game();
 		void print_game(std::string _username);
 

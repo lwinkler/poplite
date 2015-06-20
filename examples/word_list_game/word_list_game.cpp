@@ -29,11 +29,12 @@ int main(int argc, char* argv[])
 
 			cout << "Create a first client" << endl;
 			pop::client cl("TODO", serv.contact());
-			// serv.connect(cl.get_username());
 
-			cout << "Run the client" << endl;
+			serv.connect_client("a", serv.contact()); // TODO
+			return 0;
 			serv.init_game();
 			serv.print_game("a");
+			cout << "Run the client" << endl;
 			cl.run();
 		}
 		else if(argc >= 3)

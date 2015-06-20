@@ -19,7 +19,7 @@
 class pop_parallel client
 {
 	public:
-		pop_allocation(pop::local_allocator())
+		pop_allocation(pop::manual_allocator())
 		client(std::string _user, pop::accesspoint _server_ap);
 		~client();
 

@@ -51,16 +51,13 @@ server::server() : seed_(time(NULL))
 
 		cout << "Found " << list.size() << " words" << endl;
 	}
-
-	// pop::accesspoint ap;
-	p_clients_["a"] = nullptr; // TODO remove this hack
 }
 
 server::~server()
 {
 	// Free client references
 	for(auto& elem : p_clients_)
-		; // TODO delete elem.second;
+		delete elem.second;
 }
 
 int server::guess(string _user, string _word)
@@ -89,18 +86,18 @@ int server::guess(string _user, string _word)
 	return points;
 }
 
-void server::connect(std::string _user /*, pop::accesspoint _ap*/)
+void server::connect_client(std::string _user, pop::accesspoint _ap)
 {
-	// pop::accesspoint _ap; // TODO
 	LOG(debug) << "server::connect";
-	// pop::client* pcl = new pop::client(_ap);
-	// p_clients_[_user] = pcl;
+	pop::client* pcl = new pop::client(_ap);
+	LOG(debug) << "created cl";
+	p_clients_[_user] = pcl;
+	send_message("Client " + _user + " connected\n");
 }
 
 void server::send_message(const string& _message)
 {
-	cout << _message << endl;
-	return; //TODO
+	cout << "sending: " << _message << endl;
 	for(auto elem : p_clients_)
 		elem.second->message(_message);
 }
@@ -114,6 +111,7 @@ void server::init_game()
 {
 	game_state_.clear();
 	// Fill game state arrays with challenges
+	send_message("Starting game for " + to_string(p_clients_.size()) + " player(s)");
 	for(int i = 0 ; i < 10 ; i++)
 	{
 		challenge chal = create_challenge(1);
@@ -129,10 +127,12 @@ void server::init_game()
 
 void server::print_game(string _username)
 {
+	stringstream ss;
 	for(const auto& elem : game_state_[_username])
 	{
-		elem.print(cout);
+		elem.print(ss);
 	}
+	send_message(ss.str());
 }
 
 
