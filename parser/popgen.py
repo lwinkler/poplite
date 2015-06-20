@@ -75,7 +75,7 @@ def main():
 			fout.write('#include "%s"\n' % os.path.basename(brok_out))
 
 		with open(obj_out, "a") as fout:
-			call(["sed", os.path.dirname(sys.argv[0]) + "/remote_main.cpp", "-e", 's/_parclass_/%s/g' % c.spelling], stdout=fout)
+			call(["sed", os.path.dirname(sys.argv[0]) + "/object_main.cpp", "-e", 's/_parclass_/%s/g' % c.spelling], stdout=fout)
 		
 
 

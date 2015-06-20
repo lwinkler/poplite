@@ -35,8 +35,8 @@ function(pop_add_object object_name header_name)
 	add_custom_command(OUTPUT generated/${_filename}.iface${_ext} generated/${_filename}.ids${_ext} generated/${_filename}.brok${_ext} generated/main.${object_name}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${INC_DIRS}
 	DEPENDS ${header_name})
-	add_executable(main.${object_name} generated/main.${object_name}.cpp ${extra_macro_args})
-	target_link_libraries(main.${object_name} ${Boost_LIBRARIES})
+	add_executable(${object_name}.obj generated/main.${object_name}.cpp ${extra_macro_args})
+	target_link_libraries(${object_name}.obj ${Boost_LIBRARIES})
 endfunction(pop_add_object)
 
 add_subdirectory(examples)

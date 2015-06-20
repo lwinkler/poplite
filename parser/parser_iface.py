@@ -54,7 +54,7 @@ public:
 #--------------------------------------------------------------------------------
 
 def write_constr(fout, c, id):
-	fout.write('%s(%s):pop::interface("main.%s", %s) {sync<void%s>(%s_method_ids::%s%d %s);}\n' 
+	fout.write('%s(%s):pop::interface("%s.obj", %s) {sync<void%s>(%s_method_ids::%s%d %s);}\n' 
 		% (c.spelling, parser.list_args(c), c.spelling, parser.get_allocation(c), parser.list_args1(c, True), c.spelling, c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
