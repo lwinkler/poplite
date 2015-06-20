@@ -28,11 +28,11 @@ int main(int argc, char* argv[])
 
 
 			cout << "Create a first client" << endl;
-			pop::client cl(serv.contact());
-			sleep(4);
-
+			pop::client cl("TODO", serv.contact());
+			serv.connect(cl.get_username());
 			return 0;
 
+			cout << "Run the client" << endl;
 			cl.run();
 		}
 		else if(argc >= 3)
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 			ap.port_      = atoi(argv[2]);
 
 			pop::server serv(ap);
-			pop::client cl(serv.contact());
+			pop::client cl("TODO", serv.contact());
 
 			cl.run();
 		}

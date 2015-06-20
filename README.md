@@ -18,7 +18,7 @@ Installation
 ------------
 
 Dependencies
-- boost libs ... TODO
+- boost libraries
 - for the parser
 	- clang 3.5
 	- Python bindings for clang

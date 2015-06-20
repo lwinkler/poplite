@@ -36,18 +36,18 @@ struct challenge
 class pop_parallel server
 {
 	public:
-		pop_allocation(pop::local_allocator())
+		pop_allocation(pop::manual_allocator())
 		server();
 		~server();
 
 		bool guess(std::string _user, std::string _word);
 
-		void connect(std::string _user, pop::accesspoint _ap);
+		void connect(std::string _user/*, pop::accesspoint _ap*/);
 
 	private:
 		void send_message(const std::string& _msg);
 		void start_game();
-		void end_game();
+		// void end_game();
 		challenge create_challenge(int nb_);
 
 		std::map<std::string,pop::client*>             p_clients_;

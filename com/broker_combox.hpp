@@ -86,36 +86,50 @@ namespace pop {
 				}
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
-				bool quit = false;
 				bufin ia(conn->input_stream());
 				int method_id = -1;
 				ia >> method_id;
 
 				LOG(debug) << "method id " << method_id;
 
+				bool is_async = false;
+				ia >> is_async;
+				LOG(debug) << "async " << is_async;
+
 				std::stringstream oss;
 				bufout oa(oss);
 				LOG(debug) << "call remote method " << method_id;
 
 				if(method_id == -1)
-					quit = true;
-				else
-					brok_.remote_call(method_id, ia, oa);
-
-				LOG(debug) << "finish calling remote method " << method_id;
-
-				std::string ack("ACK");
-				oa << ack;
-				conn->sync_write_ss(oss);
-				LOG(debug) << "sent ack";
-
-				if(quit)
 				{
 					LOG(debug) << "received end signal";
 					conn->socket().close();
 					io_service_.stop();
 					return;
 				}
+				else if(is_async)
+				{
+					// if the call is asynchronous, we send the ack directly
+					LOG(debug) << "finish calling remote method " << method_id;
+
+					std::string ack("ACK");
+					oa << ack;
+					conn->sync_write_ss(oss);
+					LOG(debug) << "sent ack";
+					brok_.remote_call(method_id, ia, oa);
+				}
+				else
+				{
+					brok_.remote_call(method_id, ia, oa);
+
+					LOG(debug) << "finish calling remote method " << method_id;
+
+					std::string ack("ACK");
+					oa << ack;
+					conn->sync_write_ss(oss);
+					LOG(debug) << "sent ack";
+				}
+
 				conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
 			}
 

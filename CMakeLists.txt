@@ -4,8 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 set(CMAKE_BUILD_TYPE       "Debug" CACHE BOOL "Mode of compilation")
 
 add_definitions(-std=c++11)
-# note: boost filesystem is only used in examples
-find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log filesystem REQUIRED )
+find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log REQUIRED )
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(.)
 
@@ -34,7 +33,8 @@ function(pop_add_object object_name header_name)
 
 	# message("Add command to generate generated/${_filename}.ids${_ext} generated/${_filename}.iface${_ext} generated/${_filename}.brok${_ext} generated/main.${object_name}.cpp")
 	add_custom_command(OUTPUT generated/${_filename}.iface${_ext} generated/${_filename}.ids${_ext} generated/${_filename}.brok${_ext} generated/main.${object_name}.cpp
-	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${INC_DIRS})
+	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${INC_DIRS}
+	DEPENDS ${header_name})
 	add_executable(main.${object_name} generated/main.${object_name}.cpp ${extra_macro_args})
 	target_link_libraries(main.${object_name} ${Boost_LIBRARIES})
 endfunction(pop_add_object)

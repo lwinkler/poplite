@@ -28,6 +28,7 @@ class pop_parallel client
 			std::cout << msg_ << std::endl;
 		}
 
+		inline std::string get_username() {return username_;}
 		inline int get_points() {return points_;}
 
 		void run();
@@ -35,7 +36,7 @@ class pop_parallel client
 	private:
 		pop::server server_;
 		int points_;
-		std::string user_;
+		std::string username_;
 };
 
 #endif

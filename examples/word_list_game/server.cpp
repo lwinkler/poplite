@@ -59,12 +59,31 @@ server::~server()
 		delete elem.second;
 }
 
-bool server::guess(string _user, string _word){return true;}
-
-void server::connect(std::string _user, pop::accesspoint _ap)
+bool server::guess(string _user, string _word)
 {
-	pop::client* pcl = new pop::client(_ap);
-	p_clients_[_user] = pcl;
+	bool complete = true;
+	for(auto& chal : game_state_[_user])
+	{
+		if(chal.num > 0)
+		{
+			if(_word.at(0) == chal.letter)
+			{
+				send_message(_word + " is a correct answer for " + chal.category);
+				chal.num--;
+			}
+			else complete = false;
+		}
+	}
+	if(complete)
+		send_message("Congratulation, you won !");
+}
+
+void server::connect(std::string _user /*, pop::accesspoint _ap*/)
+{
+	// pop::accesspoint _ap; // TODO
+	LOG(debug) << "server::connect";
+	// pop::client* pcl = new pop::client(_ap);
+	// p_clients_[_user] = pcl;
 }
 
 void server::send_message(const string& _message)

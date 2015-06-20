@@ -61,9 +61,10 @@ class interface : private boost::noncopyable
 				LOG(debug) << "call sync "<< _method_id;
 				std::tuple<Args&...> tup(std::forward_as_tuple(args...));
 				std::stringstream oss;
+				bool is_async = false;
 				bufout oa(oss);
 				oa << _method_id;
-
+				oa << is_async;
 				oa << tup;
 				combox_.connec().sync_write_ss(oss);
 
@@ -92,6 +93,47 @@ class interface : private boost::noncopyable
 			}
 			return R(); // TODO
 		}
+
+		template<typename R, typename ...Args> R async(int _method_id, Args& ...args) // TODO: avoid rewrite of method
+		{
+			try
+			{
+				LOG(debug) << "call sync "<< _method_id;
+				std::tuple<Args&...> tup(std::forward_as_tuple(args...));
+				std::stringstream oss;
+				bool is_async = true;
+				bufout oa(oss);
+				oa << _method_id;
+				oa << is_async;
+				oa << tup;
+				combox_.connec().sync_write_ss(oss);
+
+				LOG(debug) << "sent to broker";
+
+				combox_.connec().sync_read(); //TODO: try sync_read(tup)
+				bufin ia(combox_.connec().input_stream());
+				if(std::tuple_size<std::tuple<Args...>>::value)
+					ia >> tup;
+
+				// TODO: serialize R
+				LOG(debug) << "received answer from broker" << &combox_.connec();
+
+				std::string ack;
+				ia >> ack;
+				LOG(debug) << "received ack=" << ack;
+				if(ack != "ACK")
+					throw std::runtime_error("did not receive ack");
+				if(_method_id == -1) // TODO: use code
+					combox_.connec().socket().close();
+
+			}
+			catch(std::exception& e)
+			{
+				LOG(error) << "exception in sync: " << e.what();
+			}
+			return R(); // TODO
+		}
+
 
 		// inline const boost::asio::ip::tcp::endpoint endpoint() const {return combox_.endpoint();}
 		inline const pop::accesspoint& contact(){return combox_.contact();}
