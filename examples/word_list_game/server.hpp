@@ -49,10 +49,11 @@ class pop_parallel server
 	private:
 		void send_message(const std::string& _msg);
 		// void end_game();
-		challenge create_challenge(int nb_);
+		challenge create_challenge(int nb_, std::string category = "", char letter = ' ');
 
 		std::map<std::string,pop::client*>             p_clients_;
 		std::vector<std::string>                       categories_;
+		std::string                                    category_;
 		std::map<std::string, std::set<std::string>>   words_;
 		std::map<std::string, std::vector<challenge>>  game_state_;
 

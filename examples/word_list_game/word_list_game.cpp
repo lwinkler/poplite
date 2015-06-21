@@ -26,14 +26,16 @@ int main(int argc, char* argv[])
 			cout << "Users can contact the server by typing:" << endl;
 			cout << argv[0] << " " << serv.contact().host_name_ << " " << serv.contact().port_ << endl;
 
+			string user;
+			cout << "Enter your name: ";
+			cin >> user;
 
 			cout << "Create a first client" << endl;
-			pop::client cl("TODO", serv.contact());
+			pop::client cl(user, serv.contact());
 
-			serv.connect_client("a", serv.contact()); // TODO
-			return 0;
+			serv.connect_client(user, serv.contact()); // TODO
 			serv.init_game();
-			serv.print_game("a");
+			serv.print_game(user);
 			cout << "Run the client" << endl;
 			cl.run();
 		}

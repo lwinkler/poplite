@@ -17,8 +17,6 @@ using namespace std;
 
 client::client(string _user, pop::accesspoint _server_ap) : points_(0), server_(_server_ap), username_(_user)
 {
-	cout << "Enter your name: ";
-	cin >> username_;
 }
 
 client::~client()

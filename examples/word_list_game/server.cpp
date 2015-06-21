@@ -35,7 +35,7 @@ server::server() : seed_(time(NULL))
 	for(auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator("data/" + languages.at(num - 1)), {}))
 	{
 		categories_.push_back(entry.path().filename().string());
-		cout << "Loading words for category " << categories_.back() << endl;
+		cout << "Loading words for category " << categories_.back() << "(" << categories_.size() - 1 << ")" << endl;
 		set<string>& list(words_[categories_.back()]);
 
 		ifstream txtFile( entry.path().string());
@@ -50,6 +50,18 @@ server::server() : seed_(time(NULL))
 		txtFile.close();
 
 		cout << "Found " << list.size() << " words" << endl;
+	}
+
+	cout << "Pick a category (" << categories_.size() << " for mixed categories):" << endl;
+	cin >> num;
+	try
+	{
+		category_ = categories_.at(num);
+	}
+	catch(...)
+	{
+		cout << "Selected mixed categories" << endl;
+		category_ = "";
 	}
 }
 
@@ -89,7 +101,7 @@ int server::guess(string _user, string _word)
 void server::connect_client(std::string _user, pop::accesspoint _ap)
 {
 	LOG(debug) << "server::connect";
-	pop::client* pcl = new pop::client(_ap);
+	pop::client* pcl = nullptr; //  new pop::client(_ap);
 	LOG(debug) << "created cl";
 	p_clients_[_user] = pcl;
 	send_message("Client " + _user + " connected\n");
@@ -97,14 +109,19 @@ void server::connect_client(std::string _user, pop::accesspoint _ap)
 
 void server::send_message(const string& _message)
 {
-	cout << "sending: " << _message << endl;
+	cout << _message << endl;
+	return;
 	for(auto elem : p_clients_)
 		elem.second->message(_message);
 }
 
-challenge server::create_challenge(int nb_)
+challenge server::create_challenge(int nb_, std::string category, char letter)
 {
-	return challenge(nb_, 'A' + rand_r(&seed_) % 26, categories_.at(rand_r(&seed_) % categories_.size()));
+	if(category.empty())
+		category = categories_.at(rand_r(&seed_) % categories_.size());
+	if(letter == ' ')
+		letter = 'A' + rand_r(&seed_) % 26;
+	return challenge(nb_, letter, category);
 }
 
 void server::init_game()
@@ -114,7 +131,7 @@ void server::init_game()
 	send_message("Starting game for " + to_string(p_clients_.size()) + " player(s)");
 	for(int i = 0 ; i < 10 ; i++)
 	{
-		challenge chal = create_challenge(1);
+		challenge chal = create_challenge(1, category_);
 		stringstream ss;
 		send_message(ss.str());
 
@@ -134,19 +151,3 @@ void server::print_game(string _username)
 	}
 	send_message(ss.str());
 }
-
-
-/*
-TODO
-
-add a structure
-
-map<user_string, struct>
-struct: 
-	vector<challenge>
-	int points
-
-challenge: int nb, char letter, string categ
-
-
-*/
