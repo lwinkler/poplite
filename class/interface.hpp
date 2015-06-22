@@ -75,10 +75,8 @@ class interface : private boost::noncopyable
 				if(std::tuple_size<std::tuple<Args...>>::value)
 					ia >> tup;
 
+				// TODO: serialize R
 				LOG(debug) << "received answer from broker" << &combox_.connec();
-
-				// TODO R r;
-				// TODO ia >> r;
 
 				std::string ack;
 				ia >> ack;
@@ -87,7 +85,6 @@ class interface : private boost::noncopyable
 					throw std::runtime_error("did not receive ack");
 				if(_method_id == -1) // TODO: use code
 					combox_.connec().socket().close();
-				// TODO return r;
 
 			}
 			catch(std::exception& e)

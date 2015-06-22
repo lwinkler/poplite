@@ -33,12 +33,12 @@ namespace pop
 		struct apply_obj_func
 		{
 			template < typename T, typename R, typename... ArgsF, typename... ArgsT, typename... Args >
-				static R applyTuple( T* pObj,
+				static R apply_tuple( T* pObj,
 						R (T::*f)( ArgsF... ),
 						std::tuple<ArgsT...>& t,
 						Args&&... args )
 				{
-					return apply_obj_func<N-1>::applyTuple( pObj, f, t, std::get<N-1>( t ), args... );
+					return apply_obj_func<N-1>::apply_tuple( pObj, f, t, std::get<N-1>( t ), args... );
 				}
 		};
 
@@ -57,7 +57,7 @@ namespace pop
 		struct apply_obj_func<0>
 		{
 			template < typename T, typename R, typename... ArgsF, typename... ArgsT, typename... Args >
-				static R applyTuple( T* pObj,
+				static R apply_tuple( T* pObj,
 						R (T::*f)( ArgsF... ),
 						std::tuple<ArgsT...>& /* t */,
 						Args&&... args )
@@ -73,12 +73,25 @@ namespace pop
 	 */
 	// Actual apply function
 	template < typename T, typename R, typename... ArgsF, typename... ArgsT >
-		R applyTuple( T* pObj,
-				R (T::*f)( ArgsF... ),
-				std::tuple<ArgsT...> & t )
+		void apply_tuple( T* pObj, R (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa)
 		{
-			return apply_obj_func<sizeof...(ArgsT)>::applyTuple( pObj, f, t );
+			R r = apply_obj_func<sizeof...(ArgsT)>::apply_tuple( pObj, f, t );
+			_oa << r;
+			_oa << t;
 		}
+
+	//-----------------------------------------------------------------------------
+
+	/**
+	 * Object Function Call Forwarding Using Tuple Pack Parameters
+	 */
+	// Template overload for void methods
+	template < typename T, typename... ArgsF, typename... ArgsT >
+		void apply_tuple( T* pObj, void (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa)
+			{
+				apply_obj_func<sizeof...(ArgsT)>::apply_tuple( pObj, f, t );
+				_oa << t;
+			}
 
 	//-----------------------------------------------------------------------------
 
@@ -97,11 +110,11 @@ namespace pop
 		struct apply_func
 		{
 			template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
-				static R applyTuple( R (*f)( ArgsF... ),
+				static R apply_tuple( R (*f)( ArgsF... ),
 						std::tuple<ArgsT...>& t,
 						Args&&... args )
 				{
-					return apply_func<N-1>::applyTuple( f, t, std::get<N-1>( t ), args... );
+					return apply_func<N-1>::apply_tuple( f, t, std::get<N-1>( t ), args... );
 				}
 		};
 
@@ -120,7 +133,7 @@ namespace pop
 		struct apply_func<0>
 		{
 			template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
-				static R applyTuple( R (*f)( ArgsF... ),
+				static R apply_tuple( R (*f)( ArgsF... ),
 						std::tuple<ArgsT...>& /* t */,
 						Args&&... args )
 				{
@@ -135,10 +148,10 @@ namespace pop
 	 */
 	// Actual apply function
 	template < typename R, typename... ArgsF, typename... ArgsT >
-		R applyTuple( R (*f)(ArgsF...),
+		R apply_tuple( R (*f)(ArgsF...),
 				std::tuple<ArgsT...> & t )
 		{
-			return apply_func<sizeof...(ArgsT)>::applyTuple( f, t );
+			return apply_func<sizeof...(ArgsT)>::apply_tuple( f, t );
 		}
 } // namespace
 #endif
