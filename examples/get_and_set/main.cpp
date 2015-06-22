@@ -52,6 +52,13 @@ int main(int argc, char* argv[])
 		// cout << "s=" << testClass.GetStr() << endl; // TODO: Fix return value
 		// TODO: forbid copies of interfaces
 
+		gps_position gps1(1, 1, 1);
+		gps_position gps2(0, 0, 0);
+
+		testClass.SetGps(gps1);
+		gps2 = testClass.GetGps();
+		assert(gps1 == gps2);
+
 		sleep(1);
 
 		LOG(info) << "create a second interface";

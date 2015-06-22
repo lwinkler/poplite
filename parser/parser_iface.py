@@ -13,10 +13,11 @@ def write_head(fout, filename, mid_file):
 #define _POP_%s_IFACE_H
 #include "class/interface.hpp"
 #include "%s"
+#include "%s"
 
 namespace pop
 {
-""" % (parser.capitalize(filename), parser.capitalize(filename), mid_file))
+""" % (parser.capitalize(filename), parser.capitalize(filename), mid_file, filename))
 
 #--------------------------------------------------------------------------------
 

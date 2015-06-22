@@ -14,6 +14,18 @@
 // #include "class/interface.hpp"
 #include "class/system.hpp"
 
+
+struct test_struct1 : boost::noncopyable
+{
+	int a;
+	test_struct1() : a(0){}	
+	template<class Archive> void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & a;
+	}
+};
+
+
 class gps_position
 {
 	private:
@@ -33,6 +45,7 @@ class gps_position
 		gps_position(int d, int m, float s) :
 			degrees(d), minutes(m), seconds(s)
 		{}
+		bool operator == (const gps_position& _gps){return degrees == _gps.degrees && minutes == _gps.minutes && seconds == _gps.seconds;}
 };
 
 class pop_parallel TestClass
@@ -58,6 +71,12 @@ class pop_parallel TestClass
 			_s  = s_;
 		}
 
+		void SetTest(test_struct1& _test1){test1_.a = _test1.a;}
+		// test_struct1 GetTest(){return test1_;}
+
+		void SetGps(gps_position& _gps) { gps_ = _gps;}
+		gps_position GetGps(){return gps_;}
+
 		std::string GetStr() {return s_;}
 
 	private:
@@ -65,6 +84,8 @@ class pop_parallel TestClass
 		int i2_;
 		double d_;
 		std::string s_;
+		gps_position gps_;
+		test_struct1 test1_;
 };
 
 #endif

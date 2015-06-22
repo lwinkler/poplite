@@ -52,15 +52,31 @@ namespace pop
 				}
 
 				/// A simple concurrent call to a method 
-				template<typename R, typename ...Args> static void conc(bufin& ia, bufout& oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...)) // TODO: Args by ref ?
+				template<typename R, typename ...Args> static void conc(bufin& _ia, bufout& _oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...)) // TODO: Args by ref ?
 				{
 					if(!_p_obj)
 						throw std::runtime_error("Constructor has not been called");
 					std::tuple<typename std::decay<Args>::type...> tup;
-					ia >> tup;
+					_ia >> tup;
 					// (_p_obj->*_p_meth)(tup);
+					// R r = 
 					applyTuple(_p_obj, _p_meth, tup);
-					oa << tup;
+					_oa << tup;
+					// _oa << r;
+				}
+
+				/// A simple concurrent call to a method 
+				template<typename ...Args> static void conc<void, Args>(bufin& _ia, bufout& _oa, ParClass*& _p_obj, void (ParClass::*_p_meth)(Args...)) // TODO: Args by ref ?
+				{
+					if(!_p_obj)
+						throw std::runtime_error("Constructor has not been called");
+					std::tuple<typename std::decay<Args>::type...> tup;
+					_ia >> tup;
+					// (_p_obj->*_p_meth)(tup);
+					// R r = 
+					applyTuple(_p_obj, _p_meth, tup);
+					_oa << tup;
+					// _oa << r;
 				}
 
 
