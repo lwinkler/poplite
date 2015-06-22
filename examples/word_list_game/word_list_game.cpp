@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 		if(argc == 1)
 		{
 			// Create a server
-			pop::server serv;
+			server_iface serv;
 			cout << "Users can contact the server by typing:" << endl;
 			cout << argv[0] << " " << serv.contact().host_name_ << " " << serv.contact().port_ << endl;
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 			cin >> user;
 
 			cout << "Create a first client" << endl;
-			pop::client cl(user, serv.contact());
+			client_iface cl(user, serv.contact());
 
 			serv.connect_client(user, serv.contact()); // TODO
 			serv.init_game();
@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
 			ap.host_name_ = argv[1];
 			ap.port_      = atoi(argv[2]);
 
-			pop::server serv(ap);
-			pop::client cl("TODO", serv.contact());
+			server_iface serv(ap);
+			client_iface cl("TODO", serv.contact());
 
 			cl.run();
 		}

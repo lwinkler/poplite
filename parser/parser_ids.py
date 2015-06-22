@@ -13,8 +13,6 @@ def write_head(fout, filename):
 #ifndef _POP_%s_METH_IDS_H
 #define _POP_%s_METH_IDS_H
 
-namespace pop
-{
 """ % (parser.capitalize(filename), parser.capitalize(filename)))
 
 #--------------------------------------------------------------------------------
@@ -22,7 +20,6 @@ namespace pop
 def write_foot(fout):
 
 	fout.write("""
-}
 #endif
 """)
 

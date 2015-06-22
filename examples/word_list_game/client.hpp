@@ -13,7 +13,6 @@
 
 #include "com/accesspoint.hpp"
 #include "server.iface.hpp"
-#include "alloc/manual.hpp"
 
 
 class pop_parallel client
@@ -34,7 +33,7 @@ class pop_parallel client
 		void run();
 
 	private:
-		pop::server server_;
+		server_iface server_;
 		int points_;
 		const std::string username_;
 };

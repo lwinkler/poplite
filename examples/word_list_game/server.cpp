@@ -101,7 +101,7 @@ int server::guess(string _user, string _word)
 void server::connect_client(std::string _user, pop::accesspoint _ap)
 {
 	LOG(debug) << "server::connect";
-	pop::client* pcl = nullptr; //  new pop::client(_ap);
+	client_iface* pcl = nullptr; //  new pop::client(_ap);
 	LOG(debug) << "created cl";
 	p_clients_[_user] = pcl;
 	send_message("Client " + _user + " connected\n");

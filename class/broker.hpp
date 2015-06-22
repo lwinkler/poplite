@@ -58,9 +58,7 @@ namespace pop
 						throw std::runtime_error("Constructor has not been called");
 					std::tuple<typename std::decay<Args>::type...> tup;
 					ia >> tup;
-					// (_p_obj->*_p_meth)(tup);
-					applyTuple(_p_obj, _p_meth, tup, oa);
-					oa << tup;
+					apply_tuple(_p_obj, _p_meth, tup, oa);
 				}
 
 

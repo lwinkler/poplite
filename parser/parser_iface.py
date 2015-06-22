@@ -15,8 +15,6 @@ def write_head(fout, filename, mid_file):
 #include "%s"
 #include "%s"
 
-namespace pop
-{
 """ % (parser.capitalize(filename), parser.capitalize(filename), mid_file, filename))
 
 #--------------------------------------------------------------------------------
@@ -24,7 +22,6 @@ namespace pop
 def write_foot(fout):
 
 	fout.write("""
-}
 #endif
 """)
 
@@ -33,13 +30,13 @@ def write_foot(fout):
 def write_interface(fout, class_node):
 
 	fout.write("""
-class %s : public pop::interface
+class %s_iface : public pop::interface
 {
 public:
 """ % class_node.spelling)
 
 	# Add a constructor from accesspoint for references to parallel objects
-	fout.write("%s(pop::accesspoint _ap) : pop::interface(_ap) {}\n" % class_node.spelling)
+	fout.write("%s_iface(pop::accesspoint _ap) : pop::interface(_ap) {}\n" % class_node.spelling)
 
 	id = 0
 	for c in parser.find_constructors(class_node):
@@ -55,7 +52,7 @@ public:
 #--------------------------------------------------------------------------------
 
 def write_constr(fout, c, id):
-	fout.write('%s(%s):pop::interface("%s.obj", %s) {sync<void%s>(%s_method_ids::%s%d %s);}\n' 
+	fout.write('%s_iface(%s):pop::interface("%s.obj", %s) {sync<void%s>(%s_method_ids::%s%d %s);}\n' 
 		% (c.spelling, parser.list_args(c), c.spelling, parser.get_allocation(c), parser.list_args1(c, True), c.spelling, c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 

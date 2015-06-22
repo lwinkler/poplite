@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "call constructor";
 		// iface.call_sync<int>(0, i1);
-		pop::TestClass testClass("localhost");
+		TestClass_iface testClass("localhost");
 
 /*
 		boost::asio::ip::tcp::endpoint& ep(testClass.contact());
