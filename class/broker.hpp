@@ -59,6 +59,7 @@ namespace pop
 					std::tuple<typename std::decay<Args>::type...> tup;
 					ia >> tup;
 					apply_tuple(_p_obj, _p_meth, tup, oa);
+					oa << tup;
 				}
 
 

@@ -40,17 +40,18 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "call SetValues method to set new values";
 		// iface.call_sync<int,int,double,string>(1, 11, 42, 3.14, "new stuff");
-		testClass.SetValues(2.7, 42, 3.14, "new stuff");
+		testClass.SetValues(27, 42, 3.14, "new stuff");
 
 		sleep(1);
+
+		cout << testClass.GetValue();
 
 		LOG(info) << "call GetValues again";
 		// iface.call_sync<int&,int&,double&,string&>(1, i1, i2, d, s);
 		testClass.GetValues(i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 
-		// cout << "s=" << testClass.GetStr() << endl; // TODO: Fix return value
-		// TODO: forbid copies of interfaces
+		cout << "s=" << testClass.GetStr() << endl; // TODO: Fix return value
 
 		gps_position gps1(1, 1, 1);
 		gps_position gps2(0, 0, 0);

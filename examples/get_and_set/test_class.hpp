@@ -63,6 +63,11 @@ class pop_parallel TestClass
 			std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 		}
 
+		int GetValue()
+		{
+			return 333;
+		}
+
 		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s)
 		{
 			_i1 = i1_;
@@ -77,7 +82,7 @@ class pop_parallel TestClass
 		void SetGps(gps_position& _gps) { gps_ = _gps;}
 		gps_position GetGps(){return gps_;}
 
-		std::string GetStr() {return s_;}
+		std::string GetStr() {return "s_";}
 
 	private:
 		int i1_;

@@ -58,9 +58,11 @@ def write_constr(fout, c, id):
 
 def write_meth(fout, m, id, classname):
 	fout.write('inline %s %s(%s) {' %(m.result_type.spelling, m.spelling, parser.list_args(m)) 
-		+ '%s<%s%s>(%s_method_ids::%s%s %s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
+		+ 'return %s<%s%s>(%s_method_ids::%s%s %s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
 
 #--------------------------------------------------------------------------------
 
 if __name__ == "__main__":
 	print "this file is a Python library: try using popgen instead"
+
+# TODO: remove all generated files before generation or check that no append is done

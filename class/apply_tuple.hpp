@@ -76,8 +76,8 @@ namespace pop
 		void apply_tuple( T* pObj, R (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa)
 		{
 			R r = apply_obj_func<sizeof...(ArgsT)>::apply_tuple( pObj, f, t );
-			// _oa << r; TODO
-			_oa << t;
+			_oa << r;
+			// _oa << t;
 		}
 
 	//-----------------------------------------------------------------------------

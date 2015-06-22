@@ -18,6 +18,25 @@
 
 namespace pop{
 
+
+/// A template to allow the return of a variable, including null
+template<typename R> class return_class
+{
+public:
+	return_class(bufin& _ia){_ia >> r_;}
+	R return_value(){return r_;}
+
+private:
+	R r_;
+};
+
+template<> class return_class<void>
+{
+public:
+	return_class(bufin& /*_ia*/){}
+	void return_value(){return;}
+};
+
 /// Interface is the local part used to communicate with a broker (remote) that contains the instanciation of the parallel object
 class interface : private boost::noncopyable
 {
@@ -71,11 +90,12 @@ class interface : private boost::noncopyable
 				LOG(debug) << "sent to broker";
 
 				combox_.connec().sync_read(); //TODO: try sync_read(tup)
+
 				bufin ia(combox_.connec().input_stream());
+				return_class<R> ret(ia); // TODO: also for async
 				if(std::tuple_size<std::tuple<Args...>>::value)
 					ia >> tup;
 
-				// TODO: serialize R
 				LOG(debug) << "received answer from broker" << &combox_.connec();
 
 				std::string ack;
@@ -86,6 +106,7 @@ class interface : private boost::noncopyable
 				if(_method_id == -1) // TODO: use code
 					combox_.connec().socket().close();
 
+				return ret.return_value();
 			}
 			catch(std::exception& e)
 			{
@@ -93,6 +114,7 @@ class interface : private boost::noncopyable
 			}
 			return R(); // TODO
 		}
+
 
 		template<typename R, typename ...Args> R async(int _method_id, Args& ...args) // TODO: avoid rewrite of method
 		{
