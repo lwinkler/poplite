@@ -19,30 +19,25 @@
 
 namespace pop
 {
-
-template<typename T> inline void serialize_in_iface(bufout& _oa, const T& _obj){_obj >> _oa;}
-template<typename T> inline void serialize_in_brok(bufin& _ia, T& _obj)        {_ia  >> _obj;}
-
-template<typename T> inline void serialize_out_brok(bufout& _oa, T& _obj)       {if(! std::is_const<T>::value && (std::is_pointer<T>::value || std::is_reference<T>::value)) _obj >> _oa;}
-template<typename T> inline void serialize_out_iface(bufin& _ia, const T& _obj) {if(! std::is_const<T>::value && (std::is_pointer<T>::value || std::is_reference<T>::value)) _ia  >> _obj;}
-
-
 template<typename T>
 	struct ser_element
 	{
-		static void ser_el_out(T& el){}
+		template<class Archive>
+			static void ser_el_out(Archive& ar, T& el){ar & el;} // TODO: remove serialization
 	};
 
 template<typename T>
 	struct ser_element<T&>
 	{
-		static void ser_el_out(T& el){/*ar & el;*/}
+		template<class Archive>
+			static void ser_el_out(Archive& ar, T& el){ar & el;}
 	};
 
 template<typename T>
 	struct ser_element<const T&>
 	{
-		static void ser_el_out(const T& el){}
+		template<class Archive>
+			static void ser_el_out(Archive& ar, T& el){ar & el;} // TODO remove
 	};
 
 
@@ -53,7 +48,7 @@ template<uint N>
 			static void serialize_out(Archive & ar, std::tuple<Args...> & t)
 			{
 				//ser_element<typename std::tuple_element<N, typename std::remove_reference<decltype(t)>>::type, Archive>::ser_el_out(ar, std::get<N>(t));
-				ser_element<typename std::tuple_element<N-1, std::tuple<Args...>>::type>::ser_el_out(std::get<N-1>(t));
+				ser_element<typename std::tuple_element<N-1, std::tuple<Args...>>::type>::ser_el_out(ar, std::get<N-1>(t));
 				// ser_element<std::tuple_element<N-1, std::tuple<Args...>&>, Archive>::ser_el_out(ar, std::get<N-1>(t));
 				// using std::tuple_element<N-1, decltype(t)>::type = typename mytype;
 				SerializeOut<N-1>::serialize_out(ar, t);

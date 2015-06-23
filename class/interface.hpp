@@ -92,7 +92,7 @@ class interface : private boost::noncopyable
 
 				bufin ia(combox_.connec().input_stream());
 				return_class<R> ret(ia); // TODO: also for async
-				// TODO serialize_out(ia, tup);
+				serialize_out(ia, tup);
 
 				LOG(debug) << "received answer from broker" << &combox_.connec();
 
@@ -110,7 +110,7 @@ class interface : private boost::noncopyable
 			{
 				LOG(error) << "exception in sync: " << e.what();
 			}
-			return R(); // TODO
+			return R();
 		}
 
 
