@@ -26,14 +26,6 @@ int main(int argc, char* argv[])
 		// iface.call_sync<int>(0, i1);
 		TestClass_iface testClass("localhost");
 
-/*
-		boost::asio::ip::tcp::endpoint& ep(testClass.contact());
-		std::string inbound_header_;
-		boost::asio::read(socket_, boost::asio::buffer(inbound_header_));
-		cout << "asdfasdf " << inbound_header_ << endl;
-		*/
-
-
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
 		
 		sleep(1);
@@ -44,14 +36,17 @@ int main(int argc, char* argv[])
 
 		sleep(1);
 
-		cout << testClass.GetValue();
+		cout << "GetValue: " << testClass.GetValue() << endl;
+		assert(testClass.GetValue() == 333);
 
 		LOG(info) << "call GetValues again";
 		// iface.call_sync<int&,int&,double&,string&>(1, i1, i2, d, s);
 		testClass.GetValues(i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+		assert(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff");
 
 		cout << "s=" << testClass.GetStr() << endl; // TODO: Fix return value
+		assert(testClass.GetStr() == "new stuff");
 
 		gps_position gps1(1, 1, 1);
 		gps_position gps2(0, 0, 0);
@@ -66,6 +61,7 @@ int main(int argc, char* argv[])
 		pop::interface testClass2(testClass.contact());
 		// testClass2.sync<void , int&, int&, double&, std::string&>(pop::broker::GetValues2 , i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+		assert(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff");
 
 		sleep(1);
 
@@ -74,6 +70,7 @@ int main(int argc, char* argv[])
 		// pop::interface testClass2(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 20015));
 		// testClass3.sync<void , int&, int&, double&, std::string&>(pop::broker::GetValues2 , i1, i2, d, s);
 		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+		assert(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff");
 
 		// iface.call_sync<>(-1);
 		cout << "end of main" << endl;

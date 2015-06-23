@@ -45,7 +45,6 @@ class interface : private boost::noncopyable
 			combox_(),
 			linkLife_(_linkLife)
 		{
-
 			_allocator.allocate(_executable, combox_.endpoint());
 			// Handle connection
 			combox_.run();
@@ -93,8 +92,7 @@ class interface : private boost::noncopyable
 
 				bufin ia(combox_.connec().input_stream());
 				return_class<R> ret(ia); // TODO: also for async
-				if(std::tuple_size<std::tuple<Args...>>::value)
-					ia >> tup;
+				// TODO serialize_out(ia, tup);
 
 				LOG(debug) << "received answer from broker" << &combox_.connec();
 

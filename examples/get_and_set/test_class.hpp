@@ -82,7 +82,7 @@ class pop_parallel TestClass
 		void SetGps(gps_position& _gps) { gps_ = _gps;}
 		gps_position GetGps(){return gps_;}
 
-		std::string GetStr() {return "s_";}
+		std::string GetStr() {return s_;}
 
 	private:
 		int i1_;

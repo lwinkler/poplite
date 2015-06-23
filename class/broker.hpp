@@ -48,7 +48,7 @@ namespace pop
 					std::tuple<Args...> tup;
 					_ia >> tup;
 					_p_obj = applyTupleConstr(__constr<Args...>, tup);
-					_oa << tup;
+					serialize_out(_oa, tup);
 				}
 
 				/// A simple concurrent call to a method 
@@ -59,7 +59,7 @@ namespace pop
 					std::tuple<typename std::decay<Args>::type...> tup;
 					ia >> tup;
 					apply_tuple(_p_obj, _p_meth, tup, oa);
-					oa << tup;
+					serialize_out(oa, tup);
 				}
 
 
