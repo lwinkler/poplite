@@ -23,21 +23,21 @@ template<typename TT, typename TS>
 	struct ser_element
 	{
 		template<class Archive>
-			static void ser_el_out(Archive& ar, TT& el1, TS& el2){}
+			static void ser_el_out(Archive& ar, TT& el1){}
 	};
 
 template<typename TT, typename TS>
 	struct ser_element<TT, TS&>
 	{
 		template<class Archive>
-			static void ser_el_out(Archive& ar, TT& el1, TS& el2){ar & el1;}
+			static void ser_el_out(Archive& ar, TT& el1){ar & el1;}
 	};
 
 template<typename TT, typename TS>
 	struct ser_element<TT, const TS&>
 	{
 		template<class Archive>
-			static void ser_el_out(Archive& ar, TT& el1, TS& el2){}
+			static void ser_el_out(Archive& ar, TT& el1){}
 	};
 
 
@@ -47,11 +47,8 @@ template<uint N>
 		template<class Archive, typename... ArgsT, typename... ArgsS>
 			static void serialize_out(Archive & ar, std::tuple<ArgsT...> & t1, std::tuple<ArgsS...> & t2)
 			{
-				//ser_element<typename std::tuple_element<N, typename std::remove_reference<decltype(t)>>::type, Archive>::ser_el_out(ar, std::get<N>(t));
 				ser_element<typename std::tuple_element<N-1, std::tuple<ArgsT...>>::type, 
-				            typename std::tuple_element<N-1, std::tuple<ArgsS...>>::type>::ser_el_out(ar, std::get<N-1>(t1), std::get<N-1>(t2));
-				// ser_element<std::tuple_element<N-1, std::tuple<Args...>&>, Archive>::ser_el_out(ar, std::get<N-1>(t));
-				// using std::tuple_element<N-1, decltype(t)>::type = typename mytype;
+				            typename std::tuple_element<N-1, std::tuple<ArgsS...>>::type>::ser_el_out(ar, std::get<N-1>(t1));
 				SerializeOut<N-1>::serialize_out(ar, t1, t2);
 			}
 	};
