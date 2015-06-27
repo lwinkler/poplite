@@ -45,10 +45,10 @@ namespace pop
 				{
 					if(_p_obj)
 						throw std::runtime_error("Constructor has been called twice");
-					std::tuple<Args...> tup;
+					std::tuple<typename std::decay<Args>::type...> tup;
 					_ia >> tup;
 					_p_obj = applyTupleConstr(__constr<Args...>, tup);
-					serialize_out(_oa, tup);
+					serialize_out<bufout, Args...>(_oa, tup);
 				}
 
 				/// A simple concurrent call to a method 

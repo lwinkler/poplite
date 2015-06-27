@@ -19,39 +19,40 @@
 
 namespace pop
 {
-template<typename T>
+template<typename TT, typename TS>
 	struct ser_element
 	{
 		template<class Archive>
-			static void ser_el_out(Archive& ar, T& el){ar & el;} // TODO: remove serialization
+			static void ser_el_out(Archive& ar, TT& el1, TS& el2){}
 	};
 
-template<typename T>
-	struct ser_element<T&>
+template<typename TT, typename TS>
+	struct ser_element<TT, TS&>
 	{
 		template<class Archive>
-			static void ser_el_out(Archive& ar, T& el){ar & el;}
+			static void ser_el_out(Archive& ar, TT& el1, TS& el2){ar & el1;}
 	};
 
-template<typename T>
-	struct ser_element<const T&>
+template<typename TT, typename TS>
+	struct ser_element<TT, const TS&>
 	{
 		template<class Archive>
-			static void ser_el_out(Archive& ar, T& el){ar & el;} // TODO remove
+			static void ser_el_out(Archive& ar, TT& el1, TS& el2){}
 	};
 
 
 template<uint N>
 	struct SerializeOut
 	{
-		template<class Archive, typename... Args>
-			static void serialize_out(Archive & ar, std::tuple<Args...> & t)
+		template<class Archive, typename... ArgsT, typename... ArgsS>
+			static void serialize_out(Archive & ar, std::tuple<ArgsT...> & t1, std::tuple<ArgsS...> & t2)
 			{
 				//ser_element<typename std::tuple_element<N, typename std::remove_reference<decltype(t)>>::type, Archive>::ser_el_out(ar, std::get<N>(t));
-				ser_element<typename std::tuple_element<N-1, std::tuple<Args...>>::type>::ser_el_out(ar, std::get<N-1>(t));
+				ser_element<typename std::tuple_element<N-1, std::tuple<ArgsT...>>::type, 
+				            typename std::tuple_element<N-1, std::tuple<ArgsS...>>::type>::ser_el_out(ar, std::get<N-1>(t1), std::get<N-1>(t2));
 				// ser_element<std::tuple_element<N-1, std::tuple<Args...>&>, Archive>::ser_el_out(ar, std::get<N-1>(t));
 				// using std::tuple_element<N-1, decltype(t)>::type = typename mytype;
-				SerializeOut<N-1>::serialize_out(ar, t);
+				SerializeOut<N-1>::serialize_out(ar, t1, t2);
 			}
 	};
 
@@ -59,15 +60,24 @@ template<>
 	struct SerializeOut<0>
 	{
 		template<class Archive, typename... Args>
-			static void serialize_out(Archive & ar, std::tuple<Args...> & t)
+			static void serialize_out(Archive & ar, std::tuple<Args...> & /*t1*/, std::tuple<Args...> & /*t2*/)
 			{
 			}
 	};
 
 template<class Archive, typename... Args>
-	void serialize_out(Archive & ar, std::tuple<Args...> & t)
+	void serialize_out(Archive & ar, std::tuple<Args...> & t1)
 	{
-		SerializeOut<sizeof...(Args)>::serialize_out(ar, t);
+		std::tuple<Args...> t2(t1);
+		SerializeOut<sizeof...(Args)>::serialize_out(ar, t1, t2);
+	}
+
+
+template<class Archive, typename... Args>
+	void serialize_out(Archive & ar, std::tuple<typename std::decay<Args>::type...> & t1)
+	{
+		std::tuple<Args...> t2;
+		SerializeOut<sizeof...(Args)>::serialize_out(ar, t1, t2);
 	}
 
 
