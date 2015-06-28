@@ -77,6 +77,7 @@ class pop_parallel TestClass
 		}
 
 		void SetTest(const test_struct1& _test1){test1_.a = _test1.a;}
+		void GetTest(test_struct1& _test1){_test1.a = test1_.a;}
 		// test_struct1 GetTest(){return test1_;}
 
 		void SetGps(gps_position& _gps) { gps_ = _gps;}

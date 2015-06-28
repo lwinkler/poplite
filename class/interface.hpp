@@ -77,7 +77,7 @@ class interface : private boost::noncopyable
 			try
 			{
 				LOG(debug) << "call sync "<< _method_id;
-				std::tuple<Args&...> tup(std::forward_as_tuple(args...));
+				std::tuple<Args...> tup(std::forward_as_tuple(args...));
 				std::stringstream oss;
 				bool is_async = false;
 				bufout oa(oss);
@@ -92,7 +92,7 @@ class interface : private boost::noncopyable
 
 				bufin ia(combox_.connec().input_stream());
 				return_class<R> ret(ia); // TODO: also for async
-				serialize_out<bufin, Args&... >(ia, tup);
+				serialize_out<bufin, Args... >(ia, tup);
 
 				LOG(debug) << "received answer from broker" << &combox_.connec();
 

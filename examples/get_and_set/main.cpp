@@ -12,73 +12,93 @@
 
 using namespace std;
 
+bool test_interface(TestClass_iface& testClass, bool set_values)
+{
+	int i1 = 11, i2 = 22;
+	double d = 88;
+	string s = "bla";
+
+	sleep(1);
+
+	cout << "call SetValues method to set new values: i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+	if(set_values)
+		testClass.SetValues(27, 42, 3.14, "new stuff");
+
+	sleep(1);
+
+	int val = testClass.GetValue();
+	cout << "GetValue: " << val << endl;
+	if(testClass.GetValue() != 333)
+		return false;
+
+	cout << "call GetValues" << endl;
+	testClass.GetValues(i1, i2, d, s);
+	cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+	if(!(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff"))
+		return false;
+
+	cout << "s=" << testClass.GetStr() << endl;
+	if(testClass.GetStr() != "new stuff")
+		return false;
+
+	cout << "Tests with a serializable class (gps position)" << endl;
+
+	gps_position gps1(1, 1, 1);
+	gps_position gps2(0, 0, 0);
+
+	if(set_values)
+		testClass.SetGps(gps1);
+	gps2 = testClass.GetGps();
+	if(!(gps1 == gps2))
+		return false;
+
+	sleep(1);
+
+	cout << "Tests with a second serializable class" << endl;
+	test_struct1 ts1, ts2;
+	ts1.a = 444;
+	if(set_values)
+		testClass.SetTest(ts1);
+	testClass.GetTest(ts2);
+	if(ts2.a != 444)
+		return false;
+
+	return true;
+}
+
 /// A simple example for poplite
 
 int main(int argc, char* argv[])
 {
 	try
 	{
-		int i1 = 11, i2 = 22;
-		double d = 88;
-		string s = "bla";
-
-		LOG(info) << "call constructor";
+		cout << "call constructor" << endl;
 		// iface.call_sync<int>(0, i1);
 		TestClass_iface testClass("localhost");
+		if(!test_interface(testClass, true))
+			throw runtime_error("Test failed on testClass");
 
-		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
-		
-		sleep(1);
+		if(!test_interface(testClass, false))
+			throw runtime_error("Test failed on testClass(2)");
 
-		LOG(info) << "call SetValues method to set new values";
-		// iface.call_sync<int,int,double,string>(1, 11, 42, 3.14, "new stuff");
-		testClass.SetValues(27, 42, 3.14, "new stuff");
+		cout << "create a second interface (reference)" << endl;
+		TestClass_iface testClass2(testClass.contact());
 
-		sleep(1);
+		if(!test_interface(testClass2, false))
+			throw runtime_error("Test failed on testClass2");
 
-		cout << "GetValue: " << testClass.GetValue() << endl;
-		assert(testClass.GetValue() == 333);
+		cout << "create a third interface" << endl;
+		TestClass_iface testClass3(testClass.contact());
+		if(!test_interface(testClass3, false))
+			throw runtime_error("Test failed on testClass3");
 
-		LOG(info) << "call GetValues again";
-		// iface.call_sync<int&,int&,double&,string&>(1, i1, i2, d, s);
-		testClass.GetValues(i1, i2, d, s);
-		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
-		assert(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff");
-
-		cout << "s=" << testClass.GetStr() << endl; // TODO: Fix return value
-		assert(testClass.GetStr() == "new stuff");
-
-		gps_position gps1(1, 1, 1);
-		gps_position gps2(0, 0, 0);
-
-		testClass.SetGps(gps1);
-		gps2 = testClass.GetGps();
-		assert(gps1 == gps2);
-
-		sleep(1);
-
-		LOG(info) << "create a second interface";
-		pop::interface testClass2(testClass.contact());
-		// testClass2.sync<void , int&, int&, double&, std::string&>(pop::broker::GetValues2 , i1, i2, d, s);
-		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
-		assert(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff");
-
-		sleep(1);
-
-		LOG(info) << "create a third interface";
-		pop::interface testClass3(testClass.contact());
-		// pop::interface testClass2(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 20015));
-		// testClass3.sync<void , int&, int&, double&, std::string&>(pop::broker::GetValues2 , i1, i2, d, s);
-		cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
-		assert(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff");
-
-		// iface.call_sync<>(-1);
 		cout << "end of main" << endl;
 		sleep(3);
 	}
 	catch (std::exception& e)
 	{
-		LOG(error) << e.what();
+		cout << "ERROR: " << e.what() << endl;
+		return 1;
 	}
 
 	return 0;
