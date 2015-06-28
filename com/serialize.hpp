@@ -44,20 +44,20 @@ template<typename TT, typename TS>
 template<uint N>
 	struct SerializeOut
 	{
-		template<class Archive, typename... ArgsT, typename... ArgsS>
-			static void serialize_out(Archive & ar, std::tuple<ArgsT...> & t1, std::tuple<ArgsS...> & t2)
+		template<class Archive, typename TupleS, typename TupleT>
+			static void serialize_out(Archive & ar, TupleT & t1)
 			{
-				ser_element<typename std::tuple_element<N-1, std::tuple<ArgsT...>>::type, 
-				            typename std::tuple_element<N-1, std::tuple<ArgsS...>>::type>::ser_el_out(ar, std::get<N-1>(t1));
-				SerializeOut<N-1>::serialize_out(ar, t1, t2);
+				ser_element<typename std::tuple_element<N-1, TupleT>::type, 
+				            typename std::tuple_element<N-1, TupleS>::type>::ser_el_out(ar, std::get<N-1>(t1));
+				SerializeOut<N-1>::template serialize_out<Archive, TupleS, TupleT>(ar, t1);
 			}
 	};
 
 template<>
 	struct SerializeOut<0>
 	{
-		template<class Archive, typename... Args>
-			static void serialize_out(Archive & ar, std::tuple<Args...> & /*t1*/, std::tuple<Args...> & /*t2*/)
+		template<class Archive, typename TupleS, typename TupleT>
+			static void serialize_out(Archive & ar, TupleT & /*t1*/)
 			{
 			}
 	};
@@ -65,46 +65,16 @@ template<>
 template<class Archive, typename... Args>
 	void serialize_out(Archive & ar, std::tuple<Args...> & t1)
 	{
-		std::tuple<Args...> t2(t1);
-		SerializeOut<sizeof...(Args)>::serialize_out(ar, t1, t2);
+		SerializeOut<sizeof...(Args)>::template serialize_out<bufin, std::tuple<Args&...>, std::tuple<Args...> >(ar, t1);
 	}
 
 
 template<class Archive, typename... Args>
 	void serialize_out(Archive & ar, std::tuple<typename std::decay<Args>::type...> & t1)
 	{
-		std::tuple<Args...> t2;
-		SerializeOut<sizeof...(Args)>::serialize_out(ar, t1, t2);
+		SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename std::decay<Args>::type...> >(ar, t1);
 	}
 
-
-/*
-template<uint N>
-	struct ApplySerialization
-	{
-		template<class Archive, typename Function, typename... Args>
-			static void apply_serialization(Archive & ar, Function f, std::tuple<Args...> & t)
-			{
-				f(ar, std::get<N-1>(t));
-				ApplySerialization<N-1>::apply_serialization(ar, f, t);
-			}
-	};
-
-template<>
-	struct ApplySerialization<0>
-	{
-		template<class Archive, typename Function, typename... Args>
-			static void apply_serialization(Archive & ar, Function f, std::tuple<Args...> & t)
-			{
-			}
-	};
-
-template<class Archive, typename Function, typename... Args>
-	void apply_serialization(Archive & ar, Function f, std::tuple<Args...> & t)
-	{
-		ApplySerialization<sizeof...(Args)>::apply_serialization(ar, f, t);
-	}
-	*/
 
 // In and out 
 #if 0

@@ -54,7 +54,7 @@ class pop_parallel TestClass
 		pop_allocation(pop::local_allocator())
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
 
-		void pop_sync SetValues(int _i1, int _i2, double _d, std::string _s)
+		void pop_sync SetValues(int _i1, int _i2, double _d, const std::string& _s)
 		{
 			i1_ = _i1;
 			i2_ = _i2;
@@ -76,7 +76,7 @@ class pop_parallel TestClass
 			_s  = s_;
 		}
 
-		void SetTest(test_struct1& _test1){test1_.a = _test1.a;}
+		void SetTest(const test_struct1& _test1){test1_.a = _test1.a;}
 		// test_struct1 GetTest(){return test1_;}
 
 		void SetGps(gps_position& _gps) { gps_ = _gps;}

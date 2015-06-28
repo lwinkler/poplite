@@ -59,7 +59,7 @@ namespace pop
 					std::tuple<typename std::decay<Args>::type...> tup;
 					ia >> tup;
 					apply_tuple(_p_obj, _p_meth, tup, oa);
-					serialize_out(oa, tup);
+					serialize_out<bufout, Args...>(oa, tup);
 				}
 
 
