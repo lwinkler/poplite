@@ -19,6 +19,10 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		string user;
+		cout << "Enter your name: ";
+		cin >> user;
+
 		if(argc == 1)
 		{
 			// Create a server
@@ -26,14 +30,10 @@ int main(int argc, char* argv[])
 			cout << "Users can contact the server by typing:" << endl;
 			cout << argv[0] << " " << serv.contact().host_name_ << " " << serv.contact().port_ << endl;
 
-			string user;
-			cout << "Enter your name: ";
-			cin >> user;
-
 			cout << "Create a first client" << endl;
 			client_iface cl(user, serv.contact());
 
-			serv.connect_client(user, serv.contact()); // TODO
+			serv.connect_client(user, serv.contact());
 			serv.init_game();
 			serv.print_game(user);
 			cout << "Run the client" << endl;
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 			ap.port_      = atoi(argv[2]);
 
 			server_iface serv(ap);
-			client_iface cl("TODO", serv.contact());
+			client_iface cl(user, serv.contact());
 
 			cl.run();
 		}

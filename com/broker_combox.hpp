@@ -155,7 +155,6 @@ namespace pop {
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 
 				// Recreate a connection for contact
-				// TODO: is this possible to have a permanent service for contact ?
 				connection_ptr new_conn2(new connection(io_service_));
 				contact_acceptor_.async_accept(new_conn2->socket(), boost::bind(&broker_combox::handle_accept_contact, this, boost::asio::placeholders::error, new_conn2));
 			}

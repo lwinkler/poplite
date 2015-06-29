@@ -78,12 +78,12 @@ namespace pop {
 			}
 
 			// Synchronous write an object to the socket
-			template <typename T> void sync_write(const T& _obj)
+			template <typename T> inline void sync_write(const T& _obj)
 			{
-					std::stringstream ss;
-					bufout ia(ss);
-					ia << _obj;
-					sync_write_ss(ss);
+				std::stringstream ss;
+				bufout ia(ss);
+				ia << _obj;
+				sync_write_ss(ss);
 			}
 
 			// Synchronous write to the socket

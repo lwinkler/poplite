@@ -94,7 +94,7 @@ class interface : private boost::noncopyable
 				return_class<R> ret(ia); // TODO: also for async
 				serialize_out<bufin, Args... >(ia, tup);
 
-				LOG(debug) << "received answer from broker" << &combox_.connec();
+				LOG(debug) << "received answer from broker";
 
 				std::string ack;
 				ia >> ack;
@@ -136,7 +136,7 @@ class interface : private boost::noncopyable
 					ia >> tup;
 
 				// TODO: serialize R
-				LOG(debug) << "received answer from broker" << &combox_.connec();
+				LOG(debug) << "received answer from broker";
 
 				std::string ack;
 				ia >> ack;
@@ -149,7 +149,7 @@ class interface : private boost::noncopyable
 			}
 			catch(std::exception& e)
 			{
-				LOG(error) << "exception in sync: " << e.what();
+				LOG(error) << "exception in async: " << e.what();
 			}
 			return R(); // TODO
 		}

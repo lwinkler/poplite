@@ -109,8 +109,8 @@ void server::connect_client(std::string _user, pop::accesspoint _ap)
 
 void server::send_message(const string& _message)
 {
-	cout << _message << endl;
-	return;
+	// cout << _message << endl;
+	// return;
 	for(auto elem : p_clients_)
 		elem.second->message(_message);
 }

@@ -13,7 +13,7 @@
 #ifndef POP_CLIENT_H
 #define POP_CLIENT_H
 
-#include "connection.hpp" // Must come before boost/serialization headers.
+#include "connection.hpp"
 #include "accesspoint.hpp"
 
 

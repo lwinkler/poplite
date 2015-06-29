@@ -15,7 +15,10 @@
 
 using namespace std;
 
-client::client(string _user, pop::accesspoint _server_ap) : points_(0), server_(_server_ap), username_(_user)
+client::client(string _user, pop::accesspoint _server_ap) : 
+	points_(0), 
+	server_(_server_ap), 
+	username_(_user)
 {
 }
 
@@ -30,7 +33,7 @@ void client::run()
 	string word;
 	while(true)
 	{
-	LOG(debug) << "guess";
+		LOG(debug) << "guess";
 		cout << "word: ";
 		cin >> word;
 		points_ += server_.guess(username_, word);
