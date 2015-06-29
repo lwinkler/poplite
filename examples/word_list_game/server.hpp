@@ -48,7 +48,7 @@ class pop_parallel server
 		// void end_game();
 		challenge create_challenge(int nb_, std::string category = "", char letter = ' ');
 
-		std::map<std::string, client_iface*>             p_clients_;
+		std::map<std::string, client_iface*>           p_clients_;
 		std::vector<std::string>                       categories_;
 		std::string                                    category_;
 		std::map<std::string, std::set<std::string>>   words_;

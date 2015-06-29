@@ -101,15 +101,15 @@ int server::guess(string _user, string _word)
 void server::connect_client(std::string _user, pop::accesspoint _ap)
 {
 	LOG(debug) << "server::connect";
-	client_iface* pcl = nullptr; //  new pop::client(_ap);
+	client_iface* pcl = new client_iface(_ap);
 	LOG(debug) << "created cl";
 	p_clients_[_user] = pcl;
-	send_message("Client " + _user + " connected\n");
+	send_message("Client " + to_string(p_clients_.size()) + " " + _user + " connected");
 }
 
 void server::send_message(const string& _message)
 {
-	// cout << _message << endl;
+	cout << _message << endl;
 	// return;
 	for(auto elem : p_clients_)
 		elem.second->message(_message);

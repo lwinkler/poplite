@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 			cout << "Create a first client" << endl;
 			client_iface cl(user, serv.contact());
 
-			serv.connect_client(user, serv.contact());
+			serv.connect_client(user, cl.contact());
 			serv.init_game();
 			serv.print_game(user);
 			cout << "Run the client" << endl;
@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
 
 			server_iface serv(ap);
 			client_iface cl(user, serv.contact());
+			serv.connect_client(user, cl.contact());
 
 			cl.run();
 		}
