@@ -118,8 +118,8 @@ class interface : private boost::noncopyable
 		{
 			try
 			{
-				LOG(debug) << "call sync "<< _method_id;
-				std::tuple<Args&...> tup(std::forward_as_tuple(args...));
+				LOG(debug) << "call async "<< _method_id;
+				std::tuple<Args...> tup(std::forward_as_tuple(args...));
 				std::stringstream oss;
 				bool is_async = true;
 				bufout oa(oss);
@@ -131,11 +131,11 @@ class interface : private boost::noncopyable
 				LOG(debug) << "sent to broker";
 
 				combox_.connec().sync_read(); //TODO: try sync_read(tup)
-				bufin ia(combox_.connec().input_stream());
-				if(std::tuple_size<std::tuple<Args...>>::value)
-					ia >> tup;
 
-				// TODO: serialize R
+				bufin ia(combox_.connec().input_stream());
+				return_class<R> ret(ia); // TODO: also for async
+				serialize_out<bufin, Args... >(ia, tup);
+
 				LOG(debug) << "received answer from broker";
 
 				std::string ack;
@@ -146,12 +146,13 @@ class interface : private boost::noncopyable
 				if(_method_id == -1) // TODO: use code
 					combox_.connec().socket().close();
 
+				return ret.return_value();
 			}
 			catch(std::exception& e)
 			{
-				LOG(error) << "exception in async: " << e.what();
+				LOG(error) << "exception in sync: " << e.what();
 			}
-			return R(); // TODO
+			return R();
 		}
 
 

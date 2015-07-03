@@ -16,6 +16,7 @@
 #include "connection.hpp" // Must come before boost/serialization headers.
 #include "class/broker.hpp"
 #include "com/accesspoint.hpp"
+#include <thread>
 
 
 namespace pop {
@@ -44,11 +45,17 @@ namespace pop {
 				LOG(debug) <<"async connect";
 				connection_ptr new_conn(new connection(io_service_));
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
-
-				io_service_.run();
 			}
 			/// Run io server
-			inline void run(){io_service_.run();}
+			inline void run(){
+				std::vector<std::thread> workers;
+				for (int i = 0; i < 5; i++)
+				{
+					workers.push_back(std::thread([&]() {io_service_.run();}));
+				}
+				std::for_each(workers.begin(), workers.end(), [](std::thread &t){t.join();});
+			}
+
 			inline const boost::asio::ip::tcp::endpoint& contact() const {return contact_acceptor_.local_endpoint();}
 
 		private:
@@ -117,10 +124,14 @@ namespace pop {
 					conn->sync_write_ss(oss);
 					LOG(debug) << "sent ack";
 					brok_.remote_call(method_id, ia, oa);
+					std::thread t([&]() {io_service_.poll_one();});
+					t.detach();
 				}
 				else
 				{
 					brok_.remote_call(method_id, ia, oa);
+					std::thread t([&]() {io_service_.poll_one();});
+					t.detach();
 
 					LOG(debug) << "finish calling remote method " << method_id;
 
