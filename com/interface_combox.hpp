@@ -39,7 +39,7 @@ namespace pop {
 			inline const boost::asio::ip::tcp::endpoint endpoint() const {return acceptor_.local_endpoint();}
 			inline const pop::accesspoint& contact(){return contact_;}
 
-			void send_my_contact(const pop::accesspoint& _contact, const pop::accesspoint& _to)
+			void send_my_contact(const pop::accesspoint& _to)
 			{
 				boost::asio::ip::tcp::resolver resolver(io_service_);
 				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_to.create_query());
@@ -48,7 +48,30 @@ namespace pop {
 				boost::asio::connect(contact_connection.socket(), endpoint_iterator);
 
 				// Send the address to the broker
-				contact_connection.sync_write(_contact);
+				std::stringstream oss;
+				bufout oa(oss);
+				static const int service_type = 1; // TODO enum
+				oa << service_type;
+				pop::accesspoint ap(acceptor_.local_endpoint());
+				oa << ap;
+				contact_connection.sync_write_ss(oss);
+			}
+
+			void close_service()
+			{
+				LOG(debug) << "Closing service from interface";
+				boost::asio::ip::tcp::resolver resolver(io_service_);
+				boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(contact_.create_query());
+
+				connection contact_connection(io_service_);
+				boost::asio::connect(contact_connection.socket(), endpoint_iterator);
+
+				// Send the address to the broker
+				std::stringstream oss;
+				bufout oa(oss);
+				static const int service_type = 0; // TODO enum
+				oa << service_type;
+				contact_connection.sync_write_ss(oss);
 			}
 
 		private:

@@ -55,7 +55,7 @@ class interface : private boost::noncopyable
 			linkLife_(false)
 		{
 			// Send our endpoint
-			combox_.send_my_contact(combox_.endpoint(), _contact);
+			combox_.send_my_contact(_contact);
 			
 			// Wait for the broker to call us back
 			combox_.run();
@@ -63,8 +63,14 @@ class interface : private boost::noncopyable
 
 		~interface()
 		{
+			// Close our current socket
+			sync<void>(-1);
+
 			if(linkLife_)
-				sync<void>(-1);
+			{
+				// Close the service of the remote object
+				combox_.close_service();
+			}
 		}
 
 		template<typename R, typename ...Args> R sync(int _method_id, Args& ...args)

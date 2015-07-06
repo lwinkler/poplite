@@ -17,7 +17,7 @@
 class pop_parallel ping_pong
 {
 	public:
-		pop_allocation(pop::manual_allocator())
+		pop_allocation(pop::local_allocator())
 		ping_pong() {}
 
 		void pop_sync  sync_ping(const pop::accesspoint& _target, int _cpt);

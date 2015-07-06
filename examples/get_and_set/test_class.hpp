@@ -51,7 +51,7 @@ class gps_position
 class pop_parallel TestClass
 {
 	public:
-		pop_allocation(pop::local_allocator())
+		pop_allocation(pop::manual_allocator())
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
 
 		void pop_sync SetValues(int _i1, int _i2, double _d, const std::string& _s)
