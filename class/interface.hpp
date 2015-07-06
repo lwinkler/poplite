@@ -67,11 +67,6 @@ class interface : private boost::noncopyable
 				sync<void>(-1);
 		}
 
-		inline void destructor()
-		{
-			sync<void>(-1);
-		}
-
 		template<typename R, typename ...Args> R sync(int _method_id, Args& ...args)
 		{
 			try
@@ -88,10 +83,17 @@ class interface : private boost::noncopyable
 
 				LOG(debug) << "sent to broker";
 
+				if(_method_id == -1) // TODO: use code
+				{
+					//sleep(1);
+					combox_.connec().socket().close(); // TODO async
+					return R();
+				}
+
 				combox_.connec().sync_read(); //TODO: try sync_read(tup)
 
 				bufin ia(combox_.connec().input_stream());
-				return_class<R> ret(ia); // TODO: also for async
+				return_class<R> ret(ia);
 				serialize_out<bufin, Args... >(ia, tup);
 
 				LOG(debug) << "received answer from broker";
@@ -101,9 +103,6 @@ class interface : private boost::noncopyable
 				LOG(debug) << "received ack=" << ack;
 				if(ack != "ACK")
 					throw std::runtime_error("did not receive ack");
-				if(_method_id == -1) // TODO: use code
-					combox_.connec().socket().close();
-
 				return ret.return_value();
 			}
 			catch(std::exception& e)
@@ -133,7 +132,7 @@ class interface : private boost::noncopyable
 				combox_.connec().sync_read(); //TODO: try sync_read(tup)
 
 				bufin ia(combox_.connec().input_stream());
-				return_class<R> ret(ia); // TODO: also for async
+				return_class<R> ret(ia);
 				serialize_out<bufin, Args... >(ia, tup);
 
 				LOG(debug) << "received answer from broker";
@@ -150,7 +149,7 @@ class interface : private boost::noncopyable
 			}
 			catch(std::exception& e)
 			{
-				LOG(error) << "exception in sync: " << e.what();
+				LOG(error) << "exception in async: " << e.what();
 			}
 			return R();
 		}

@@ -30,7 +30,8 @@ int main(int argc, char* argv[])
 		p2.set_contact(p2.contact());
 
 		// p2.sync_ping(p1.contact(), atoi(argv[1]));
-		p2.async_ping(p1.contact(), atoi(argv[1]));
+		p2.sync_ping(p1.contact(), atoi(argv[1]));
+		// p2.sync_ping(p1.contact(), atoi(argv[1]));
 
 	}
 	catch (std::exception& e)
