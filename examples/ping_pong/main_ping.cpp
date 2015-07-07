@@ -30,8 +30,10 @@ int main(int argc, char* argv[])
 		p2.set_contact(p2.contact());
 
 		// p2.sync_ping(p1.contact(), atoi(argv[1]));
-		p2.sync_ping(p1.contact(), atoi(argv[1]));
+		p2.async_ping(p1.contact(), atoi(argv[1]));
+		p2.async_ping(p1.contact(), atoi(argv[1]));
 		// p2.sync_ping(p1.contact(), atoi(argv[1]));
+		sleep(2); // TODO: Remove this and use a callback
 
 	}
 	catch (std::exception& e)

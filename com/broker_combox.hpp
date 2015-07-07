@@ -49,7 +49,9 @@ namespace pop {
 			/// Run io server
 			inline void run(){
 				std::vector<std::thread> workers;
-				for (int i = 0; i < 5; i++)
+				// note: so far we can only set up a fixed number of threads
+				//       this determines the max number of simultaneous calls to the broker
+				for (int i = 0; i < 10; i++)
 				{
 					workers.push_back(std::thread([&]() {io_service_.run();}));
 				}
@@ -124,14 +126,10 @@ namespace pop {
 					conn->sync_write_ss(oss);
 					LOG(debug) << "sent ack";
 					brok_.remote_call(method_id, ia, oa);
-					std::thread t([&]() {io_service_.poll_one();});
-					t.detach();
 				}
 				else
 				{
 					brok_.remote_call(method_id, ia, oa);
-					std::thread t([&]() {io_service_.poll_one();});
-					t.detach();
 
 					LOG(debug) << "finish calling remote method " << method_id;
 

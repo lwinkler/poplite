@@ -21,6 +21,6 @@ void ping_pong::pop_sync async_ping(const pop::accesspoint& _target, int _cpt)
 	{
 		// Call next target
 		ping_pong_iface iface(_target);
-		iface.sync_ping(contact_, _cpt - 1);
+		iface.async_ping(contact_, _cpt - 1);
 	}
 }

@@ -20,7 +20,7 @@ namespace pop {
 	class accesspoint
 	{
 		public:
-			accesspoint() : host_name_(""), port_(0) {}
+			accesspoint() noexcept : host_name_(""), port_(0) {}
 
 			accesspoint(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : 
 				host_name_(boost::asio::ip::host_name()), // TODO: Try with address().to_string()
