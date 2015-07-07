@@ -16,9 +16,9 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	if(argc != 2)
+	if(argc != 3 || (string(argv[1]) != "async" && string(argv[1]) != "sync" ))
 	{
-		cerr << "usage: " << argv[0] << " <nb pings>" << endl;
+		cerr << "usage: " << argv[0] << " <sync or async> <nb pings>" << endl;
 		return 1;
 	}
 
@@ -29,12 +29,15 @@ int main(int argc, char* argv[])
 		ping_pong_iface p2;
 		p2.set_contact(p2.contact());
 
-		// p2.sync_ping(p1.contact(), atoi(argv[1]));
-		p2.async_ping(p1.contact(), atoi(argv[1]));
-		p2.async_ping(p1.contact(), atoi(argv[1]));
-		// p2.sync_ping(p1.contact(), atoi(argv[1]));
-		sleep(2); // TODO: Remove this and use a callback
-
+		if(string(argv[1]) == "async")
+		{
+			p2.async_ping(p1.contact(), atoi(argv[2]));
+			sleep(2); // TODO: Remove this and use a callback
+		}
+		else
+		{
+			p2.sync_ping(p1.contact(), atoi(argv[2]));
+		}
 	}
 	catch (std::exception& e)
 	{

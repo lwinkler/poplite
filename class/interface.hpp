@@ -138,8 +138,8 @@ class interface : private boost::noncopyable
 				combox_.connec().sync_read(); //TODO: try sync_read(tup)
 
 				bufin ia(combox_.connec().input_stream());
-				return_class<R> ret(ia);
-				serialize_out<bufin, Args... >(ia, tup);
+				// return_class<R> ret(ia);
+				// serialize_out<bufin, Args... >(ia, tup); // TODO: Verify that async does not return anything
 
 				LOG(debug) << "received answer from broker";
 
@@ -151,7 +151,7 @@ class interface : private boost::noncopyable
 				if(_method_id == -1) // TODO: use code
 					combox_.connec().socket().close();
 
-				return ret.return_value();
+				return; // ret.return_value(); // TODO: maybe return a future value
 			}
 			catch(std::exception& e)
 			{

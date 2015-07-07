@@ -119,13 +119,13 @@ namespace pop {
 				else if(is_async)
 				{
 					// if the call is asynchronous, we send the ack directly
-					LOG(debug) << "finish calling remote method " << method_id;
 
 					std::string ack("ACK");
 					oa << ack;
 					conn->sync_write_ss(oss);
 					LOG(debug) << "sent ack";
 					brok_.remote_call(method_id, ia, oa);
+					LOG(debug) << "finish calling remote method " << method_id;
 				}
 				else
 				{
