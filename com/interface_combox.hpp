@@ -25,6 +25,7 @@ namespace pop {
 			/// Constructor
 			interface_combox() :
 				acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))),
+				callback_(acceptor_.local_endpoint()),
 				connection_(io_service_)
 			{
 				// Start an accept operation for a new connection.
@@ -37,7 +38,8 @@ namespace pop {
 			inline void run(){io_service_.run();}
 			inline connection& connec(){return connection_;}
 			inline const boost::asio::ip::tcp::endpoint endpoint() const {return acceptor_.local_endpoint();}
-			inline const pop::accesspoint& contact(){return contact_;}
+			inline const pop::accesspoint& contact() const {return contact_;}
+			inline const pop::accesspoint& callback() const {return callback_;}
 
 			void send_my_contact(const pop::accesspoint& _to)
 			{
@@ -92,6 +94,7 @@ namespace pop {
 		boost::asio::io_service io_service_;
 		connection connection_;
 		boost::asio::ip::tcp::acceptor acceptor_;
+		pop::accesspoint callback_;
 		pop::accesspoint contact_;
 	};
 } // namespace

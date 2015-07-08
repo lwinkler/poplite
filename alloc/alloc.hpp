@@ -13,6 +13,7 @@
 
 #include <boost/asio/ip/tcp.hpp>
 #include "class/system.hpp"
+#include "com/accesspoint.hpp"
 
 #define MAX_STR 512
 
@@ -25,7 +26,7 @@ class allocator
 {
 	public:
 	/// Allocate an object at endpoint
-	virtual void allocate(const std::string& _obj_name, const boost::asio::ip::tcp::endpoint& _endpoint) const = 0;
+	virtual void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const = 0;
 };
 }
 

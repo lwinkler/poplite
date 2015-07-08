@@ -15,6 +15,11 @@ def write_head(fout, filename, mid_file):
 #include "%s"
 #include "%s"
 
+#include "alloc/alloc.hpp"
+#include "alloc/local.hpp"
+#include "alloc/manual.hpp"
+#include "alloc/ssh.hpp"
+
 """ % (parser.capitalize(filename), parser.capitalize(filename), mid_file, filename))
 
 #--------------------------------------------------------------------------------

@@ -45,7 +45,7 @@ class interface : private boost::noncopyable
 			combox_(),
 			linkLife_(_linkLife)
 		{
-			_allocator.allocate(_executable, combox_.endpoint());
+			_allocator.allocate(_executable, combox_.callback());
 			// Handle connection
 			combox_.run();
 		}

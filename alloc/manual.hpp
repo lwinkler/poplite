@@ -20,10 +20,10 @@ class manual_allocator : public allocator
 {
 	public:
 	manual_allocator(){}
-	void allocate(const std::string& _obj_name, const boost::asio::ip::tcp::endpoint& _endpoint) const
+	void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const
 	{
 		std::stringstream ss;
-		ss << "./" << _obj_name << " " << _endpoint.address() << " " << _endpoint.port();
+		ss << "./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
 		LOG(info) << "Start object " << _obj_name << " with command :";
 		LOG(info) << ss.str();
 	}

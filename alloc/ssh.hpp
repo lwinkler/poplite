@@ -23,10 +23,10 @@ namespace pop{
 	{
 		public:
 			ssh_allocator(const std::string& _url): url_(_url){}
-			void allocate(const std::string& _obj_name, const boost::asio::ip::tcp::endpoint& _endpoint) const
+			void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const
 			{
 				std::stringstream ss;
-				ss << "ssh" << " " << url_ << " ./" << _obj_name << " " << _endpoint.address() << " " << _endpoint.port();
+				ss << "ssh" << " " << url_ << " ./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
 				LOG(debug) << "Run object with :" << ss.str();
 
 				/*Spawn a child to run the program.*/
@@ -37,8 +37,8 @@ namespace pop{
 					std::stringstream ss2;
 					snprintf(buf0, sizeof(buf0), "./%s", _obj_name.c_str());
 
-					ss1 << _endpoint.address();
-					ss2 << _endpoint.port();
+					ss1 << _callback.host_name;
+					ss2 << _callback.port;
 
 					execlp("ssh", "ssh", url_.c_str(), buf0, ss1.str().c_str(), ss2.str().c_str(), (const char*)nullptr);
 					perror("Error in execution of object file");

@@ -13,6 +13,8 @@
 
 
 #include "class/system.hpp"
+#include "alloc/alloc.hpp"
+
 
 #define MAX_STR 512
 
@@ -23,10 +25,10 @@ class local_allocator : public allocator
 {
 	public:
 	local_allocator(){}
-	void allocate(const std::string& _obj_name, const boost::asio::ip::tcp::endpoint& _endpoint) const
+	void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const
 	{
 		std::stringstream ss;
-		ss << "./" << _obj_name << " " << _endpoint.address() << " " << _endpoint.port();
+		ss << "./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
 		LOG(debug) << "Run object with :" << ss.str();
 
 		/*Spawn a child to run the program.*/
@@ -37,8 +39,8 @@ class local_allocator : public allocator
 			std::stringstream ss2;
 			snprintf(buf0, sizeof(buf0), "./%s", _obj_name.c_str());
 
-			ss1 << _endpoint.address();
-			ss2 << _endpoint.port();
+			ss1 << _callback.host_name;
+			ss2 << _callback.port;
 
 			execlp(buf0, buf0, ss1.str().c_str(), ss2.str().c_str(), (const char*)nullptr);
 			perror("Error in execution of object file");

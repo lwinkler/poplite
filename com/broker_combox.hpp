@@ -165,7 +165,7 @@ namespace pop {
 						// Open a contact with a new interface
 						pop::accesspoint ap;
 						ia >> ap;
-						LOG(debug) << "Call iface on "<< ap.host_name_ << " " << ap.port_;
+						LOG(debug) << "Call iface on "<< ap.host_name << " " << ap.port;
 
 						boost::asio::ip::tcp::resolver resolver(io_service_);
 						boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(ap.create_query());
