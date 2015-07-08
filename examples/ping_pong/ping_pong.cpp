@@ -3,7 +3,7 @@
 #include "ping_pong.hpp"
 #include "ping_pong.iface.hpp"
 
-void ping_pong::pop_sync sync_ping(const pop::accesspoint& _target, int _cpt)
+void ping_pong::sync_ping(const pop::accesspoint& _target, int _cpt)
 {
 	std::cout << "Counter = " << _cpt << std::endl;
 	if(_cpt)
@@ -14,7 +14,7 @@ void ping_pong::pop_sync sync_ping(const pop::accesspoint& _target, int _cpt)
 	}
 }
 
-void ping_pong::pop_sync async_ping(const pop::accesspoint& _target, int _cpt)
+void ping_pong::async_ping(const pop::accesspoint& _target, int _cpt)
 {
 	std::cout << "Counter = " << _cpt << std::endl;
 	if(_cpt)

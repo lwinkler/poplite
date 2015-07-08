@@ -21,7 +21,10 @@
 
 // Lines for boost log
 #define BOOST_LOG_DYN_LINK
+#include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+
 #define LOG BOOST_LOG_TRIVIAL
 
 #include "alloc/alloc.hpp"

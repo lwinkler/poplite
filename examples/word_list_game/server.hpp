@@ -30,23 +30,23 @@ struct challenge
 };
 
 /// The server that handles the game
-class pop_parallel server
+POP_CLASS server
 {
 	public:
-		pop_allocation(pop::local_allocator())
+		POP_ALLOCATION(pop::local_allocator())
 		server();
 		~server();
 
-		int guess(std::string _user, std::string _word);
+		int guess(const std::string& _user, const std::string& _word);
 
-		void connect_client(std::string _user, pop::accesspoint _client_contact);
+		void connect_client(const std::string& _user, const pop::accesspoint& _client_contact);
 		void init_game();
-		void print_game(std::string _username);
+		void POP_ASYNC print_game(const std::string& _username = "");
 
 	private:
-		void send_message(const std::string& _msg);
+		void POP_ASYNC send_message(const std::string& _msg, const std::string& _user = "");
 		// void end_game();
-		challenge create_challenge(int nb_, std::string category = "", char letter = ' ');
+		challenge create_challenge(int nb_, const std::string& category = "", char letter = ' ');
 
 		std::map<std::string, client_iface*>           p_clients_;
 		std::vector<std::string>                       categories_;

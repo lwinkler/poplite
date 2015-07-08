@@ -2,6 +2,9 @@
 
 int main(int argc, char* argv[])
 {
+
+	boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::info); // TODO: parameters
+
 	try
 	{
 		// Check command line arguments.

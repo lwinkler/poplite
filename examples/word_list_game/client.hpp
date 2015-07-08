@@ -15,10 +15,10 @@
 #include "server.iface.hpp"
 
 
-class pop_parallel client
+POP_CLASS client
 {
 	public:
-		pop_allocation(pop::local_allocator())
+		POP_ALLOCATION(pop::local_allocator())
 		client(std::string _user, pop::accesspoint _server_ap);
 		~client();
 

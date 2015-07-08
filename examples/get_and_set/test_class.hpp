@@ -48,13 +48,13 @@ class gps_position
 		bool operator == (const gps_position& _gps){return degrees == _gps.degrees && minutes == _gps.minutes && seconds == _gps.seconds;}
 };
 
-class pop_parallel TestClass
+POP_CLASS TestClass
 {
 	public:
-		pop_allocation(pop::manual_allocator())
+		POP_ALLOCATION(pop::manual_allocator())
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
 
-		void pop_sync SetValues(int _i1, int _i2, double _d, const std::string& _s)
+		void POP_SYNC SetValues(int _i1, int _i2, double _d, const std::string& _s)
 		{
 			i1_ = _i1;
 			i2_ = _i2;

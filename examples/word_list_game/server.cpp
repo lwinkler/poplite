@@ -26,7 +26,7 @@ server::server() : seed_(time(NULL))
 	cout << "Please choose language:" << endl;
 	for(const auto& entry : boost::make_iterator_range(boost::filesystem::directory_iterator("data"), {}))
 	{
-		std::cout << num << ": " << entry.path().filename() << endl;
+		cout << num << ": " << entry.path().filename() << endl;
 		languages.push_back(entry.path().filename().string());
 		num++;
 	}
@@ -72,7 +72,7 @@ server::~server()
 		delete elem.second;
 }
 
-int server::guess(string _user, string _word)
+int server::guess(const string& _user, const string& _word)
 {
 	bool complete = true;
 	int points = 0;
@@ -85,7 +85,7 @@ int server::guess(string _user, string _word)
 			// cout << (_word.at(0) == chal.letter) << (find(dict.begin(), dict.end(), _word) != dict.end())<<endl;
 			if(word.at(0) == chal.letter && find(dict.begin(), dict.end(), word) != dict.end())
 			{
-				send_message(_word + " is a correct answer for " + chal.category);
+				p_clients_[_user]->message(_word + " is a correct answer for " + chal.category);
 				chal.num--;
 				points++;
 			}
@@ -93,35 +93,44 @@ int server::guess(string _user, string _word)
 		}
 	}
 	if(complete)
-		send_message("Congratulation, you won !");
+	{
+		p_clients_[_user]->message("Congratulation, you won !");
+		send_message("The game has been won by player " + _user);
+		return points;
+	}
+	
+	// Re-print the state of the game
 	print_game(_user);
+
 	return points;
 }
 
-void server::connect_client(std::string _user, pop::accesspoint _ap)
+void server::connect_client(const std::string& _user, const pop::accesspoint& _ap)
 {
 	LOG(debug) << "server::connect";
 	client_iface* pcl = new client_iface(_ap);
 	LOG(debug) << "created cl";
 	p_clients_[_user] = pcl;
-	send_message("Client " + to_string(p_clients_.size()) + " " + _user + " connected");
+	cout << "Client " << p_clients_.size() << " " << _user << " connected" << endl;
 }
 
-void server::send_message(const string& _message)
+void server::send_message(const string& _message, const string& _user)
 {
-	cout << _message << endl;
-	// return;
-	for(auto elem : p_clients_)
-		elem.second->message(_message);
+	if(_user.empty())
+		for(auto elem : p_clients_)
+			elem.second->message(_message);
+	else
+		p_clients_[_user]->message(_message);
 }
 
-challenge server::create_challenge(int nb_, std::string category, char letter)
+challenge server::create_challenge(int nb_, const std::string& category, char letter)
 {
-	if(category.empty())
-		category = categories_.at(rand_r(&seed_) % categories_.size());
+	string cat = category;
+	if(cat.empty())
+		cat = categories_.at(rand_r(&seed_) % categories_.size());
 	if(letter == ' ')
 		letter = 'A' + rand_r(&seed_) % 26;
-	return challenge(nb_, letter, category);
+	return challenge(nb_, letter, cat);
 }
 
 void server::init_game()
@@ -132,22 +141,21 @@ void server::init_game()
 	for(int i = 0 ; i < 10 ; i++)
 	{
 		challenge chal = create_challenge(1, category_);
-		stringstream ss;
-		send_message(ss.str());
 
 		for(auto &elem1 : p_clients_)
 		{
 			game_state_[elem1.first].push_back(chal);
 		}
 	}
+	print_game();
 }
 
-void server::print_game(string _username)
+void server::print_game(const string& _username)
 {
 	stringstream ss;
 	for(const auto& elem : game_state_[_username])
 	{
 		elem.print(ss);
 	}
-	send_message(ss.str());
+	send_message(ss.str(), _username);
 }
