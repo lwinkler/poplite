@@ -19,14 +19,6 @@ int main(int argc, char* argv[])
 {
 	boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::info);
 
-	    BOOST_LOG_TRIVIAL(trace) << "A trace severity message";
-	        BOOST_LOG_TRIVIAL(debug) << "A debug severity message";
-	            BOOST_LOG_TRIVIAL(info) << "An informational severity message";
-	                BOOST_LOG_TRIVIAL(warning) << "A warning severity message";
-	                    BOOST_LOG_TRIVIAL(error) << "An error severity message";
-	                        BOOST_LOG_TRIVIAL(fatal) << "A fatal severity message";
-
-
 	try
 	{
 		if(argc == 1)
@@ -35,7 +27,7 @@ int main(int argc, char* argv[])
 			server_iface serv;
 			cout << "waiting for other players: game will start as soon as you log in" << endl;
 			cout << "Users can contact the server by typing:" << endl;
-			cout << argv[0] << " " << serv.contact().host_name_ << " " << serv.contact().port_ << endl;
+			cout << argv[0] << " " << serv.contact().host_name << " " << serv.contact().port << endl;
 
 			string user;
 			cout << "Enter your name: ";
@@ -53,8 +45,8 @@ int main(int argc, char* argv[])
 		{
 			cout << "Create a client and connect to an existing server" << endl;
 			pop::accesspoint ap;
-			ap.host_name_ = argv[1];
-			ap.port_      = atoi(argv[2]);
+			ap.host_name = argv[1];
+			ap.port      = atoi(argv[2]);
 			server_iface serv(ap);
 
 			string user;
