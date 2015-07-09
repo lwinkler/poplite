@@ -16,7 +16,10 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	if(argc != 3 || (string(argv[1]) != "async" && string(argv[1]) != "sync" ))
+	// Init the pop system with arguments
+	pop::system::instance(argc, argv);
+
+	if(argc < 3 || (string(argv[1]) != "async" && string(argv[1]) != "sync" ))
 	{
 		cerr << "usage: " << argv[0] << " <sync or async> <nb pings>" << endl;
 		return 1;

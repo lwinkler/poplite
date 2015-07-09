@@ -2,7 +2,7 @@ project(poplite_world_list_game)
 
 include_directories(gen)
 
-find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log filesystem REQUIRED )
+find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log filesystem program_options REQUIRED )
 include_directories(${Boost_INCLUDE_DIR})
 
 pop_add_object(server server.hpp server.cpp)

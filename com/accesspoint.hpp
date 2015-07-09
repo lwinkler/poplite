@@ -23,7 +23,7 @@ namespace pop {
 			accesspoint() noexcept : host_name(""), port(0) {}
 
 			accesspoint(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : 
-				host_name(boost::asio::ip::host_name()), // TODO: Try with address().to_string() // TODO: resolve hostname from host. Add .local ?
+				host_name(pop::system::instance().host_name()),
 				port(_contact_endpoint.port())
 			{}
 			std::string host_name;

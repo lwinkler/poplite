@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 set(CMAKE_BUILD_TYPE       "Debug" CACHE BOOL "Mode of compilation")
 
 add_definitions(-std=c++11)
-find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log REQUIRED )
+find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log program_options REQUIRED )
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(.)
 
