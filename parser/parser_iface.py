@@ -1,6 +1,14 @@
 #!/usr/bin/env python
-""" Usage: call with <filename> <typename> # TODO
-"""
+
+##
+## parser_iface.py
+## ~~~~~~~~~~~~~~~
+##
+## Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+## 
+## Distributed under the Boost Software License, Version 1.0. (See accompanying
+## file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+##
 
 import parser
 
@@ -70,4 +78,3 @@ def write_meth(fout, m, id, classname):
 if __name__ == "__main__":
 	print "this file is a Python library: try using popgen instead"
 
-# TODO: remove all generated files before generation or check that no append is done

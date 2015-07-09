@@ -1,4 +1,15 @@
 #!/usr/bin/env python
+
+##
+## parser.py
+## ~~~~~~~~~
+##
+## Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+## 
+## Distributed under the Boost Software License, Version 1.0. (See accompanying
+## file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+##
+
 """ Usage: call with <filename> <typename>
 """
 
@@ -136,6 +147,7 @@ def get_allocation(constr_node):
 	return "pop::local_allocator()" # our default
 
 def list_args1(parent, comma = False):
+	""" List all types of arguments as a string with commas, if specified add an extra comma in front """
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.type.spelling)
@@ -145,6 +157,7 @@ def list_args1(parent, comma = False):
 		return ','.join(out)
 
 def list_args2(parent, comma = False):
+	""" List all arguments without types as a string with commas, if specified add an extra comma in front """
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.spelling)
@@ -154,6 +167,7 @@ def list_args2(parent, comma = False):
 		return ','.join(out)
 
 def list_args(parent, comma = False):
+	""" List all arguments with types as a string with commas, if specified add an extra comma in front """
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.type.spelling + " " + arg.spelling)
@@ -164,11 +178,10 @@ def list_args(parent, comma = False):
 
 
 def align(filename):
+	""" Align the file with command astyle """
 	call(["astyle", "-nToO", "--style=allman", filename])
 
 def main():
-# TODO remove
-
 	[src, tu] = parser.init_tu(sys.argv)
 	tu = index.parse(src, ["-I."])
 

@@ -52,7 +52,7 @@ namespace pop
 				}
 
 				/// A simple concurrent call to a method 
-				template<typename R, typename ...Args> static void conc(bufin& ia, bufout& oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...)) // TODO: Args by ref ?
+				template<typename R, typename ...Args> static void conc(bufin& ia, bufout& oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...))
 				{
 					if(!_p_obj)
 						throw std::runtime_error("Constructor has not been called");

@@ -30,6 +30,7 @@ private:
 	R r_;
 };
 
+/// Specification for void
 template<> class return_class<void>
 {
 public:
@@ -91,8 +92,7 @@ class interface : private boost::noncopyable
 
 				if(_method_id == -1) // TODO: use code
 				{
-					//sleep(1);
-					combox_.connec().socket().close(); // TODO async
+					combox_.connec().socket().close();
 					return R();
 				}
 
@@ -134,6 +134,12 @@ class interface : private boost::noncopyable
 				combox_.connec().sync_write_ss(oss);
 
 				LOG(debug) << "sent to broker";
+
+				if(_method_id == -1) // TODO: use code
+				{
+					combox_.connec().socket().close();
+					return R();
+				}
 
 				combox_.connec().sync_read(); //TODO: try sync_read(tup)
 

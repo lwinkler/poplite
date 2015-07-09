@@ -1,4 +1,15 @@
 #!/usr/bin/env python
+
+##
+## parser_ids.py
+## ~~~~~~~~~~~~~
+##
+## Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
+## 
+## Distributed under the Boost Software License, Version 1.0. (See accompanying
+## file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+##
+
 """ Usage: call with <filename> <typename>
 """
 
@@ -8,6 +19,7 @@ import parser
 #--------------------------------------------------------------------------------
 
 def write_head(fout, filename):
+	""" Write the header or the file """
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
 #ifndef _POP_%s_METH_IDS_H
@@ -18,6 +30,7 @@ def write_head(fout, filename):
 #--------------------------------------------------------------------------------
 
 def write_foot(fout):
+	""" Write the foot or the file """
 
 	fout.write("""
 #endif
