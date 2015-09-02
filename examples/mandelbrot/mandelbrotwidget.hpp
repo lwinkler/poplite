@@ -45,41 +45,42 @@
 #include <QWidget>
 #include "class/system.hpp"
 #include "renderthread.iface.hpp"
+#include "com/accesspoint.hpp"
+
 
 POP_CLASS MandelbrotWidget : public QWidget
 {
-    // Q_OBJECT
+	public:
+		MandelbrotWidget();
+		void setReferenceToWidget(const pop::accesspoint& ap){thread.setReferenceToWidget(ap);}
+		virtual void show(){QWidget::show();} // TODO: This line can be removed as soon as poplite handles inheritence properly
 
-public:
-    MandelbrotWidget();
-    virtual void show(){QWidget::show();} // TODO: This line can be removed as soon as poplite handles inheritence properly
-
-protected:
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+	protected:
+		void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+		void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+		void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 #ifndef QT_NO_WHEELEVENT
-    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
+		void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 #endif
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+		void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+		void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+		void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
-public:
-    void updatePixmap(const QImage &image, double scaleFactor);
-    void zoom(double zoomFactor);
+	public:
+		void updatePixmap(const QImage &image, double scaleFactor);
+		void zoom(double zoomFactor);
 
-private:
-    void scroll(int deltaX, int deltaY);
+	private:
+		void scroll(int deltaX, int deltaY);
 
-    RenderThread thread;
-    QPixmap pixmap;
-    QPoint pixmapOffset;
-    QPoint lastDragPos;
-    double centerX;
-    double centerY;
-    double pixmapScale;
-    double curScale;
+		RenderThread thread;
+		QPixmap pixmap;
+		QPoint pixmapOffset;
+		QPoint lastDragPos;
+		double centerX;
+		double centerY;
+		double pixmapScale;
+		double curScale;
 };
 
 #endif // MANDELBROTWIDGET_H

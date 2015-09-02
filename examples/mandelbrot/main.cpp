@@ -46,6 +46,9 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     MandelbrotWidget_iface widget;
+
+    // we need to set the reference of the worker
+    widget.setReferenceToWidget(widget.contact());
     widget.show();
     return app.exec();
 }

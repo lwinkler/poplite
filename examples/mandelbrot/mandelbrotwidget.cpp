@@ -44,6 +44,7 @@
 #include <math.h>
 
 #include "mandelbrotwidget.hpp"
+#include "com/accesspoint.hpp"
 
 const double DefaultCenterX = -0.637011f;
 const double DefaultCenterY = -0.0395159f;
@@ -54,7 +55,7 @@ const double ZoomOutFactor = 1 / ZoomInFactor;
 const int ScrollStep = 20;
 
 MandelbrotWidget::MandelbrotWidget()
-    : QWidget(0)
+    : QWidget(0), thread()
 {
     centerX = DefaultCenterX;
     centerY = DefaultCenterY;
