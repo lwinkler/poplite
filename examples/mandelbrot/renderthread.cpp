@@ -38,13 +38,12 @@
 **
 ****************************************************************************/
 
-#include "renderthread.h"
+#include "renderthread.hpp"
 
 #include <QtWidgets>
 #include <cmath>
 
-RenderThread::RenderThread(QObject *parent)
-    : QThread(parent)
+RenderThread::RenderThread()
 {
     restart = false;
     abort = false;
@@ -73,12 +72,14 @@ void RenderThread::render(double centerX, double centerY, double scaleFactor,
     this->scaleFactor = scaleFactor;
     this->resultSize = resultSize;
 
+/*
     if (!isRunning()) {
         start(LowPriority);
     } else {
         restart = true;
         condition.wakeOne();
     }
+    */
 }
 
 void RenderThread::run()
@@ -145,7 +146,7 @@ void RenderThread::run()
                 pass = 4;
             } else {
                 if (!restart)
-                    emit renderedImage(image, scaleFactor);
+                    ; // TODO emit renderedImage(image, scaleFactor);
                 ++pass;
             }
         }

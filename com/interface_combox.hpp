@@ -92,9 +92,9 @@ namespace pop {
 
 
 		boost::asio::io_service io_service_;
-		connection connection_;
 		boost::asio::ip::tcp::acceptor acceptor_;
 		pop::accesspoint callback_;
+		connection connection_;
 		pop::accesspoint contact_;
 	};
 } // namespace

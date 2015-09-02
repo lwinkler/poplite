@@ -61,7 +61,7 @@ MandelbrotWidget::MandelbrotWidget(QWidget *parent)
     pixmapScale = DefaultScale;
     curScale = DefaultScale;
 
-    connect(&thread, SIGNAL(renderedImage(QImage,double)), this, SLOT(updatePixmap(QImage,double)));
+    // connect(&thread, SIGNAL(renderedImage(QImage,double)), this, SLOT(updatePixmap(QImage,double)));
 
     setWindowTitle(tr("Mandelbrot"));
 #ifndef QT_NO_CURSOR

@@ -43,7 +43,7 @@
 
 #include <QPixmap>
 #include <QWidget>
-#include "renderthread.h"
+#include "renderthread.iface.hpp"
 
 class MandelbrotWidget : public QWidget
 {

@@ -24,6 +24,10 @@ cindex.Config.set_library_path("/usr/lib/llvm-3.5/lib")
 def init_tu(argv):
 	""" Initialize a translation unit with the clang parser
 	"""
+	if len(sys.argv) < 2:
+		print "usage: %s <header> <arguments...>" % sys.argv[0]
+		exit(1)
+
 	index = cindex.Index.create()
 	src = argv[1]
 	return [src, index.parse(src, ["-D_POP_PARSER_"] + argv[2:])]

@@ -38,7 +38,7 @@ namespace pop {
 
 		private:
 			friend class boost::serialization::access;
-			template<class Archive>void serialize(Archive & ar, const unsigned int version)
+			template<class Archive>void serialize(Archive & ar, const unsigned int /*version*/)
 			{
 				ar & host_name;
 				ar & port;

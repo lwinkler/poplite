@@ -14,6 +14,7 @@ from subprocess import call
 #--------------------------------------------------------------------------------
 
 def main():
+	# TODO: There seems to be a problem to parse headers with .h extensions
 
 	[filename_in, tu] = parser.init_tu(sys.argv)
 	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)

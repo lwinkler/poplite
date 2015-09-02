@@ -48,7 +48,7 @@ namespace pop
 	{
 		public:
 			system():empty_(true){}
-			system(int argc, char **argv) : empty_(false) {}
+			system(int argc, char **argv) : empty_(false) {(void)argc;(void)argv;} // TODO: Are arguments used ?
 
 			static const system& instance(int argc = 0, char **argv = nullptr)
 			{
@@ -77,7 +77,8 @@ namespace pop
 							;
 
 						boost::program_options::variables_map vm;
-						boost::program_options::store(boost::program_options::parsers::basic_command_line_parser(argc, argv, desc), vm);
+						// boost::program_options::store(boost::program_options::parsers::basic_command_line_parser(argc, argv, desc), vm);
+						boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 						boost::program_options::notify(vm);    
 
 						if (vm.count("pop-help")) {

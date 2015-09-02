@@ -37,7 +37,7 @@ template<typename TT, typename TS>
 	struct ser_element<TT, const TS&>
 	{
 		template<class Archive>
-			static void ser_el_out(Archive& ar, TT& el1){}
+			static void ser_el_out(Archive& /*ar*/, TT& /*el1*/){}
 	};
 
 
@@ -57,7 +57,7 @@ template<>
 	struct SerializeOut<0>
 	{
 		template<class Archive, typename TupleS, typename TupleT>
-			static void serialize_out(Archive & ar, TupleT & /*t1*/)
+			static void serialize_out(Archive & /*ar*/, TupleT & /*t1*/)
 			{
 			}
 	};
