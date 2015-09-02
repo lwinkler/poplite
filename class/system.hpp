@@ -25,6 +25,7 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/program_options.hpp>
+#include <boost/program_options/parsers.hpp>
 
 #define LOG BOOST_LOG_TRIVIAL
 
@@ -76,7 +77,7 @@ namespace pop
 							;
 
 						boost::program_options::variables_map vm;
-						boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+						boost::program_options::store(boost::program_options::parsers::basic_command_line_parser(argc, argv, desc), vm);
 						boost::program_options::notify(vm);    
 
 						if (vm.count("pop-help")) {
