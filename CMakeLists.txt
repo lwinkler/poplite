@@ -29,17 +29,16 @@ function(pop_add_object object_name header_name)
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
 
-	# extra arguments are seen as dependencies
-	set (extra_macro_args ${ARGN})
-
 	# message("Add command to generate gen/${_filename}.ids${_ext} gen/${_filename}.iface${_ext} gen/${_filename}.brok${_ext} gen/main.${object_name}.cpp")
 	# note: there are conflicts while generating multiple files with one command
 	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
 	add_custom_command(OUTPUT gen/${_filename}.iface${_ext} gen/${_filename}.ids${_ext} gen/${_filename}.brok${_ext} gen/main.${object_name}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${INC_DIRS}
 	DEPENDS ${header_name})
-	add_executable(${object_name}.obj gen/main.${object_name}.cpp ${extra_macro_args})
-	target_link_libraries(${object_name}.obj ${Boost_LIBRARIES})
+
+	# extra arguments are seen as dependencies
+	add_executable(${object_name}.obj gen/main.${object_name}.cpp ${ARGN})
+	target_link_libraries(${object_name}.obj ${Boost_LIBRARIES} "Qt5::Widgets")
 endfunction(pop_add_object)
 
 add_subdirectory(examples)
