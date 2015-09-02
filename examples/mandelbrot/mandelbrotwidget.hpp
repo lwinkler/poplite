@@ -43,14 +43,16 @@
 
 #include <QPixmap>
 #include <QWidget>
+#include "class/system.hpp"
 #include "renderthread.iface.hpp"
 
-class MandelbrotWidget : public QWidget
+POP_CLASS MandelbrotWidget : public QWidget
 {
-    Q_OBJECT
+    // Q_OBJECT
 
 public:
-    MandelbrotWidget(QWidget *parent = 0);
+    MandelbrotWidget();
+    virtual void show(){QWidget::show();} // TODO: This line can be removed as soon as poplite handles inheritence properly
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
@@ -63,7 +65,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
-private slots:
+public:
     void updatePixmap(const QImage &image, double scaleFactor);
     void zoom(double zoomFactor);
 

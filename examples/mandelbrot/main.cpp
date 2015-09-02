@@ -38,14 +38,14 @@
 **
 ****************************************************************************/
 
-#include "mandelbrotwidget.h"
+#include "mandelbrotwidget.iface.hpp"
 
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    MandelbrotWidget widget;
+    MandelbrotWidget_iface widget;
     widget.show();
     return app.exec();
 }
