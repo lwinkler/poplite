@@ -20,12 +20,16 @@ Installation
 Dependencies
 - boost libraries
 - for the parser
-	- clang 3.5
+	- clang 3.8
 	- Python bindings for clang
 	- astyle for alignement
 
-	sudo apt-get install libboost-all-dev libclang-3.5-dev pip astyle
+	sudo apt-get install libboost-all-dev libclang-3.8-dev python-pip astyle
 	sudo pip install clang
+
+Additionnally you may have to edit this line in **parser.py**:
+
+	cindex.Config.set_library_path("/usr/lib/llvm-3.8/lib")
 
 Example of parallel class
 -------------------------
