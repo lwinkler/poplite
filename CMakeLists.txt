@@ -38,7 +38,7 @@ function(pop_add_object object_name header_name)
 
 	# extra arguments are seen as dependencies
 	add_executable(${object_name}.obj gen/main.${object_name}.cpp ${ARGN})
-	target_link_libraries(${object_name}.obj ${Boost_LIBRARIES} "Qt5::Widgets")
+	target_link_libraries(${object_name}.obj ${Boost_LIBRARIES})
 endfunction(pop_add_object)
 
 add_subdirectory(examples)
