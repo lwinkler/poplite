@@ -12,6 +12,7 @@
 #define POPLITE_SYSTEM_H
 
 
+#include <iostream>
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/archive/text_oarchive.hpp>
