@@ -55,6 +55,22 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	/*
+	try
+	{
+		chat_client_iface cl1;
+		chat_client_iface cl2;
+		cl1.connect(cl2.contact());
+		cl2.connect(cl1.contact());
+		cl1.send("This is a test message");
+		cl2.send("This is another test message");
+	}
+	catch (std::exception& e)
+	{
+		cout << "ERROR: " << e.what() << endl;
+		return 1;
+	}
+	*/
 
 
 	return 0;
