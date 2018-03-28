@@ -1,7 +1,6 @@
 
 
 #include "ping_pong.hpp"
-#include "ping_pong.iface.hpp"
 
 void ping_pong::sync_ping(const pop::accesspoint& _target, int _cpt)
 {

@@ -18,7 +18,7 @@ import os
 import clang.cindex as cindex
 from subprocess import call
 
-cindex.Config.set_library_path("/usr/lib/llvm-3.5/lib")
+cindex.Config.set_library_path("/usr/lib/llvm-4.0/lib")
 
 
 def init_tu(argv):

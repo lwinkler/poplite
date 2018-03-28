@@ -21,7 +21,7 @@ def write_head(fout, filename, mid_file):
 #define _POP_%s_IFACE_H
 #include "class/interface.hpp"
 #include "%s"
-#include "%s"
+// #include "%s"
 
 #include "alloc/alloc.hpp"
 #include "alloc/local.hpp"

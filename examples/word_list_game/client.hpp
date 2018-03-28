@@ -12,8 +12,10 @@
 #define WORDLIST_CLIENT_HPP
 
 #include "com/accesspoint.hpp"
-#include "server.iface.hpp"
+#include "server.hpp"
 
+// this include should always be right before the parallel class declaration
+#include "client.iface.hpp"
 
 POP_CLASS client
 {

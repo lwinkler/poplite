@@ -10,8 +10,8 @@
 
 /// A game where the user has to guess as many words in one theme
 
-#include "server.iface.hpp"
-#include "client.iface.hpp"
+#include "server.hpp"
+#include "client.hpp"
 
 using namespace std;
 

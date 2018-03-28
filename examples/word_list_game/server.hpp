@@ -29,6 +29,9 @@ struct challenge
 	std::string category;
 };
 
+// this include should always be right before the parallel class declaration
+#include "server.iface.hpp"
+
 /// The server that handles the game
 POP_CLASS server
 {

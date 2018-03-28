@@ -48,6 +48,9 @@ class gps_position
 		bool operator == (const gps_position& _gps){return degrees == _gps.degrees && minutes == _gps.minutes && seconds == _gps.seconds;}
 };
 
+// this include should always be right before the parallel class declaration
+#include "test_class.iface.hpp"
+
 POP_CLASS TestClass
 {
 	public:
