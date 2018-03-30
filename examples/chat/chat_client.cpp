@@ -34,3 +34,8 @@ void chat_client::add_contact(const pop::accesspoint& _ap)
 		cerr << "Exception while adding contact " << e.what() << endl;
 	}
 }
+
+void chat_client::remove_contacts()
+{
+	connected_clients_.clear();
+}

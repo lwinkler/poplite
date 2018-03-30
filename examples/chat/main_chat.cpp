@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
 	chat_client_iface c1;
 
 	cout << "Contact this client at " << c1.contact().host_name << ":" << c1.contact().port << endl;
-
-	cout << "'c':connect" << endl;
+	cout << "'a':add contact" << endl;
+	cout << "'R':remove all contacts" << endl;
 	cout << "'w':write" << endl;
 	cout << "'q':quit" << endl;
 
@@ -36,15 +36,20 @@ int main(int argc, char* argv[])
 			cin >> cmd;
 			if(cmd == "q")
 				break;
-			else if(cmd == "c") {
+			else if(cmd == "a") {
 				pop::accesspoint ap;
 				cout << "host_name>";
 				cin >> ap.host_name;
 				cout << "port>";
 				cin >> ap.port;
 				c1.add_contact(ap);
-			}
-			else if(cmd == "w"){
+
+				// add to remote
+				chat_client_iface remote(ap);
+				remote.add_contact(c1.contact());
+			} else if(cmd == "R") {
+				c1.remove_contacts();
+			} else if(cmd == "w"){
 				string msg;
 				cout << ">>";
 				cin >> msg;
@@ -55,15 +60,15 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	/*
+	/* Alternative code
 	try
 	{
 		chat_client_iface cl1;
 		chat_client_iface cl2;
-		cl1.connect(cl2.contact());
-		cl2.connect(cl1.contact());
-		cl1.send("This is a test message");
-		cl2.send("This is another test message");
+		cl1.add_contact(cl2.contact());
+		cl2.add_contact(cl1.contact());
+		cl1.send_all("This is a test message");
+		cl2.send_all("This is another test message");
 	}
 	catch (std::exception& e)
 	{
