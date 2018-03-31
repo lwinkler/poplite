@@ -27,6 +27,7 @@
 #include <boost/log/expressions.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #define LOG BOOST_LOG_TRIVIAL
 
@@ -43,6 +44,15 @@ namespace pop
 	typedef boost::archive::binary_iarchive bufin;
 	typedef boost::archive::binary_oarchive bufout;
 #endif
+
+	// Utils
+	using noncopyable = boost::noncopyable;
+
+	// Types for thread locks // TODO maybe create a util file
+	using lock = boost::shared_mutex;
+	using write_lock = boost::unique_lock<lock>;
+	using read_lock =  boost::shared_lock<lock>;
+
 	
 	/// A class that contains all the parameters of one executable (either the main or an object executable)
 	class system

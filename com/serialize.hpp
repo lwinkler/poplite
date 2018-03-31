@@ -74,59 +74,6 @@ template<class Archive, typename... Args>
 	{
 		SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename std::decay<Args>::type...> >(ar, t1);
 	}
-
-
-// In and out 
-#if 0
-template<typename T> struct in
-{
-	inline in(T& val) : m_val(val){}
-	inline void marshallInterface(bufout& oa){oa<<m_val;}
-	inline void unmarshallBroker(){/*unmarshall(m_val);*/}
-
-	inline void marshallBroker(bufout& oa){}
-	inline void unmarshallInterface(){}
-
-	inline const T& operator = (const T& val){m_val = val;}
-	inline operator T(){return m_val;}
-
-	private:
-	T& m_val;
-};
-
-template<typename T> struct out
-{
-	inline out(T& val) : m_val(val){}
-	inline void marshallInterface(bufout& oa){}
-	inline void unmarshallBroker(){}
-
-	inline void marshallBroker(bufout& oa){oa<<m_val;}
-	inline void unmarshallInterface(){/*unmarshall(m_val);*/}
-
-	inline const T& operator = (const T& val){m_val = val;}
-	inline operator T(){return m_val;}
-
-	private:
-	T& m_val;
-};
-
-template<typename T> struct inout
-{
-	inline inout(T& val) : m_val(val){}
-	inline void marshallInterface(bufout& oa){oa<<m_val;}
-	inline void unmarshallBroker(){/*unmarshall(m_val);*/}
-
-	inline void marshallBroker(bufout& oa){oa<<m_val;}
-	inline void unmarshallInterface(){/*unmarshall(m_val);*/}
-
-	inline const T& operator = (const T& val){m_val = val;}
-	inline operator T(){return m_val;}
-
-	private:
-	T& m_val;
-};
-#endif
-
 }
 
 

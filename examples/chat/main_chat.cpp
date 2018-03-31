@@ -19,10 +19,12 @@ int main(int argc, char* argv[])
 	// Init the pop system with arguments
 	pop::system::instance(argc, argv);
 
-	chat_client_iface c1;
+	string username = argc > 2 ? argv[2] : getenv("USER");
+	chat_client_iface c1(username);
 
-	cout << "Contact this client at " << c1.contact().host_name << ":" << c1.contact().port << endl;
+	cout << "Contact this client " << username << " at " << c1.contact().host_name << ":" << c1.contact().port << endl;
 	cout << "'a':add contact" << endl;
+	cout << "'l':list connected clients" << endl;
 	cout << "'R':remove all contacts" << endl;
 	cout << "'w':write" << endl;
 	cout << "'q':quit" << endl;
@@ -49,11 +51,18 @@ int main(int argc, char* argv[])
 				remote.add_contact(c1.contact());
 			} else if(cmd == "R") {
 				c1.remove_contacts();
-			} else if(cmd == "w"){
+			} else if(cmd == "w") {
 				string msg;
-				cout << ">>";
-				cin >> msg;
+				cout << ">";
+				while(msg.empty())
+					getline(cin, msg);
 				c1.send_all(msg);
+			} else if(cmd == "l") {
+				map<string, pop::accesspoint> m;
+				c1.get_contacts(m);
+				cout << "Connected clients: " << 
+				for(auto& el : m)
+					cout << " - " << el.first << " on " << el.second.hostname << ":" << el.second.port:
 			}
 		} catch (exception e) {
 			cerr << "Exception :" << e.what() << endl;

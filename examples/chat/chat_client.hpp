@@ -11,7 +11,7 @@
 #ifndef CHAT_CLIENT_HPP
 #define CHAT_CLIENT_HPP
 
-#include <list>
+#include <map>
 
 #include "class/system.hpp"
 #include "com/accesspoint.hpp"
@@ -23,15 +23,19 @@ POP_CLASS chat_client
 {
 	public:
 		POP_ALLOCATION(pop::local_allocator())
-		chat_client() {}
+		chat_client(const std::string& _username) : username_(username_) {}
 
 		void POP_ASYNC send_all(const std::string& _text);
 		void POP_ASYNC print(const std::string& _text);
 		void POP_SYNC add_contact(const pop::accesspoint& _ap);
 		void POP_SYNC remove_contacts();
+		void POP_SYNC get_contacts(std::map<std::string, pop::accesspoint>& _contacts);
+		std::string POP_SYNC get_username() {return username_;}
 	
 	private:
-		std::list<chat_client_iface> connected_clients_;
+		std::map<std::string, std::shared_ptr<chat_client_iface>> connected_clients_;
+		std::string username_;
+		pop::lock contacts_lock_;
 };
 
 #endif

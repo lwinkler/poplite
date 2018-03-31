@@ -11,7 +11,6 @@ int main(int argc, char* argv[])
 		// Check command line arguments.
 		if (argc != 3)
 		{
-
 			LOG(error) << argc << "Usage: " << argv[0] << " <hostname of interface> <port of interface>";
 			return -1;
 		}
@@ -23,6 +22,11 @@ int main(int argc, char* argv[])
 	catch (std::exception& e)
 	{
 		LOG(error) << e.what();
+		return 1;
+	}
+	catch (...)
+	{
+		LOG(error) << "Unknown exception";
 		return 1;
 	}
 

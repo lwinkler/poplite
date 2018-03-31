@@ -22,7 +22,7 @@
 namespace pop {
 
 
-	/// Serves stock quote information to any client that connects to it.
+	/// Remove server for each parallel object
 	template<class ParClass>class broker_combox
 	{
 		public:
