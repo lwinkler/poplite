@@ -60,9 +60,9 @@ int main(int argc, char* argv[])
 			} else if(cmd == "l") {
 				map<string, pop::accesspoint> m;
 				c1.get_contacts(m);
-				cout << "Connected clients: " << 
+				cout << "Connected clients: " << endl;
 				for(auto& el : m)
-					cout << " - " << el.first << " on " << el.second.hostname << ":" << el.second.port:
+					cout << " - " << el.first << " on " << el.second.host_name << ":" << el.second.port;
 			}
 		} catch (exception e) {
 			cerr << "Exception :" << e.what() << endl;

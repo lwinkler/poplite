@@ -89,6 +89,10 @@ POP_CLASS TestClass
 
 		std::string GetStr() {return s_;}
 
+		std::vector<int> GetVector1(){return vi_;}
+		std::vector<gps_position> GetVector2(){return vgps_;}
+		std::map<int, std::string> GetMap1(){return mstr_;}
+
 	private:
 		int i1_;
 		int i2_;
@@ -96,6 +100,9 @@ POP_CLASS TestClass
 		std::string s_;
 		gps_position gps_;
 		test_struct1 test1_;
+		std::vector<int> vi_;
+		std::vector<gps_position> vgps_;
+		std::map<int, std::string> mstr_;
 };
 
 #endif

@@ -14,11 +14,19 @@ from subprocess import call
 #--------------------------------------------------------------------------------
 
 def main():
-	# TODO: There seems to be a problem to parse headers with .h extensions
-
-	[filename_in, tu] = parser.init_tu(sys.argv)
-	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)
+	# TODO: There seems to be a problem to parse headers with .h extensions, add -x c++ -std=c++17 and test
+	filename_in = sys.argv[1]
 	gendir = "gen"
+	mid_out = parser.generate_file_name(filename_in, gendir, "ids")
+	iface_out = parser.generate_file_name(filename_in, gendir, "iface")
+	brok_out = parser.generate_file_name(filename_in, gendir, "brok")
+
+	# if os.path.exists(mid_out): os.remove(mid_out)
+	# if os.path.exists(iface_out):os.remove(iface_out)
+	# if os.path.exists(brok_out): os.remove(brok_out)
+
+	tu = parser.init_tu(sys.argv)
+	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)
 
 	print "found %d parallel classe(s):" % len(parclasses)
 	for c in parclasses:
@@ -28,7 +36,6 @@ def main():
 		os.makedirs(gendir)
 	
 	# Generate the file containing methods and constructors ids
-	mid_out = parser.generate_file_name(filename_in, gendir, "ids")
 	print "Generate %s containing methods and constructors ids" % mid_out
 	with open(mid_out, "w") as fout:
 
@@ -42,7 +49,6 @@ def main():
 	parser.align(mid_out)
 
 	# Generate the file containing the interface
-	iface_out = parser.generate_file_name(filename_in, gendir, "iface")
 	print "Generate %s containing the interface" % iface_out
 	with open(iface_out, "w") as fout:
 
@@ -56,7 +62,6 @@ def main():
 	parser.align(iface_out)
 
 	# Generate the file containing the broker
-	brok_out = parser.generate_file_name(filename_in, gendir, "brok")
 	print "Generate %s containing the remote broker" % brok_out
 	with open(brok_out, "w") as fout:
 

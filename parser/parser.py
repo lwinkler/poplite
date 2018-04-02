@@ -18,7 +18,7 @@ import os
 import clang.cindex as cindex
 from subprocess import call
 
-cindex.Config.set_library_path("/usr/lib/llvm-4.0/lib")
+cindex.Config.set_library_path("/usr/lib/llvm-5.0/lib")
 
 
 def init_tu(argv):
@@ -30,7 +30,7 @@ def init_tu(argv):
 
 	index = cindex.Index.create()
 	src = argv[1]
-	return [src, index.parse(src, ["-D_POP_PARSER_"] + argv[2:])]
+	return index.parse(src, ["-D_POP_PARSER_", "-x", "c++", "-std=c++17"] + argv[2:])
 
 def generate_file_name(header, directory, label):
 	""" Generate a filename with path with an added label

@@ -38,7 +38,7 @@ void chat_client::add_contact(const pop::accesspoint& _ap)
 				return;
 			}
 		}
-		// note: maybe one day, improve this code and avoid using a map of pointers
+		// note: maybe one day, improve this code and avoid using a map of pointers and use move operators
 		connected_clients_.emplace(username, pcl);
 	} catch(exception& e) {
 		cerr << "Exception while adding contact " << e.what() << endl;
@@ -51,9 +51,10 @@ void chat_client::remove_contacts()
 }
 
 
-void chat_client::get_contacts(map<string, accesspoint>& _contacts) {
+map<string, accesspoint> chat_client::get_contacts() {
 	map<string, accesspoint> res;
 	for(auto& el : connected_clients_) {
 		res.insert(make_pair(el.first, el->second.get_contact()));
 	}
+	return res;
 }

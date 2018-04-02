@@ -39,7 +39,7 @@ public:
 };
 
 /// Interface is the local part used to communicate with a broker (remote) that contains the instanciation of the parallel object
-class interface : private boost::noncopyable
+class interface
 {
 	public:
 		interface(const std::string& _executable, const pop::allocator& _allocator, bool _linkLife = true) :
@@ -62,6 +62,14 @@ class interface : private boost::noncopyable
 			combox_.run();
 		}
 
+		interface(interface&&) = default; // TODO: Move is not working due to parent classes. See if boost fixes this
+		interface& operator=(interface&&) = default;
+
+		// you shall not copy
+		interface(const interface&) = delete;
+		interface& operator=(const interface&) = delete;
+
+		
 		~interface()
 		{
 			// Close our current socket
