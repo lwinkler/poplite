@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 	// Init the pop system with arguments
 	pop::system::instance(argc, argv);
 
-	string username = argc > 2 ? argv[2] : getenv("USER");
+	string username = argc > 1 ? argv[1] : getenv("USER");
 	chat_client_iface c1(username);
 
 	cout << "Contact this client " << username << " at " << c1.contact().host_name << ":" << c1.contact().port << endl;
@@ -33,12 +33,11 @@ int main(int argc, char* argv[])
 	while(true) {
 
 		try {
-			string cmd ;
 			cout << "cmd>";
-			cin >> cmd;
-			if(cmd == "q")
+			char c = getchar();
+			if(c == 'q')
 				break;
-			else if(cmd == "a") {
+			else if(c == 'a') {
 				pop::accesspoint ap;
 				cout << "host_name>";
 				cin >> ap.host_name;
@@ -49,20 +48,19 @@ int main(int argc, char* argv[])
 				// add to remote
 				chat_client_iface remote(ap);
 				remote.add_contact(c1.contact());
-			} else if(cmd == "R") {
+			} else if(c == 'R') {
 				c1.remove_contacts();
-			} else if(cmd == "w") {
+			} else if(c == 'w') {
 				string msg;
 				cout << ">";
 				while(msg.empty())
 					getline(cin, msg);
 				c1.send_all(msg);
-			} else if(cmd == "l") {
-				map<string, pop::accesspoint> m;
-				c1.get_contacts(m);
+			} else if(c == 'l') {
+				map<string, pop::accesspoint> m = c1.get_contacts();
 				cout << "Connected clients: " << endl;
 				for(auto& el : m)
-					cout << " - " << el.first << " on " << el.second.host_name << ":" << el.second.port;
+					cout << " - " << el.first << " on " << el.second.host_name << ":" << el.second.port << endl;
 			}
 		} catch (exception e) {
 			cerr << "Exception :" << e.what() << endl;

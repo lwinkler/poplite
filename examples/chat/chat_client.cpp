@@ -51,10 +51,10 @@ void chat_client::remove_contacts()
 }
 
 
-map<string, accesspoint> chat_client::get_contacts() {
-	map<string, accesspoint> res;
+map<string, pop::accesspoint> chat_client::get_contacts() {
+	map<string, pop::accesspoint> res;
 	for(auto& el : connected_clients_) {
-		res.insert(make_pair(el.first, el->second.get_contact()));
+		res.insert(make_pair(el.first, el.second->contact()));
 	}
 	return res;
 }
