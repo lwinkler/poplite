@@ -30,7 +30,7 @@ namespace pop
 			public:
 				broker() : p_obj_(nullptr){}
 
-				~broker()
+				virtual ~broker()
 				{
 					if(p_obj_)
 						delete p_obj_;

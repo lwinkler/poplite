@@ -28,7 +28,9 @@ POP_CLASS chat_client
 		void POP_ASYNC send_all(const std::string& _text);
 		void POP_ASYNC print(const std::string& _text);
 		void POP_SYNC add_contact(const pop::accesspoint& _ap);
-		void POP_SYNC remove_contacts();
+		void POP_ASYNC remove_contacts();
+		void POP_ASYNC remove_contact(const std::string& _username);
+		void POP_ASYNC disconnect();
 		std::map<std::string, pop::accesspoint> POP_SYNC get_contacts();
 		std::string POP_SYNC get_username() {return username_;}
 	

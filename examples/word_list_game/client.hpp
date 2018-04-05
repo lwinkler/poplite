@@ -22,7 +22,7 @@ POP_CLASS client
 	public:
 		POP_ALLOCATION(pop::local_allocator())
 		client(std::string _user, pop::accesspoint _server_ap);
-		~client();
+		virtual ~client();
 
 		inline void message(std::string msg_)
 		{

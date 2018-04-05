@@ -26,42 +26,55 @@ int main(int argc, char* argv[])
 	cout << "'a':add contact" << endl;
 	cout << "'l':list connected clients" << endl;
 	cout << "'R':remove all contacts" << endl;
+	cout << "'D':disconnect" << endl;
 	cout << "'w':write" << endl;
 	cout << "'q':quit" << endl;
 
 
-	while(true) {
+	char c = 0;
+	while(c != 'q') {
 
 		try {
-			cout << "cmd>";
-			char c = getchar();
-			if(c == 'q')
-				break;
-			else if(c == 'a') {
-				pop::accesspoint ap;
-				cout << "host_name>";
-				cin >> ap.host_name;
-				cout << "port>";
-				cin >> ap.port;
-				c1.add_contact(ap);
+			c = getchar();
+			switch(c) {
+				case 'D':
+				case 'q': {
+					c1.disconnect(); // note: cannot be added to destructor: deadlock
+					break;
+				}
+				case 'a': {
+					pop::accesspoint ap;
+					cout << "host_name>";
+					cin >> ap.host_name;
+					cout << "port>";
+					cin >> ap.port;
+					c1.add_contact(ap);
 
-				// add to remote
-				chat_client_iface remote(ap);
-				remote.add_contact(c1.contact());
-			} else if(c == 'R') {
-				c1.remove_contacts();
-			} else if(c == 'w') {
-				string msg;
-				cout << ">";
-				while(msg.empty())
-					getline(cin, msg);
-				c1.send_all(msg);
-			} else if(c == 'l') {
-				map<string, pop::accesspoint> m = c1.get_contacts();
-				cout << "Connected clients: " << endl;
-				for(auto& el : m)
-					cout << " - " << el.first << " on " << el.second.host_name << ":" << el.second.port << endl;
-			}
+					// add to remote
+					chat_client_iface remote(ap);
+					remote.add_contact(c1.contact());
+					break;
+				}
+				case 'R': {
+					c1.remove_contacts();
+					break;
+				}
+				case 'w': {
+					string msg;
+					cout << ">";
+					while(msg.empty())
+						getline(cin, msg);
+					c1.send_all(msg);
+					break;
+				}
+				case 'l': {
+					map<string, pop::accesspoint> m = c1.get_contacts();
+					cout << "Connected clients: " << (m.empty() ? "none" : "") << endl;
+					for(auto& el : m)
+						cout << " - " << el.first << " on " << el.second.host_name << ":" << el.second.port << endl;
+					break;
+				}
+			};
 		} catch (exception e) {
 			cerr << "Exception in main: " << e.what() << endl;
 		}

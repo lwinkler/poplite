@@ -38,7 +38,7 @@ POP_CLASS server
 	public:
 		POP_ALLOCATION(pop::local_allocator())
 		server();
-		~server();
+		virtual ~server();
 
 		int guess(const std::string& _user, const std::string& _word);
 

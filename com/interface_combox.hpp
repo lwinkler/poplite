@@ -40,7 +40,7 @@ namespace pop {
 			interface_combox(const interface_combox&) = delete;
 			interface_combox& operator=(const interface_combox&) = delete;
 
-			~interface_combox(){/*io_service_.stop();*/}
+			// virtual ~interface_combox(){/*io_service_.stop();*/}
 
 			inline void run(){io_service_.run();}
 			inline connection& connec(){return connection_;}

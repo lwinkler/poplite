@@ -106,7 +106,7 @@ namespace pop {
 				ia >> is_async;
 				LOG(debug) << "async " << is_async;
 
-				static const std::string ack("ACK");
+				static const pop::exception ack;
 				std::stringstream oss;
 				bufout oa(oss);
 				LOG(debug) << "call remote method " << method_id;
@@ -154,9 +154,9 @@ namespace pop {
 					LOG(debug) << "finish calling remote method " << method_id;
 
 					oa << remote_exc;
-					oa << ack;
+					// oa << ack;
 					conn->sync_write_ss(oss);
-					LOG(debug) << "sent ack";
+					// LOG(debug) << "sent ack";
 				}
 
 				conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));

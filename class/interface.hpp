@@ -71,7 +71,7 @@ class interface
 		interface& operator=(const interface&) = delete;
 
 		
-		~interface()
+		virtual ~interface()
 		{
 			// Close our current socket
 			sync<void>(-1);
@@ -115,11 +115,11 @@ class interface
 				LOG(debug) << "received answer from broker";
 
 				ia >> exc;
-				std::string ack;
-				ia >> ack;
-				LOG(debug) << "received ack=" << ack;
-				if(ack != "ACK")
-					throw std::runtime_error("did not receive ack");
+				// std::string ack;
+				// ia >> ack;
+				// LOG(debug) << "received ack=" << ack;
+				// if(ack != "ACK")
+					// throw std::runtime_error("did not receive ack");
 				if(!exc.empty()) {
 					throw exc;
 				}
@@ -174,11 +174,15 @@ class interface
 
 				LOG(debug) << "received answer from broker";
 
-				std::string ack;
-				ia >> ack;
-				LOG(debug) << "received ack=" << ack;
-				if(ack != "ACK")
-					throw std::runtime_error("did not receive ack");
+				pop::exception exc;
+				ia >> exc;
+				assert(exc.empty());
+
+				// std::string ack;
+				// ia >> ack;
+				// LOG(debug) << "received ack=" << ack;
+				// if(ack != "ACK")
+					// throw std::runtime_error("did not receive ack");
 				if(_method_id == -1) // TODO: use code
 					combox_.connec().socket().close();
 
