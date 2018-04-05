@@ -61,6 +61,7 @@ namespace pop
 			system():empty_(true){}
 			system(int argc, char **argv) : empty_(false) {(void)argc;(void)argv;} // TODO: Are arguments used ?
 
+			// TODO remove arguments (and pass by ref)
 			static const system& instance(int argc = 0, char **argv = nullptr)
 			{
 				static system inst;

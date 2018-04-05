@@ -47,19 +47,19 @@ namespace pop
 						throw std::runtime_error("Constructor has been called twice");
 					std::tuple<typename std::decay<Args>::type...> tup;
 					_ia >> tup;
-					_p_obj = applyTupleConstr(__constr<Args...>, tup);
+					_p_obj = apply_tuple_constr(__constr<Args...>, tup);
 					serialize_out<bufout, Args...>(_oa, tup);
 				}
 
 				/// A simple concurrent call to a method 
-				template<typename R, typename ...Args> static void conc(bufin& ia, bufout& oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...))
+				template<typename R, typename ...Args> static void conc(bufin& _ia, bufout& _oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...))
 				{
 					if(!_p_obj)
 						throw std::runtime_error("Constructor has not been called");
 					std::tuple<typename std::decay<Args>::type...> tup;
-					ia >> tup;
-					apply_tuple(_p_obj, _p_meth, tup, oa);
-					serialize_out<bufout, Args...>(oa, tup);
+					_ia >> tup;
+					apply_tuple(_p_obj, _p_meth, tup, _oa);
+					serialize_out<bufout, Args...>(_oa, tup);
 				}
 
 

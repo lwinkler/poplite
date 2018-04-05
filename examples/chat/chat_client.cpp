@@ -28,21 +28,18 @@ void chat_client::print(const string& _text)
 
 void chat_client::add_contact(const pop::accesspoint& _ap)
 {
+	// throw runtime_error("Test error");
 	pop::write_lock lock1(contacts_lock_);
-	try {
-		shared_ptr<chat_client_iface> pcl(new chat_client_iface(_ap));
-		const string username = pcl->get_username();
-		for(auto& client : connected_clients_) {
-			if(username == client.first) {
-				LOG(warning) << "Contact " << username << " already connected";
-				return;
-			}
+	shared_ptr<chat_client_iface> pcl(new chat_client_iface(_ap));
+	const string username = pcl->get_username();
+	for(auto& client : connected_clients_) {
+		if(username == client.first) {
+			LOG(warning) << "Contact " << username << " already connected";
+			return;
 		}
-		// note: maybe one day, improve this code and avoid using a map of pointers and use move operators
-		connected_clients_.emplace(username, pcl);
-	} catch(exception& e) {
-		cerr << "Exception while adding contact " << e.what() << endl;
 	}
+	// note: maybe one day, improve this code and avoid using a map of pointers and use move operators
+	connected_clients_.emplace(username, pcl);
 }
 
 void chat_client::remove_contacts()

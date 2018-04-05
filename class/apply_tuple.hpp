@@ -133,11 +133,11 @@ namespace pop
 		struct apply_func<0>
 		{
 			template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
-				static R apply_tuple( R (*f)( ArgsF... ),
+				static R apply_tuple(R(*f)( ArgsF...),
 						std::tuple<ArgsT...>& /* t */,
-						Args&&... args )
+						Args&&... args)
 				{
-					return f( args... );
+					return f(args...);
 				}
 		};
 

@@ -16,6 +16,7 @@
 #include "connection.hpp" // Must come before boost/serialization headers.
 #include "class/broker.hpp"
 #include "com/accesspoint.hpp"
+#include "com/exception.hpp"
 #include <thread>
 
 
@@ -105,6 +106,7 @@ namespace pop {
 				ia >> is_async;
 				LOG(debug) << "async " << is_async;
 
+				static const std::string ack("ACK");
 				std::stringstream oss;
 				bufout oa(oss);
 				LOG(debug) << "call remote method " << method_id;
@@ -120,20 +122,38 @@ namespace pop {
 				{
 					// if the call is asynchronous, we send the ack directly
 
-					std::string ack("ACK");
 					oa << ack;
 					conn->sync_write_ss(oss);
 					LOG(debug) << "sent ack";
-					brok_.remote_call(method_id, ia, oa);
+					try {
+						brok_.remote_call(method_id, ia, oa);
+					} catch(std::exception& exc) {
+						LOG(error) << "Exception caught in async method: " << exc.what();
+						// exc.text = "Exception caught in async method: ";
+						// exc.text += exc.what();
+					} catch(...) {
+						LOG(error) << "Unknown exception caught in async method";
+						// exc.text = "Exception caught in async method";
+					}
 					LOG(debug) << "finish calling remote method " << method_id;
 				}
 				else
 				{
-					brok_.remote_call(method_id, ia, oa);
+					pop::exception remote_exc;
+					try {
+						brok_.remote_call(method_id, ia, oa);
+					} catch(std::exception& exc) {
+						LOG(warning) << "Broker: Exception caught in sync method: " << exc.what();
+						// remote_exc.text = "Exception caught in sync method: ";
+						remote_exc.text = exc.what();
+					} catch(...) {
+						LOG(warning) << "Broker: Unknown exception caught in sync method";
+						remote_exc.text = "Unknown exception";
+					}
 
 					LOG(debug) << "finish calling remote method " << method_id;
 
-					std::string ack("ACK");
+					oa << remote_exc;
 					oa << ack;
 					conn->sync_write_ss(oss);
 					LOG(debug) << "sent ack";

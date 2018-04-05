@@ -39,6 +39,7 @@ def write_foot(fout):
 #--------------------------------------------------------------------------------
 
 def write_meth_ids(fout, class_node):
+	# TODO: use enum class direction: unsigned short{ LEFT, RIGHT }; // scoped
 	
 	fout.write("""
 struct %s_method_ids

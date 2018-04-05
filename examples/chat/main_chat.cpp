@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 					cout << " - " << el.first << " on " << el.second.host_name << ":" << el.second.port << endl;
 			}
 		} catch (exception e) {
-			cerr << "Exception :" << e.what() << endl;
+			cerr << "Exception in main: " << e.what() << endl;
 		}
 	}
 

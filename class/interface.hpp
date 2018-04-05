@@ -13,6 +13,7 @@
 
 
 #include "com/serialize.hpp"
+#include "com/exception.hpp"
 #include "com/interface_combox.hpp"
 #include "alloc/alloc.hpp"
 
@@ -84,6 +85,7 @@ class interface
 
 		template<typename R, typename ...Args> R sync(int _method_id, Args& ...args)
 		{
+			pop::exception exc;
 			try
 			{
 				LOG(debug) << "call sync "<< _method_id;
@@ -112,16 +114,31 @@ class interface
 
 				LOG(debug) << "received answer from broker";
 
+				ia >> exc;
 				std::string ack;
 				ia >> ack;
 				LOG(debug) << "received ack=" << ack;
 				if(ack != "ACK")
 					throw std::runtime_error("did not receive ack");
+				if(!exc.empty()) {
+					throw exc;
+				}
 				return ret.return_value();
 			}
-			catch(std::exception& e)
+			catch(pop::exception& exc)
 			{
-				LOG(error) << "exception in sync: " << e.what();
+				LOG(warning) << "Interface: Remote exception in sync method: " << exc.what();
+				// throw;
+			}
+			catch(std::exception& exc)
+			{
+				LOG(error) << "Interface: Exception in sync method: " << exc.what();
+				throw;
+			}
+			catch(...)
+			{
+				LOG(error) << "Interface: Unknown exception in sync method";
+				throw;
 			}
 			return R();
 		}
@@ -169,7 +186,11 @@ class interface
 			}
 			catch(std::exception& e)
 			{
-				LOG(error) << "exception in async: " << e.what();
+				LOG(error) << "Exception in async: " << e.what();
+			}
+			catch(...)
+			{
+				LOG(error) << "Unknown exception in async";
 			}
 			return R();
 		}

@@ -14,7 +14,6 @@ from subprocess import call
 #--------------------------------------------------------------------------------
 
 def main():
-	# TODO: There seems to be a problem to parse headers with .h extensions, add -x c++ -std=c++17 and test
 	filename_in = sys.argv[1]
 	gendir = "gen"
 	mid_out = parser.generate_file_name(filename_in, gendir, "ids")
