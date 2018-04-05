@@ -89,6 +89,7 @@ namespace pop {
 			{
 				if(e)
 				{
+					LOG(error) << "Error code in handle_accept: " << e.message();
 					throw std::runtime_error(e.message());
 				}
 

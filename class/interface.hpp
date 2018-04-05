@@ -120,27 +120,22 @@ class interface
 				// LOG(debug) << "received ack=" << ack;
 				// if(ack != "ACK")
 					// throw std::runtime_error("did not receive ack");
-				if(!exc.empty()) {
-					throw exc;
+				if(exc.empty()) {
+					return ret.return_value();
 				}
-				return ret.return_value();
-			}
-			catch(pop::exception& exc)
-			{
-				LOG(warning) << "Interface: Remote exception in sync method: " << exc.what();
-				// throw;
 			}
 			catch(std::exception& exc)
 			{
 				LOG(error) << "Interface: Exception in sync method: " << exc.what();
-				throw;
+				throw exc;
 			}
 			catch(...)
 			{
 				LOG(error) << "Interface: Unknown exception in sync method";
 				throw;
 			}
-			return R();
+			throw exc;
+			// return R();
 		}
 
 

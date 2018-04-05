@@ -24,7 +24,7 @@ void chat_client::send_all(const string& _text)
 	LOG(debug) << "send to " << connected_clients_.size() << " clients";
 	for(auto& contact : connected_clients_)
 	{
-		contact.second->print(username_ + "<" + _text);
+		contact.second->print("*" + username_ + "*: " + _text);
 	}
 }
 
