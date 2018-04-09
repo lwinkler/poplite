@@ -58,15 +58,21 @@ namespace pop
 	class system
 	{
 		public:
-			system():empty_(true){}
-			system(int argc, char **argv) : empty_(false) {(void)argc;(void)argv;} // TODO: Are arguments used ?
+			system(const int _argc, char **_argv) : empty_(true) {
+				assert(_argc > 0);
+				assert(_argv != nullptr);
+				LOG(debug) << "Instanciate poplite system with " << _argc << " arguments";
 
-			// TODO remove arguments (and pass by ref)
-			static const system& instance(int argc = 0, char **argv = nullptr)
+				for(int i = 1 ; i < _argc ; i++)
+					args_.push_back(_argv[i]);
+			}
+
+			static const system& instance(int _argc = 0, char **_argv = nullptr)
 			{
-				static system inst;
-				if(argc)
+				static system inst(_argc, _argv);
+				if(_argc)
 				{
+					assert(_argv != nullptr);
 					// Declare the supported options.
 					boost::program_options::options_description desc("Allowed options");
 
@@ -89,12 +95,11 @@ namespace pop
 							;
 
 						boost::program_options::variables_map vm;
-						// boost::program_options::store(boost::program_options::parsers::basic_command_line_parser(argc, argv, desc), vm);
-						boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+						// boost::program_options::store(boost::program_options::parsers::basic_command_line_parser(_argc, _argv, desc), vm);
+						boost::program_options::store(boost::program_options::parse_command_line(_argc, _argv, desc), vm);
 						boost::program_options::notify(vm);    
 
 						if (vm.count("pop-help")) {
-							std::cout << desc << std::endl;
 							exit(0);
 						}
 
@@ -104,6 +109,7 @@ namespace pop
 					{
 						LOG(error) << "Error in arguments : " << e.what();
 						std::cout << desc << std::endl;
+						exit(1);
 					}
 				}
 				return inst;
@@ -132,10 +138,34 @@ namespace pop
 			// System options
 			int log_level;
 
+			void print_args(std::ostream& _os) const { // TODO: MAybe replace
+				for(const auto& arg: args_) {
+					_os << ' ' << arg;
+				}
+			}
+
+			const std::vector<std::string>& get_args() const {return args_;}
+
+			/* Static methods */
+			static char* create_string(const std::string& _str) {
+				char* pc = (char*) malloc(sizeof(char) * (_str.size() + 1));
+				snprintf(pc, _str.size() + 1, "%s", _str.c_str());
+				return pc;
+			}
+
+			static void append_to_args(char** _args, const std::vector<std::string>& _new_args) {
+				for(const auto& el : _new_args) {
+					*_args = create_string(el);
+					_args++;
+				}
+			}
+
 		private:
 			bool empty_;
 			std::string domain_;
 			std::string host_name_;
+
+			std::vector<std::string> args_;
 	};
 }
 

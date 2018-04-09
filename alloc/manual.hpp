@@ -24,6 +24,7 @@ class manual_allocator : public allocator
 	{
 		std::stringstream ss;
 		ss << "./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
+		pop::system::instance().print_args(ss);
 		LOG(info) << "Start object " << _obj_name << " with command :";
 		LOG(info) << ss.str();
 	}

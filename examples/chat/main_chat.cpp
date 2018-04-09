@@ -1,6 +1,6 @@
 //
-// main.cpp
-// ~~~~~~~~
+// main_chat.cpp
+// ~~~~~~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
 // 
@@ -29,7 +29,6 @@ int main(int argc, char* argv[])
 	cout << "'D':disconnect" << endl;
 	cout << "'w':write" << endl;
 	cout << "'q':quit" << endl;
-
 
 	char c = 0;
 	while(c != 'q') {

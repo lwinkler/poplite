@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::info);
+	pop::system::instance(argc, argv);
 
 	try
 	{

@@ -54,7 +54,7 @@ class gps_position
 POP_CLASS TestClass
 {
 	public:
-		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@192.168.178.34"))
+		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		POP_ALLOCATION(pop::local_allocator())
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}
 

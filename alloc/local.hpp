@@ -29,20 +29,34 @@ class local_allocator : public allocator
 	{
 		std::stringstream ss;
 		ss << "./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
-		LOG(debug) << "Run object with :" << ss.str();
+		const auto& popsys = pop::system::instance();
+		popsys.print_args(ss);
+		LOG(debug) << "Run object with: " << ss.str();
 
 		/*Spawn a child to run the program.*/
 		pid_t pid=fork();
-		if (pid==0) { /* child process */
-			char buf0[MAX_STR];
-			std::stringstream ss1;
-			std::stringstream ss2;
-			snprintf(buf0, sizeof(buf0), "./%s", _obj_name.c_str());
+		if (pid==0) {
+			/* child process */
+			size_t s = 3 + popsys.get_args().size() + 1;
+			char** arg_arr = (char**) malloc(sizeof(char*) * s);
+			arg_arr[0] = pop::system::create_string("./" + _obj_name);
+			arg_arr[1] = pop::system::create_string(_callback.host_name);
+			arg_arr[2] = pop::system::create_string(std::to_string(_callback.port));
+			pop::system::append_to_args(arg_arr + 3, popsys.get_args());
+			arg_arr[s - 1] = nullptr;
 
-			ss1 << _callback.host_name;
-			ss2 << _callback.port;
-
-			execlp(buf0, buf0, ss1.str().c_str(), ss2.str().c_str(), (const char*)nullptr);
+			/* char** b = arg_arr;
+			while(*b != nullptr) {
+				b++;
+			} */
+			execvp(arg_arr[0], arg_arr);
+			// note: no need to delete vector
+			/* char** a = arg_arr;
+			while(*a != nullptr) {
+				delete *a;
+				a++;
+			}
+			delete(arg_arr); */
 			perror("Error in execution of object file");
 
 			throw std::runtime_error("Error while running " + ss.str());

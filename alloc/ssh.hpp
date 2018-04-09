@@ -27,20 +27,23 @@ namespace pop{
 			{
 				std::stringstream ss;
 				ss << "ssh" << " " << url_ << " ./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
-				LOG(debug) << "Run object with :" << ss.str();
+				const auto& popsys = pop::system::instance();
+				popsys.print_args(ss);
+				LOG(debug) << "Run object with: " << ss.str();
 
 				/*Spawn a child to run the program.*/
 				pid_t pid=fork();
 				if (pid==0) { /* child process */
-					char buf0[MAX_STR];
-					std::stringstream ss1;
-					std::stringstream ss2;
-					snprintf(buf0, sizeof(buf0), "./%s", _obj_name.c_str());
-
-					ss1 << _callback.host_name;
-					ss2 << _callback.port;
-
-					execlp("ssh", "ssh", url_.c_str(), buf0, ss1.str().c_str(), ss2.str().c_str(), (const char*)nullptr);
+					size_t s = 5 + popsys.get_args().size() + 1;
+					char** arg_arr = (char**) malloc(sizeof(char*) * s);
+					arg_arr[0] = pop::system::create_string("ssh");
+					arg_arr[1] = pop::system::create_string(url_);
+					arg_arr[2] = pop::system::create_string("./" + _obj_name);
+					arg_arr[3] = pop::system::create_string(_callback.host_name);
+					arg_arr[4] = pop::system::create_string(std::to_string(_callback.port));
+					pop::system::append_to_args(arg_arr + 5, popsys.get_args());
+					arg_arr[s - 1] = nullptr;
+					execvp(arg_arr[0], arg_arr);
 					perror("Error in execution of object file");
 
 					throw std::runtime_error("Error while running " + ss.str());

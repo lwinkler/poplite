@@ -70,6 +70,9 @@ bool test_interface(TestClass_iface& testClass, bool set_values)
 
 int main(int argc, char* argv[])
 {
+	// Init the pop system with arguments
+	pop::system::instance(argc, argv);
+
 	try
 	{
 		cout << "call constructor" << endl;
