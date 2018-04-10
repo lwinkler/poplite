@@ -67,7 +67,7 @@ namespace pop {
 			{
 				if (!e)
 				{
-					pop::accesspoint ap(service_acceptor_.local_endpoint());
+					pop::accesspoint ap(pop::system::instance().host_name(), service_acceptor_.local_endpoint().port());
 					LOG(debug) << "send contact from broker"; // << ap;
 					conn->sync_write(ap);
 

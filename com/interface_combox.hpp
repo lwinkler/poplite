@@ -25,7 +25,7 @@ namespace pop {
 			/// Constructor
 			interface_combox() :
 				acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))),
-				callback_(acceptor_.local_endpoint()),
+				callback_(pop::system::instance().host_name(), acceptor_.local_endpoint().port()),
 				connection_(io_service_)
 			{
 				// Start an accept operation for a new connection.
@@ -61,7 +61,7 @@ namespace pop {
 				bufout oa(oss);
 				static const int service_type = 1; // TODO enum
 				oa << service_type;
-				pop::accesspoint ap(acceptor_.local_endpoint());
+				pop::accesspoint ap(pop::system::instance().host_name(), acceptor_.local_endpoint().port());
 				oa << ap;
 				contact_connection.sync_write_ss(oss);
 			}

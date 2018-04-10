@@ -22,9 +22,13 @@ namespace pop {
 		public:
 			accesspoint() noexcept : host_name(""), port(0) {}
 
-			accesspoint(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : 
+			/*accesspoint(const boost::asio::ip::tcp::endpoint& _contact_endpoint) : 
 				host_name(pop::system::instance().host_name()),
 				port(_contact_endpoint.port())
+			{}*/
+			accesspoint(const std::string& _host_name, int _port) :
+				host_name(_host_name),
+				port(_port) 
 			{}
 			std::string host_name;
 			int port;
