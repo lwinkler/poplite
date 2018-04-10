@@ -17,7 +17,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	// Init the pop system with arguments
-	pop::system::instance(argc, argv);
+	pop::system::instance(&argc, argv);
 
 	if(argc < 3 || (string(argv[1]) != "async" && string(argv[1]) != "sync" ))
 	{

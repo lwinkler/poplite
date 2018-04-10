@@ -24,7 +24,7 @@ namespace pop
 	{
 		template<class ParClass> using parallel_method = std::function<void(bufin&, bufout&, ParClass*&)>;
 
-		/// A broker is the (remote) part that contains the instanciation of the parallel object
+		/// A broker is the (remote) part that contains the instantiation of the parallel object
 		template<class ParClass> class broker : private boost::noncopyable
 		{
 			public:

@@ -2,7 +2,7 @@
 
 int main(int _argc, char* _argv[])
 {
-	pop::system::instance(_argc, _argv);
+	pop::system::instance(&_argc, _argv);
 
 	try
 	{

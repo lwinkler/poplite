@@ -59,22 +59,20 @@ namespace pop
 	class system
 	{
 		public:
-			system(const int _argc, char **_argv) : empty_(true) {
-				if(_argc == 0 || _argv == nullptr) {
+			system(int* _pargc, char **_argv) : empty_(true) {
+				if(_pargc == nullptr || _argv == nullptr) {
 					LOG(error) << "pop::system must be initialized at the beginning of main routine";
 					exit(1);
 				}
 
-				LOG(debug) << "Instanciate poplite system with " << _argc << " arguments";
-
-				for(int i = 1 ; i < _argc ; i++)
+				for(int i = 1 ; i < *_pargc ; i++)
 					args_.push_back(_argv[i]);
 			}
 
-			static const system& instance(int _argc = 0, char **_argv = nullptr)
+			static const system& instance(int* _pargc = nullptr, char **_argv = nullptr)
 			{
-				static system inst(_argc, _argv);
-				if(_argc) {
+				static system inst(_pargc, _argv);
+				if(_pargc) {
 					assert(_argv != nullptr);
 					// Declare the supported options.
 					boost::program_options::options_description desc("Allowed options");
@@ -103,13 +101,33 @@ namespace pop
 							;
 
 						boost::program_options::variables_map vm;
-						boost::program_options::store(boost::program_options::parse_command_line(_argc, _argv, desc), vm);
+						boost::program_options::store(boost::program_options::command_line_parser(*_pargc, _argv).options(desc).allow_unregistered().run(), vm);
 						boost::program_options::notify(vm);    
 
 						if (vm.count("pop-help")) {
 							exit(0);
 						}
 
+						// Remove arguments starting with --pop-
+						for(int i = 1 ; i < *_pargc ; ) {
+							char shift = 0;
+							if(strncmp(_argv[i], "--pop-", 6) == 0) {
+								// note: do not remove 2 for single arguments
+								shift = 2;
+							}
+							if(shift) {
+								while(shift) {
+									// shift all args by 1
+									for(int j = i ; j < *_pargc - 1 ; j++) {
+										_argv[j] = _argv[j+1];
+									}
+									(*_pargc)--;
+									_argv[*_pargc] = nullptr;
+									shift--;
+								}
+							}
+							else i++;
+						}
 					}
 					catch(std::exception &e)
 					{

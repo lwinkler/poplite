@@ -39,7 +39,7 @@ public:
 	void return_value(){return;}
 };
 
-/// Interface is the local part used to communicate with a broker (remote) that contains the instanciation of the parallel object
+/// Interface is the local part used to communicate with a broker (remote) that contains the instantiation of the parallel object
 class interface
 {
 	public:

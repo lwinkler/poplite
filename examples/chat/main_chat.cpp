@@ -17,7 +17,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	// Init the pop system with arguments
-	pop::system::instance(argc, argv);
+	pop::system::instance(&argc, argv);
 
 	string username = argc > 1 ? argv[1] : getenv("USER");
 	chat_client_iface c1(username);

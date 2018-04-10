@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	pop::system::instance(argc, argv);
+	pop::system::instance(&argc, argv);
 
 	try
 	{
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 		}
 		else if(argc >= 3)
 		{
-			cout << "Create a client and connect to an existing server" << endl;
+			cout << "Create a client and connect to an existing server " << argv[1] << ":" << argv[2] << endl;
 			pop::accesspoint ap;
 			ap.host_name = argv[1];
 			ap.port      = atoi(argv[2]);
@@ -58,6 +58,8 @@ int main(int argc, char* argv[])
 			serv.print_game(user);
 			cout << "Run the client" << endl;
 			cl.run();
+		} else {
+			LOG(error) << "Unexpected number of arguments " << argc;
 		}
 
 		return 0;
