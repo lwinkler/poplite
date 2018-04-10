@@ -37,6 +37,7 @@ POP_CLASS server
 {
 	public:
 		POP_ALLOCATION(pop::local_allocator())
+		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		server();
 		virtual ~server();
 

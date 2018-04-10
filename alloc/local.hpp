@@ -28,8 +28,8 @@ class local_allocator : public allocator
 	void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const
 	{
 		std::stringstream ss;
-		ss << "./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
 		const auto& popsys = pop::system::instance();
+		ss << popsys.path() << "/" << _obj_name << " " << _callback.host_name << " " << _callback.port;
 		popsys.print_args(ss);
 		LOG(debug) << "Run object with: " << ss.str();
 
@@ -39,7 +39,7 @@ class local_allocator : public allocator
 			/* child process */
 			size_t s = 3 + popsys.get_args().size() + 1;
 			char** arg_arr = (char**) malloc(sizeof(char*) * s);
-			arg_arr[0] = pop::system::create_string("./" + _obj_name);
+			arg_arr[0] = pop::system::create_string(popsys.path() + "/" + _obj_name);
 			arg_arr[1] = pop::system::create_string(_callback.host_name);
 			arg_arr[2] = pop::system::create_string(std::to_string(_callback.port));
 			pop::system::append_to_args(arg_arr + 3, popsys.get_args());

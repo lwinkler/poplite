@@ -28,6 +28,7 @@
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/filesystem.hpp>
 
 #define LOG BOOST_LOG_TRIVIAL
 
@@ -35,14 +36,14 @@ namespace pop
 {
 #ifndef POP_BINARY_SERIALIZATION
 	// use text serialization
-	typedef boost::archive::text_iarchive bufin;
-	typedef boost::archive::text_oarchive bufout;
+	using bufin = boost::archive::text_iarchive;
+	using bufout = boost::archive::text_oarchive;
 #else
 	// use binary serialization
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
-	typedef boost::archive::binary_iarchive bufin;
-	typedef boost::archive::binary_oarchive bufout;
+	using bufin = boost::archive::binary_iarchive;
+	using bufout = boost::archive::binary_oarchive;
 #endif
 
 	// Utils
@@ -59,8 +60,11 @@ namespace pop
 	{
 		public:
 			system(const int _argc, char **_argv) : empty_(true) {
-				assert(_argc > 0);
-				assert(_argv != nullptr);
+				if(_argc == 0 || _argv == nullptr) {
+					LOG(error) << "pop::system must be initialized at the beginning of main routine";
+					exit(1);
+				}
+
 				LOG(debug) << "Instanciate poplite system with " << _argc << " arguments";
 
 				for(int i = 1 ; i < _argc ; i++)
@@ -70,8 +74,7 @@ namespace pop
 			static const system& instance(int _argc = 0, char **_argv = nullptr)
 			{
 				static system inst(_argc, _argv);
-				if(_argc)
-				{
+				if(_argc) {
 					assert(_argv != nullptr);
 					// Declare the supported options.
 					boost::program_options::options_description desc("Allowed options");
@@ -86,16 +89,20 @@ namespace pop
 
 						desc.add_options()
 							("pop-help"        , "produce help message")
-							("pop-hostname"    , boost::program_options::value<std::string>(&inst.host_name_),
-								"override the hostname of your computer")
+							// note: setting host name manually would be a problem for a remote object creating another object
+							// ("pop-hostname"    , boost::program_options::value<std::string>(&inst.host_name_),
+								// "override the hostname of your computer")
 							("pop-domain"      , boost::program_options::value<std::string>(&inst.domain_),
-								"the domain name of your network (e.g. local) , to be added to hostname")
+								"the domain name of your network (e.g. local), to be added to hostname")
+							("pop-cwd"         , boost::program_options::value<std::string>(&inst.cwd_),
+								"set the current working directory for the main and all objects")
+							("pop-path"         , boost::program_options::value<std::string>(&inst.path_)->default_value("."),
+								"set the directory containing the main and objects executables")
 							("pop-log"         , boost::program_options::value<int>(&inst.log_level)->default_value(2), 
 								"set logging level 0 to 5")
 							;
 
 						boost::program_options::variables_map vm;
-						// boost::program_options::store(boost::program_options::parsers::basic_command_line_parser(_argc, _argv, desc), vm);
 						boost::program_options::store(boost::program_options::parse_command_line(_argc, _argv, desc), vm);
 						boost::program_options::notify(vm);    
 
@@ -103,7 +110,6 @@ namespace pop
 							exit(0);
 						}
 
-						boost::log::core::get()->set_filter(boost::log::trivial::severity >= inst.log_level);
 					}
 					catch(std::exception &e)
 					{
@@ -111,6 +117,11 @@ namespace pop
 						std::cout << desc << std::endl;
 						exit(1);
 					}
+
+					// Change working dir and set logs
+					boost::log::core::get()->set_filter(boost::log::trivial::severity >= inst.log_level);
+					if(!inst.cwd_.empty())
+						boost::filesystem::current_path(inst.cwd_);
 				}
 				return inst;
 			}
@@ -119,17 +130,17 @@ namespace pop
 			{
 				if(domain_.empty())
 				{
-					if(domain_.empty())
+					// if(host_name_.empty())
 						return boost::asio::ip::host_name();
-					else
-						return host_name_;
+					// else
+						// return host_name_;
 				}
 				else
 				{
-					if(domain_.empty())
+					// if(host_name_.empty())
 						return boost::asio::ip::host_name() + "." + domain_;
-					else
-						return host_name_ + "." + domain_;
+					// else
+						// return host_name_ + "." + domain_;
 				}
 			}
 
@@ -160,10 +171,15 @@ namespace pop
 				}
 			}
 
+			inline const std::string& path() const {return path_;}
+			inline const std::string& workdir() const {return cwd_;}
+
 		private:
 			bool empty_;
 			std::string domain_;
-			std::string host_name_;
+			// std::string host_name_;
+			std::string cwd_;
+			std::string path_;
 
 			std::vector<std::string> args_;
 	};

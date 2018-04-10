@@ -26,8 +26,8 @@ namespace pop{
 			void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const
 			{
 				std::stringstream ss;
-				ss << "ssh" << " " << url_ << " ./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
 				const auto& popsys = pop::system::instance();
+				ss << "ssh" << " " << url_ << " " << popsys.path() << "/" << _obj_name << " " << _callback.host_name << " " << _callback.port;
 				popsys.print_args(ss);
 				LOG(debug) << "Run object with: " << ss.str();
 
@@ -38,7 +38,7 @@ namespace pop{
 					char** arg_arr = (char**) malloc(sizeof(char*) * s);
 					arg_arr[0] = pop::system::create_string("ssh");
 					arg_arr[1] = pop::system::create_string(url_);
-					arg_arr[2] = pop::system::create_string("./" + _obj_name);
+					arg_arr[2] = pop::system::create_string(popsys.path() + "/" + _obj_name);
 					arg_arr[3] = pop::system::create_string(_callback.host_name);
 					arg_arr[4] = pop::system::create_string(std::to_string(_callback.port));
 					pop::system::append_to_args(arg_arr + 5, popsys.get_args());
