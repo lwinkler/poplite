@@ -27,19 +27,24 @@ int main(int argc, char* argv[])
 
 	try
 	{
+		// create 2 objects
 		ping_pong_iface p1;
-		p1.set_contact(p1.contact());
 		ping_pong_iface p2;
-		p2.set_contact(p2.contact());
+		p1.set_contact(p2.contact());
+		p2.set_contact(p1.contact());
 
 		if(string(argv[1]) == "async")
 		{
-			p2.async_ping(p1.contact(), atoi(argv[2]));
-			sleep(2); // TODO: Remove this and use a callback
+			// objects ping each other asynchrounously
+			p2.async_ping(atoi(argv[2]));
+			// note: we need to add a sleep here to allow all methods to complete
+			sleep(2);
 		}
 		else
 		{
-			p2.sync_ping(p1.contact(), atoi(argv[2]));
+			// objects ping each other synchrounously
+			p2.sync_ping(atoi(argv[2]));
+			// TODO: At the moment the number of pings is limited. Fix this.
 		}
 	}
 	catch (std::exception& e)

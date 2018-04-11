@@ -17,18 +17,23 @@
 // this include should always be right before the parallel class declaration
 #include "ping_pong.iface.hpp"
 
+/// A simple class that calls another object
 POP_CLASS ping_pong
 {
 	public:
+		// Constructor: We need to specify an allocator to specify how to launch the object
+		// here we use a local allocator: the object will be created locally
 		POP_ALLOCATION(pop::local_allocator())
 		ping_pong() {}
 
-		void POP_SYNC  sync_ping(const pop::accesspoint& _target, int _cpt);
-		void POP_ASYNC async_ping(const pop::accesspoint& _target, int _cpt);
+		// An example of synchronous method
+		void POP_SYNC  sync_ping(int _cpt);
+		void POP_ASYNC async_ping(int _cpt);
 		void set_contact(const pop::accesspoint& _ap){contact_ = _ap;}
-	
+
 	private:
-		pop::accesspoint contact_;// TODO remove this
+		// The point of contact of the object
+		pop::accesspoint contact_;
 };
 
 #endif

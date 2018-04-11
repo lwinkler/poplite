@@ -5,6 +5,8 @@ Description
 -----------
 Poplite is a small C++ framework based on boost. It implements the POP (Parallel Object Programming) model for C++ objects. If you are interested in a more complete implementations you should have a look at the [POP-C++](https://github.com/pop-team/pop-cpp) framework developed by Tuan Ahn Nguyen and Pierre Kuonen.
 
+### Philosophy
+
 C++ objects can be transformed into parallel objects that can be executed on a distant machine
 
 In consequence:
@@ -33,12 +35,14 @@ Additionnally you may have to edit this line in **parser.py**:
 
 Example of parallel class
 -------------------------
-TODO
-
-Broker and interface
+An example of a parallel class can be found in the directory **examples/ping_pong**.
 
 
-Serialization
+### Broker and interface
+A parallel object consists of an interface and a broker. The broker creates and launches the remote object and the interface is the local point of contact to this object.
+
+### Serialization
+All types used in parallel methods must be serialized. This is already the case for all basic types. A custom class must implement the **serialize** method used by the boost serialization library. See example for example the **gps_position** class in **examples/get_and_set**.
 
 ### Allocation of object
 Since objects run now on their own process their creation requires to launch the object executable on the target machine. This is the function of the allocator. Depending on the envirnoment you can use either:
@@ -46,9 +50,8 @@ Since objects run now on their own process their creation requires to launch the
 - A remote allocator that uses ssh
 - A manual allocator which only prints the command to run (for debug)
 
-Parser
-------
-TODO
+### Parser
+The interface and broker of each class must be created by a parser. They will be added to the the **gen/** directory. As a consequence you need to add additional lines in CMakeLists.txt. See any example.
 
 
 
