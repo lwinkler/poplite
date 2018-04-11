@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
 		// create 2 objects
 		ping_pong_iface p1;
 		ping_pong_iface p2;
-		p1.set_contact(p2.contact());
-		p2.set_contact(p1.contact());
+		p1.set_next_one(p2.contact());
+		p2.set_next_one(p1.contact());
 
 		if(string(argv[1]) == "async")
 		{
