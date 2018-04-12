@@ -10,8 +10,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef POP_CLIENT_H
-#define POP_CLIENT_H
+#ifndef POP_INTERFACE_COMBOX_H
+#define POP_INTERFACE_COMBOX_H
 
 #include "connection.hpp"
 #include "accesspoint.hpp"
@@ -59,8 +59,8 @@ namespace pop {
 				// Send the address to the broker
 				std::stringstream oss;
 				bufout oa(oss);
-				static const int service_type = 1; // TODO enum
-				oa << service_type;
+				static const service_type open_signal = service_type::OPEN_SERVICE_CONNECTION;
+				oa << open_signal;
 				pop::accesspoint ap(pop::system::instance().host_name(), acceptor_.local_endpoint().port());
 				oa << ap;
 				contact_connection.sync_write_ss(oss);
@@ -78,8 +78,8 @@ namespace pop {
 				// Send the address to the broker
 				std::stringstream oss;
 				bufout oa(oss);
-				static const int service_type = 0; // TODO enum
-				oa << service_type;
+				static const service_type close_signal = service_type::CLOSE_SERVICE_CONNECTION;
+				oa << close_signal;
 				contact_connection.sync_write_ss(oss);
 			}
 

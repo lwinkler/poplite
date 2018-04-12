@@ -28,6 +28,20 @@
 
 namespace pop {
 
+	// Types of service calls
+	enum class service_type : unsigned char {
+		CLOSE_SERVICE_CONNECTION = 0,
+		OPEN_SERVICE_CONNECTION = 1,
+		UNKNOWN = 255
+	};
+
+	// Types of method calls: all other methods are defined in each generated interface
+	namespace method_id {
+		static const int DISCONNECT = -1;
+		static const int DESTROY = -2;
+		static const int UNKNOWN = -3;
+	};
+
 	class connection
 	{
 		public:

@@ -43,9 +43,9 @@ public:
 class interface
 {
 	public:
-		interface(const std::string& _executable, const pop::allocator& _allocator, bool _linkLife = true) :
+		interface(const std::string& _executable, const pop::allocator& _allocator, bool _link_life = true) :
 			combox_(),
-			linkLife_(_linkLife)
+			link_life_(_link_life)
 		{
 			_allocator.allocate(_executable, combox_.callback());
 			// Handle connection
@@ -54,7 +54,7 @@ class interface
 
 		interface(const pop::accesspoint& _contact) :
 			combox_(),
-			linkLife_(false)
+			link_life_(false)
 		{
 			// Send our endpoint
 			combox_.send_my_contact(_contact);
@@ -73,13 +73,18 @@ class interface
 		
 		virtual ~interface()
 		{
-			// Close our current socket
-			sync<void>(-1);
+			try {
+				LOG(debug) << "Destroy interface";
+				// Close our current socket
+				sync<void>(link_life_ ? method_id::DESTROY : method_id::DISCONNECT);
 
-			if(linkLife_)
-			{
-				// Close the service of the remote object
-				combox_.close_service();
+				if(link_life_)
+				{
+					// Close the service of the remote object
+					combox_.close_service();
+				}
+			} catch(std::exception& exc) {
+				LOG(info) << "Cannot " << (link_life_ ? "close" : "disconnect") << " broker service remotely: " << exc.what();
 			}
 		}
 
@@ -100,7 +105,7 @@ class interface
 
 				LOG(debug) << "sent to broker";
 
-				if(_method_id == -1) // TODO: use code
+				if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY)
 				{
 					combox_.connec().socket().close();
 					return R();
@@ -139,7 +144,7 @@ class interface
 		}
 
 
-		template<typename R, typename ...Args> R async(int _method_id, Args& ...args) // TODO: avoid rewrite of method
+		template<typename R, typename ...Args> R async(int _method_id, Args& ...args)
 		{
 			try
 			{
@@ -155,7 +160,7 @@ class interface
 
 				LOG(debug) << "sent to broker";
 
-				if(_method_id == -1) // TODO: use code
+				if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY)
 				{
 					combox_.connec().socket().close();
 					return R();
@@ -178,10 +183,10 @@ class interface
 				// LOG(debug) << "received ack=" << ack;
 				// if(ack != "ACK")
 					// throw std::runtime_error("did not receive ack");
-				if(_method_id == -1) // TODO: use code
+				if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY)
 					combox_.connec().socket().close();
 
-				return; // ret.return_value(); // TODO: maybe return a future value
+				return;
 			}
 			catch(std::exception& e)
 			{
@@ -201,7 +206,7 @@ class interface
 
 	private:
 		pop::interface_combox combox_;
-		bool linkLife_;
+		bool link_life_;
 };
 
 

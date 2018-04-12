@@ -97,10 +97,10 @@ namespace pop {
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
 				bufin ia(conn->input_stream());
-				int method_id = -1;
-				ia >> method_id;
+				int meth_id = method_id::UNKNOWN;
+				ia >> meth_id;
 
-				LOG(debug) << "method id " << method_id;
+				LOG(debug) << "method id " << meth_id;
 
 				bool is_async = false;
 				ia >> is_async;
@@ -109,13 +109,19 @@ namespace pop {
 				static const pop::exception ack;
 				std::stringstream oss;
 				bufout oa(oss);
-				LOG(debug) << "call remote method " << method_id;
+				LOG(debug) << "call remote method " << meth_id;
 
-				if(method_id == -1)
+				if(meth_id == method_id::DISCONNECT)
+				{
+					LOG(debug) << "disconnect iface and broker";
+					conn->socket().close();
+					return;
+				}
+				if(meth_id == method_id::DESTROY)
 				{
 					LOG(debug) << "received end signal";
 					conn->socket().close();
-					// io_service_.stop();
+					io_service_.stop();
 					return;
 				}
 				else if(is_async)
@@ -126,7 +132,7 @@ namespace pop {
 					conn->sync_write_ss(oss);
 					LOG(debug) << "sent ack";
 					try {
-						brok_.remote_call(method_id, ia, oa);
+						brok_.remote_call(meth_id, ia, oa);
 					} catch(std::exception& exc) {
 						LOG(error) << "Exception caught in async method: " << exc.what();
 						// exc.text = "Exception caught in async method: ";
@@ -135,13 +141,13 @@ namespace pop {
 						LOG(error) << "Unknown exception caught in async method";
 						// exc.text = "Exception caught in async method";
 					}
-					LOG(debug) << "finish calling remote method " << method_id;
+					LOG(debug) << "finish calling remote method " << meth_id;
 				}
 				else
 				{
 					pop::exception remote_exc;
 					try {
-						brok_.remote_call(method_id, ia, oa);
+						brok_.remote_call(meth_id, ia, oa);
 					} catch(std::exception& exc) {
 						LOG(warning) << "Broker: Exception caught in sync method: " << exc.what();
 						// remote_exc.text = "Exception caught in sync method: ";
@@ -151,7 +157,7 @@ namespace pop {
 						remote_exc.text = "Unknown exception";
 					}
 
-					LOG(debug) << "finish calling remote method " << method_id;
+					LOG(debug) << "finish calling remote method " << meth_id;
 
 					oa << remote_exc;
 					// oa << ack;
@@ -171,16 +177,16 @@ namespace pop {
 				}
 				service_connection->sync_read();
 				bufin ia(service_connection->input_stream());
-				int service_type = -1;
-				ia >> service_type;
+				service_type stype = service_type::UNKNOWN;
+				ia >> stype;
 				LOG(debug) << "Interface combox contacted";
-				switch(service_type)
+				switch(stype)
 				{
-					case 0:
+					case service_type::CLOSE_SERVICE_CONNECTION:
 						// Closing the service:
 						LOG(debug) << "Closing service on broker";
 						return;
-					case 1: // TODO ENUM
+					case service_type::OPEN_SERVICE_CONNECTION:
 					{
 						// Open a contact with a new interface
 						pop::accesspoint ap;
@@ -198,7 +204,7 @@ namespace pop {
 					}
 					break;
 					default:
-						throw std::runtime_error("Unknown service_type " + std::to_string(service_type));
+						throw std::runtime_error("Unknown service_type " + std::to_string(static_cast<int>(stype)));
 				}
 
 				// Recreate a connection for contact

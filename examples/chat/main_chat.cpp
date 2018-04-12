@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 			switch(c) {
 				case 'D':
 				case 'q': {
-					c1.disconnect(); // note: cannot be added to destructor: deadlock
+					// c1.disconnect(); // note: cannot be added to destructor: deadlock
 					break;
 				}
 				case 'a': {
