@@ -9,6 +9,7 @@
 //
 
 #include "test_class.hpp"
+#include "test_child_class.hpp"
 
 using namespace std;
 
@@ -20,28 +21,28 @@ bool test_interface(TestClass_iface& testClass, bool set_values)
 
 	sleep(1);
 
-	cout << "call SetValues method to set new values: i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+	LOG(info) << "call SetValues method to set new values: i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s;
 	if(set_values)
 		testClass.SetValues(27, 42, 3.14, "new stuff");
 
 	sleep(1);
 
 	int val = testClass.GetValue();
-	cout << "GetValue: " << val << endl;
+	LOG(info) << "GetValue: " << val;
 	if(testClass.GetValue() != 333)
 		return false;
 
-	cout << "call GetValues" << endl;
+	LOG(info) << "call GetValues";
 	testClass.GetValues(i1, i2, d, s);
-	cout << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s << endl;
+	LOG(info) << "i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s;
 	if(!(i1 == 27 && i2 == 42 && d == 3.14 && s == "new stuff"))
 		return false;
 
-	cout << "s=" << testClass.GetStr() << endl;
+	LOG(info) << "s=" << testClass.GetStr();
 	if(testClass.GetStr() != "new stuff")
 		return false;
 
-	cout << "Tests with a serializable class (gps position)" << endl;
+	LOG(info) << "Tests with a serializable class (gps position)";
 
 	gps_position gps1(1, 1, 1);
 	gps_position gps2(0, 0, 0);
@@ -54,7 +55,7 @@ bool test_interface(TestClass_iface& testClass, bool set_values)
 
 	sleep(1);
 
-	cout << "Tests with a second serializable class" << endl;
+	LOG(info) << "Tests with a second serializable class";
 	test_struct1 ts1, ts2;
 	ts1.a = 444;
 	if(set_values)
@@ -75,32 +76,56 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		cout << "call constructor" << endl;
-		// iface.call_sync<int>(0, i1);
-		TestClass_iface testClass("localhost");
-		if(!test_interface(testClass, true))
-			throw runtime_error("Test failed on testClass");
+		{
+			LOG(info) << "call constructor for TestClass";
+			// iface.call_sync<int>(0, i1);
+			TestClass_iface testClass("localhost");
+			if(!test_interface(testClass, true))
+				throw runtime_error("Test failed on testClass");
 
-		if(!test_interface(testClass, false))
-			throw runtime_error("Test failed on testClass(2)");
+			if(!test_interface(testClass, false))
+				throw runtime_error("Test failed on testClass(2)");
 
-		cout << "create a second interface (reference)" << endl;
-		TestClass_iface testClass2(testClass.contact());
+			LOG(info) << "create a second interface (reference)";
+			TestClass_iface testClass2(testClass.contact());
 
-		if(!test_interface(testClass2, false))
-			throw runtime_error("Test failed on testClass2");
+			if(!test_interface(testClass2, false))
+				throw runtime_error("Test failed on testClass2");
 
-		cout << "create a third interface" << endl;
-		TestClass_iface testClass3(testClass.contact());
-		if(!test_interface(testClass3, false))
-			throw runtime_error("Test failed on testClass3");
+			LOG(info) << "create a third interface";
+			TestClass_iface testClass3(testClass.contact());
+			if(!test_interface(testClass3, false))
+				throw runtime_error("Test failed on testClass3");
+		}
+		{
+			// Child class
+			LOG(info) << "call constructor for TestChildClass";
+			// iface.call_sync<int>(0, i1);
+			TestChildClass_iface testClass("localhost", 12);
+			if(!test_interface(testClass, true))
+				throw runtime_error("Test failed on testClass");
 
-		cout << "end of main" << endl;
+			if(!test_interface(testClass, false))
+				throw runtime_error("Test failed on testClass(2)");
+
+			LOG(info) << "create a second interface (reference)";
+			TestChildClass_iface testClass2(testClass.contact());
+
+			if(!test_interface(testClass2, false))
+				throw runtime_error("Test failed on testClass2");
+
+			LOG(info) << "create a third interface";
+			TestChildClass_iface testClass3(testClass.contact());
+			if(!test_interface(testClass3, false))
+				throw runtime_error("Test failed on testClass3");
+		}
+
+		LOG(info) << "end of main";
 		sleep(3);
 	}
 	catch (std::exception& e)
 	{
-		cout << "ERROR: " << e.what() << endl;
+		LOG(error) << "ERROR: " << e.what();
 		return 1;
 	}
 

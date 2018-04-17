@@ -17,9 +17,34 @@ import sys
 import os
 import clang.cindex as cindex
 from subprocess import call
+from pprint import pprint
 
 cindex.Config.set_library_path("/usr/lib/llvm-5.0/lib")
 
+def describe_node(node, full = False):
+	""" Describe a node. For debug purposes
+	"""
+
+	print "node %s (%s) %s" % (node.spelling, node.displayname, node.kind)
+	print node
+
+	if full:
+		pprint(node.__dict__)
+		pprint(node._tu.__dict__)
+		pprint(node._tu.index.__dict__)
+		pprint(node._tu.index.obj.__dict__)
+		print dir(node)
+
+	# Recurse for children of this node
+	def descr(node, tabs):
+		for c in node.get_children():
+			print "%s- %s (%s): %s %s" % (tabs, c.spelling, c.displayname, c.kind, c.data)
+			print node
+			if full:
+				print dir(c)
+				pprint(c._tu.index.obj.__dict__)
+			descr(c, tabs + '\t')
+	descr(node, '\t')
 
 def init_tu(argv):
 	""" Initialize a translation unit with the clang parser
@@ -150,69 +175,74 @@ def get_allocation(constr_node):
 
 	return "pop::local_allocator()" # our default
 
-def list_args1(parent, comma = False):
-	""" List all types of arguments as a string with commas, if specified add an extra comma in front """
+def is_parallel(node):
+	""" Return true if a node has parallel class annotation
+	"""
+	# describe_node(node)
+	for c in node.get_children():
+		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling == "parallel":
+			return True
+	return False
+
+def get_parents(node, parallel_only = True, public_only = True):
+	""" Return all parent nodes of a class
+	"""
+	parents = []
+	for cc in node.get_children():
+		# print 'Search %s' % cc.spelling
+		if cc.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
+			# describe_node(cc)
+			if parallel_only and not is_parallel(cc.get_definition()):
+				continue
+			if public_only and not cc.access_specifier == cindex.AccessSpecifier.PUBLIC:
+				continue
+			print "Found parent of %s: %s" % (node.spelling, cc.spelling)
+			parents += [cc.get_definition()]
+	return parents
+
+def get_arguments_values(node):
+	for ccc in cc.get_children():
+		print ccc
+		print "arg %s" % ccc.spelling
+		if ccc.kind == cindex.CursorKind.CALL_EXPR:
+			describe_node(ccc, False)
+			# describe_node(cc)
+			if not parallel_only or is_parallel(cc.get_definition()):
+				print "Found parent of %s: %s" % (node.spelling, cc.spelling)
+				parents += [cc.get_definition()]
+
+
+def list_args1(parent, front_comma = False, back_comma = False):
+	""" List all types of arguments as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.type.spelling)
-	if comma and out:
-		return ',' + ','.join(out)
-	else:
-		return ','.join(out)
+	fc = ', ' if out and front_comma else ''
+	bc = ', ' if out and back_comma else ''
+	return fc + ', '.join(out) + bc
 
-def list_args2(parent, comma = False):
-	""" List all arguments without types as a string with commas, if specified add an extra comma in front """
+def list_args2(parent, front_comma = False, back_comma = False):
+	""" List all arguments without types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.spelling)
-	if comma and out:
-		return ',' + ','.join(out)
-	else:
-		return ','.join(out)
+	fc = ', ' if out and front_comma else ''
+	bc = ', ' if out and back_comma else ''
+	return fc + ', '.join(out) + bc
 
-def list_args(parent, comma = False):
-	""" List all arguments with types as a string with commas, if specified add an extra comma in front """
+def list_args(parent, front_comma = False, back_comma = False):
+	""" List all arguments with types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
 		out.append(arg.type.spelling + " " + arg.spelling)
-	if comma and out:
-		return ',' + ','.join(out)
-	else:
-		return ','.join(out)
+	fc = ', ' if out and front_comma else ''
+	bc = ', ' if out and back_comma else ''
+	return fc + ', '.join(out) + bc
 
 
 def align(filename):
 	""" Align the file with command astyle """
-	call(["astyle", "-nToO", "--style=allman", filename])
-
-def main():
-	[src, tu] = parser.init_tu(sys.argv)
-	tu = index.parse(src, ["-I."])
-
-	parclasses = find_parallel_classes(tu.cursor, None, src)
-
-	print "found %d parallel classes:" % len(parclasses)
-	for c in parclasses:
-		print "parallel class %s in %s" % (c.spelling, c.location)
-		constructors = find_constructors(c)
-		print "found %d constructors" % len(constructors)
-		for m in constructors:
-			print "\tconstr: %s allocation:%s" % (m.spelling, get_allocation(m))
-			# print_ast(m, 1)
-			arguments = find_arguments(m)
-			for a in arguments:
-				print "\t\targ %s %s" % (a.type.spelling, a.spelling)
-		methods = find_methods(c)
-		print "found %d parallel methods" % len(methods)
-		for m in methods:
-			print "\tmethod: %s %s %s" % (get_invoker(m), m.result_type.spelling, m.spelling)
-			# print_ast(m, 1)
-			arguments = find_arguments(m)
-			for a in arguments:
-				print "\t\targ %s %s" % (a.type.spelling, a.spelling)
-
-
-
+	call(["astyle", "-nT", filename])
 
 if __name__ == "__main__":
 	print "this file is a Python library: try using popgen instead"

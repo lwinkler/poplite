@@ -167,9 +167,9 @@ namespace pop
 			// System options
 			int log_level;
 
-			void print_args(std::ostream& _os) const { // TODO: MAybe replace
+			void print_args(std::ostream& _os) const {
 				for(const auto& arg: args_) {
-					_os << ' ' << arg;
+					_os << ' ' << std::quoted(arg);
 				}
 			}
 

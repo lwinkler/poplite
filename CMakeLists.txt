@@ -31,7 +31,7 @@ function(pop_add_object object_name header_name)
 
 	# message("Add command to generate gen/${_filename}.ids${_ext} gen/${_filename}.iface${_ext} gen/${_filename}.brok${_ext} gen/main.${object_name}.cpp")
 	# note: there are conflicts while generating multiple files with one command
-	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
+	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116 TODO
 	add_custom_command(OUTPUT gen/${_filename}.iface${_ext} gen/${_filename}.ids${_ext} gen/${_filename}.brok${_ext} gen/main.${object_name}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${INC_DIRS}
 	DEPENDS ${header_name})

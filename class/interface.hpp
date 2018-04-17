@@ -43,9 +43,9 @@ public:
 class interface
 {
 	public:
-		interface(const std::string& _executable, const pop::allocator& _allocator, bool _link_life = true) :
+		interface(const std::string& _executable, const pop::allocator& _allocator) :
 			combox_(),
-			link_life_(_link_life)
+			link_life_(true)
 		{
 			_allocator.allocate(_executable, combox_.callback());
 			// Handle connection
