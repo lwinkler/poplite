@@ -23,12 +23,17 @@ struct abc {
 	void call_abc(){}
 };
 
+// TODO: Test with static method
+// TODO: Test with inheritence from a normal class
+// TODO: Maybe test with virtual inheritance
+
 POP_CLASS TestChildClass : public TestClass, public abc
 {
 	public:
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		POP_ALLOCATION(pop::local_allocator())
 		TestChildClass(std::string _s2, int myint) : TestClass("AAA_s2"), abc(myint, 12, "abc") {std::cout << "call constr with " << _s2 << std::endl;}
+		void Print(){}
 
 };
 

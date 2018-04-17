@@ -85,6 +85,7 @@ POP_CLASS TestClass
 		// test_struct1 GetTest(){return test1_;}
 
 		void SetGps(gps_position& _gps) { gps_ = _gps;}
+		void Print(){}
 		gps_position GetGps(){return gps_;}
 
 		std::string GetStr() {return s_;}

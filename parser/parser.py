@@ -39,7 +39,6 @@ def describe_node(node, full = False):
 	def descr(node, tabs):
 		for c in node.get_children():
 			print "%s- %s (%s): %s %s" % (tabs, c.spelling, c.displayname, c.kind, c.data)
-			print node
 			if full:
 				print dir(c)
 				pprint(c._tu.index.obj.__dict__)
@@ -105,19 +104,30 @@ def find_parallel_classes(node, parent, src):
 def find_methods(class_node):
 	""" Find all public methods in parallel class
 	"""
+	meth_map = {}
+	find_methods1(class_node, meth_map)
+	l = []
 
-	found = []
+	for key, value in meth_map.iteritems():
+		l.append(value)
+	return l
+
+def find_methods1(class_node, meth_map):
+	""" Find all public methods in parallel class (mapped by signature)
+	"""
 
 	# print "class %s %s %s [line=%s, col=%s]" % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
-
 
 	# Recurse for children of this node
 	for c in class_node.get_children():
 		if c.kind == cindex.CursorKind.CXX_METHOD and c.access_specifier == cindex.AccessSpecifier.PUBLIC:
-			# print 'Found parallel method %s [line=%s, col=%s]' % (c.spelling, c.location.line, c.location.column)
-			found.append(c)
+			print 'Found parallel method %s [line=%s, col=%s] access=%s static=%s' % (c.spelling, c.location.line, c.location.column, c.access_specifier, c.is_static_method())
+			if c.displayname not in meth_map.keys():
+				meth_map[c.displayname] = c
 	
-	return found
+	# this is depth-first search !!!
+	for parent in get_parents(class_node, False, True):
+		find_methods1(parent, meth_map)
 
 def find_constructors(class_node):
 	""" Find all public methods in parallel class
@@ -199,18 +209,6 @@ def get_parents(node, parallel_only = True, public_only = True):
 			print "Found parent of %s: %s" % (node.spelling, cc.spelling)
 			parents += [cc.get_definition()]
 	return parents
-
-def get_arguments_values(node):
-	for ccc in cc.get_children():
-		print ccc
-		print "arg %s" % ccc.spelling
-		if ccc.kind == cindex.CursorKind.CALL_EXPR:
-			describe_node(ccc, False)
-			# describe_node(cc)
-			if not parallel_only or is_parallel(cc.get_definition()):
-				print "Found parent of %s: %s" % (node.spelling, cc.spelling)
-				parents += [cc.get_definition()]
-
 
 def list_args1(parent, front_comma = False, back_comma = False):
 	""" List all types of arguments as a string with commas, if specified add an extra comma in front or end """
