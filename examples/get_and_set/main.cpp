@@ -100,7 +100,6 @@ int main(int argc, char* argv[])
 		{
 			// Child class
 			LOG(info) << "call constructor for TestChildClass";
-			// iface.call_sync<int>(0, i1);
 			TestChildClass_iface testClass("localhost", 12);
 			if(!test_interface(testClass, true))
 				throw runtime_error("Test failed on testClass");
