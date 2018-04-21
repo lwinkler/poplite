@@ -89,8 +89,9 @@ def write_constr(fout, c, id, parent_ifaces):
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id, classname):
-	fout.write('inline %s %s(%s) {' %(m.result_type.spelling, m.spelling, parser.list_args(m)) 
-		+ 'return %s<%s%s>(%s_method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
+	if m.lexical_parent.spelling == classname:
+		fout.write('inline %s%s %s(%s) {' %('virtual ' if m.is_virtual_method() else '', m.result_type.spelling, m.spelling, parser.list_args(m)) 
+			+ 'return %s<%s%s>(%s_method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
 
 #--------------------------------------------------------------------------------
 

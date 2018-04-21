@@ -32,7 +32,7 @@ POP_CLASS child : public parent_b
 		}
 
 		std::string get_non_virtual_name() {return "child:" + str_;}
-		virtual std::string get_virtual_name(){return "child:" + str_;}
+		std::string get_virtual_name(){return "child:" + str_;}
 
 
 	protected:

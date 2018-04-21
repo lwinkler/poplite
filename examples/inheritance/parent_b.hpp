@@ -30,8 +30,8 @@ POP_CLASS parent_b : public parent_a
 
 		virtual void set_double(double _d){d_ = _d;}
 		virtual int get_double(){return d_;}
-		// std::string get_non_virtual_name(){return "parent_b:" + str_;}
-		// static std::string get_static_class_name_of_parent_b(){return "parent_b";}
+		std::string get_non_virtual_name(){return "parent_b:" + str_;}
+		virtual std::string get_virtual_name(){return "parent_b:" + str_;}
 
 	private:
 		double d_;

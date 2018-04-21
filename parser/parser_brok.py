@@ -47,7 +47,7 @@ def write_constr(fout, m):
 def write_meth(fout, m, classname):
 	
 	fout.write("std::bind(&remote::broker<%s>::conc<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		% (classname, m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling))
+		% (classname, m.result_type.spelling, parser.list_args1(m, True), m.lexical_parent.spelling, m.spelling))
 
 #--------------------------------------------------------------------------------
 

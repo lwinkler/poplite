@@ -122,12 +122,10 @@ def find_methods1(class_node, meths):
 	# Recurse for children of this node
 	for c in class_node.get_children():
 		if c.kind == cindex.CursorKind.CXX_METHOD and c.access_specifier == cindex.AccessSpecifier.PUBLIC:
-			describe_node(c, True)
-			print 'Found parallel method %s::%s [line=%s, col=%s] access=%s static=%s' % (class_node.spelling, c.displayname, c.location.line, c.location.column, c.access_specifier, c.is_static_method())
+			print 'Found parallel method %s::%s [line=%s, col=%s] access=%s static=%s virtual=%s' % (class_node.spelling, c.displayname, c.location.line, c.location.column, c.access_specifier, c.is_static_method(), c.is_virtual_method())
 			found = False
 			for meth in meths:
-				if meth.displayname == c.displayname:
-					# TODO: HAndle virtual
+				if meth.displayname == c.displayname and meth.is_virtual_method():
 					print 'Replace method %s' % meth.displayname
 					meth = c
 					found = True
