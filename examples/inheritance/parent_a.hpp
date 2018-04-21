@@ -15,7 +15,6 @@
 #include "class/system.hpp"
 
 
-
 // this include should always be right before the parallel class declaration
 #include "parent_a.iface.hpp"
 

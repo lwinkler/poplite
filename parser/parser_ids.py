@@ -47,13 +47,13 @@ struct %s_method_ids
 """ % (class_node.spelling))
 
 	id = 0
-	constructors = parser.find_constructors(class_node)
-	for m in constructors:
+	methods = parser.find_methods(class_node)
+	for m in methods:
 		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
 		id += 1
 
-	methods = parser.find_methods(class_node)
-	for m in methods:
+	constructors = parser.find_constructors(class_node)
+	for m in constructors:
 		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
 		id += 1
 

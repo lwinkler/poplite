@@ -41,9 +41,9 @@ def write_foot(fout):
 #--------------------------------------------------------------------------------
 
 def write_interface(fout, class_node):
-	parent_nodes = parser.get_parents(class_node, True, True)
-	# if len(parent_nodes) > 1:
-		# raise Exception('Class ' + class_node.spelling + ' cannot have more than one direct parent')
+	parent_nodes = parser.get_direct_parents(class_node, True, True)
+	if len(parent_nodes) > 1:
+		raise Exception('Parallel class ' + class_node.spelling + ' cannot have more than one direct parent')
 	parent_ifaces = [node.spelling + "_iface" for node in  parent_nodes] if parent_nodes else ['pop::interface']
 
 	# note: we must have virtual inheritence to have multiple inheritance
@@ -51,22 +51,24 @@ def write_interface(fout, class_node):
 class %s_iface : %s
 {
 public:
-""" % (class_node.spelling, ', '.join(['virtual public ' + iface for iface in parent_ifaces])))
+""" % (class_node.spelling, ', '.join(['public ' + iface for iface in parent_ifaces])))
 
 	# Needed for virtual inheritence
-	if 'pop::interface' not in parent_ifaces:
-		parent_ifaces += ['pop::interface']
+	# unused for the moment: each parclass can have only one parclass direct parent
+	# if 'pop::interface' not in parent_ifaces:
+		# parent_ifaces += ['pop::interface']
 
 	# Add a constructor from accesspoint for references to parallel objects
 	fout.write("%s_iface(pop::accesspoint _ap) : %s {}\n" % (class_node.spelling, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
 
 	id = 0
-	for c in parser.find_constructors(class_node):
-		write_constr(fout, c, id, parent_ifaces)
-		id += 1
-
 	for m in parser.find_methods(class_node):
 		write_meth(fout, m, id, class_node.spelling)
+		id += 1
+
+	# Constructors need to be inserted after methods to match in parent and child
+	for c in parser.find_constructors(class_node):
+		write_constr(fout, c, id, parent_ifaces)
 		id += 1
 
 	fout.write("""

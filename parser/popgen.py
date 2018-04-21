@@ -27,6 +27,9 @@ def main():
 	tu = parser.init_tu(sys.argv)
 	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)
 
+	if len(parclasses) != 1:
+		raise Exception('Found %d parallel class(es) in %s' % (len(parclasses), filename_in))
+
 	print "found %d parallel classe(s):" % len(parclasses)
 	for c in parclasses:
 		print "parallel class %s at %s" % (c.spelling, c.location)

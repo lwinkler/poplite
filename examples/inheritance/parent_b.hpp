@@ -13,17 +13,18 @@
 
 // #include "class/interface.hpp"
 #include "class/system.hpp"
+#include "parent_a.hpp"
 
 
 
 // this include should always be right before the parallel class declaration
 #include "parent_b.iface.hpp"
 
-POP_CLASS parent_b
+POP_CLASS parent_b : public parent_a
 {
 	public:
 		POP_ALLOCATION(pop::local_allocator())
-		parent_b(std::string _str) : str_(_str) {
+		parent_b(std::string _str): parent_a("A: " + _str), str_(_str) {
 			LOG(info) << "call constr of parent_b: " << _str;
 		}
 

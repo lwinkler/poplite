@@ -12,19 +12,18 @@
 #define TEST_CHILD_H
 
 #include "class/system.hpp"
-#include "parent_a.hpp"
 #include "parent_b.hpp"
 
 
 // this include should always be right before the parallel class declaration
 #include "child.iface.hpp"
 
-POP_CLASS child : public parent_a, public parent_b
+POP_CLASS child : public parent_b
 {
 	public:
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		POP_ALLOCATION(pop::local_allocator())
-		child(std::string _str) : str_(_str), parent_a("A:" + _str), parent_b("B:" + _str) {
+		child(std::string _str) : str_(_str), parent_b("B:" + _str) {
 			LOG(info) << "call child constr";
 		}
 

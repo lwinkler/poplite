@@ -104,30 +104,39 @@ def find_parallel_classes(node, parent, src):
 def find_methods(class_node):
 	""" Find all public methods in parallel class
 	"""
-	meth_map = {}
-	find_methods1(class_node, meth_map)
-	l = []
+	meths = []
+	find_methods1(class_node, meths)
+	return meths
 
-	for key, value in meth_map.iteritems():
-		l.append(value)
-	return l
-
-def find_methods1(class_node, meth_map):
+def find_methods1(class_node, meths):
 	""" Find all public methods in parallel class (mapped by signature)
 	"""
 
 	# print "class %s %s %s [line=%s, col=%s]" % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
+	par = get_direct_parents(class_node, True, True)
+	if len(par) > 1:
+		raise Exception('Parallel class ' + class_node.spelling + ' has more than one parallel class as parent')
+	if len(par) == 1:
+		find_methods1(par[0], meths)
 
 	# Recurse for children of this node
 	for c in class_node.get_children():
 		if c.kind == cindex.CursorKind.CXX_METHOD and c.access_specifier == cindex.AccessSpecifier.PUBLIC:
-			print 'Found parallel method %s [line=%s, col=%s] access=%s static=%s' % (c.spelling, c.location.line, c.location.column, c.access_specifier, c.is_static_method())
-			if c.displayname not in meth_map.keys():
-				meth_map[c.displayname] = c
+			describe_node(c, True)
+			print 'Found parallel method %s::%s [line=%s, col=%s] access=%s static=%s' % (class_node.spelling, c.displayname, c.location.line, c.location.column, c.access_specifier, c.is_static_method())
+			found = False
+			for meth in meths:
+				if meth.displayname == c.displayname:
+					# TODO: HAndle virtual
+					print 'Replace method %s' % meth.displayname
+					meth = c
+					found = True
+					break
+			if not found:
+				meths.append(c)
 	
-	# this is depth-first search !!!
-	for parent in get_parents(class_node, False, True):
-		find_methods1(parent, meth_map)
+	# for parent in get_direct_parents(class_node, True, True):
+		# find_methods1(parent, meths)
 
 def find_constructors(class_node):
 	""" Find all public methods in parallel class
@@ -194,7 +203,7 @@ def is_parallel(node):
 			return True
 	return False
 
-def get_parents(node, parallel_only = True, public_only = True):
+def get_direct_parents(node, parallel = None, public_only = True):
 	""" Return all parent nodes of a class
 	"""
 	parents = []
@@ -202,7 +211,7 @@ def get_parents(node, parallel_only = True, public_only = True):
 		# print 'Search %s' % cc.spelling
 		if cc.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
 			# describe_node(cc)
-			if parallel_only and not is_parallel(cc.get_definition()):
+			if parallel is not None and not is_parallel(cc.get_definition()) == parallel:
 				continue
 			if public_only and not cc.access_specifier == cindex.AccessSpecifier.PUBLIC:
 				continue
