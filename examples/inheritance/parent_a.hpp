@@ -14,11 +14,18 @@
 // #include "class/interface.hpp"
 #include "class/system.hpp"
 
+class simple_parent_a {
+	public:
+		void set_float_a(float _f){f_ = _f;}
+		float get_float_a(){return f_;}
+	private:
+		float f_ = 0;
+};
 
 // this include should always be right before the parallel class declaration
 #include "parent_a.iface.hpp"
 
-POP_CLASS parent_a
+POP_CLASS parent_a : public simple_parent_a
 {
 	public:
 		POP_ALLOCATION(pop::local_allocator())

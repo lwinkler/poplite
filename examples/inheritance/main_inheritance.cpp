@@ -42,6 +42,14 @@ int main(int argc, char* argv[])
 		iface1.set_double(3.14);
 		check_equal(real1.get_double(), iface1.get_double());
 
+		real1.set_float(3e33);
+		iface1.set_float(3e33);
+		check_equal(real1.get_float(), iface1.get_float());
+
+		real1.set_float_a(3e3);
+		iface1.set_float_a(3e3);
+		check_equal(real1.get_float_a(), iface1.get_float_a());
+
 		check_equal(real1.get_non_virtual_name(), iface1.get_non_virtual_name());
 		check_equal(real1.get_virtual_name(), iface1.get_virtual_name());
 

@@ -62,8 +62,9 @@ public:
 	fout.write("%s_iface(pop::accesspoint _ap) : %s {}\n" % (class_node.spelling, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
 
 	id = 0
-	for m in parser.find_methods(class_node):
-		write_meth(fout, m, id, class_node.spelling)
+	[methods, real_parents] = parser.find_methods(class_node)
+	for m in methods:
+		write_meth(fout, m, id, class_node.spelling, real_parents)
 		id += 1
 
 	# Constructors need to be inserted after methods to match in parent and child
@@ -88,8 +89,8 @@ def write_constr(fout, c, id, parent_ifaces):
 		% (c.spelling, parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
-def write_meth(fout, m, id, classname):
-	if m.lexical_parent.spelling == classname:
+def write_meth(fout, m, id, classname, real_parents):
+	if m.lexical_parent.spelling not in real_parents:
 		fout.write('inline %s%s %s(%s) {' %('virtual ' if m.is_virtual_method() else '', m.result_type.spelling, m.spelling, parser.list_args(m)) 
 			+ 'return %s<%s%s>(%s_method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
 

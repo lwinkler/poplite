@@ -24,8 +24,6 @@ struct abc {
 };
 
 // TODO: Test with static method
-// TODO: Test with inheritence from a normal class
-// TODO: Maybe test with virtual inheritance
 
 POP_CLASS TestChildClass : public TestClass //, public abc
 {

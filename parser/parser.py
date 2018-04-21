@@ -105,19 +105,28 @@ def find_methods(class_node):
 	""" Find all public methods in parallel class
 	"""
 	meths = []
-	find_methods1(class_node, meths)
-	return meths
+	real_parents = []
+	find_methods1(class_node, meths, real_parents)
+	return [meths, real_parents]
 
-def find_methods1(class_node, meths):
+def find_methods1(class_node, meths, real_parents):
 	""" Find all public methods in parallel class (mapped by signature)
 	"""
 
 	# print "class %s %s %s [line=%s, col=%s]" % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
-	par = get_direct_parents(class_node, True, True)
-	if len(par) > 1:
-		raise Exception('Parallel class ' + class_node.spelling + ' has more than one parallel class as parent')
-	if len(par) == 1:
-		find_methods1(par[0], meths)
+	real_parent = ''
+	if real_parents is not None:
+		par_parents = get_direct_parents(class_node, True, True)
+		if len(par_parents) > 1:
+			print "Warning: parallel class %s has more than one parallel class as parent. The interface will only be castable into the first parent" % class_node.spelling
+		if len(par_parents) >= 1:
+			find_methods1(par_parents[0], meths, real_parents)
+			real_parent = par_parents[0].spelling
+			real_parents.append(real_parent)
+		
+	for parent in get_direct_parents(class_node, False, True):
+		if parent.spelling != real_parent:
+			find_methods1(parent, meths, None)
 
 	# Recurse for children of this node
 	for c in class_node.get_children():
@@ -132,9 +141,6 @@ def find_methods1(class_node, meths):
 					break
 			if not found:
 				meths.append(c)
-	
-	# for parent in get_direct_parents(class_node, True, True):
-		# find_methods1(parent, meths)
 
 def find_constructors(class_node):
 	""" Find all public methods in parallel class
