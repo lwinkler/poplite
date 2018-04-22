@@ -18,14 +18,9 @@
 // this include should always be right before the parallel class declaration
 #include "TestChildClass.iface.hpp"
 
-struct abc {
-	abc(int a, char b, std::string c){}
-	void call_abc(){}
-};
+// TODO: Test with const method
 
-// TODO: Test with static method
-
-POP_CLASS TestChildClass : public TestClass //, public abc
+POP_CLASS TestChildClass : public TestClass
 {
 	public:
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))

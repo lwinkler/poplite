@@ -15,6 +15,7 @@
 #include "class/system.hpp"
 #include "class/apply_tuple.hpp"
 #include "class/apply_tuple_constr.hpp"
+#include "class/apply_tuple_static.hpp"
 #include "com/serialize.hpp"
 
 
@@ -61,6 +62,16 @@ namespace pop
 					apply_tuple(_p_obj, _p_meth, tup, _oa);
 					serialize_out<bufout, Args...>(_oa, tup);
 				}
+
+				/// A simple concurrent call to a static method 
+				template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, ParClass*& _p_obj, R (*_p_meth)(Args...))
+				{
+					std::tuple<typename std::decay<Args>::type...> tup;
+					_ia >> tup;
+					apply_tuple_static( _p_meth, tup, _oa);
+					serialize_out<bufout, Args...>(_oa, tup);
+				}
+
 
 
 			private:

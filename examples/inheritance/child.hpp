@@ -35,7 +35,7 @@ POP_CLASS parent_a : public simple_parent_a
 		virtual int get_int(){return i_;}
 		std::string get_non_virtual_name(){return "parent_a:" + str_;}
 		virtual std::string get_virtual_name(){return "parent_a:" + str_;}
-		// static std::string get_static_class_name_of_parent_a(){return "parent_a";} // TODO
+		static std::string get_static_name(){return "parent_a";}
 
 	private:
 		int i_;
@@ -57,6 +57,7 @@ POP_CLASS parent_b : public parent_a
 		virtual int get_double(){return d_;}
 		std::string get_non_virtual_name(){return "parent_b:" + str_;}
 		virtual std::string get_virtual_name(){return "parent_b:" + str_;}
+		static std::string get_static_name(){return "parent_b";}
 
 	private:
 		double d_;
@@ -88,7 +89,7 @@ POP_CLASS child : public parent_b, public simple_parent_c
 
 		std::string get_non_virtual_name() {return "child:" + str_;}
 		std::string get_virtual_name(){return "child:" + str_;}
-
+		static std::string get_static_name(){return "child";}
 
 	protected:
 		const std::string str_ = "Child";

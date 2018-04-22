@@ -43,14 +43,14 @@ def write_constr(fout, m):
 
 def write_meth(fout, m, classname):
 	
-	fout.write("std::bind(&remote::broker<%s>::conc<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		% (classname, m.result_type.spelling, parser.list_args1(m, True), m.lexical_parent.spelling, m.spelling))
+	conc = 'static_conc' if m.is_static_method() else 'conc'
+	fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+		% (classname, conc, m.result_type.spelling, parser.list_args1(m, True), m.lexical_parent.spelling, m.spelling))
 
 #--------------------------------------------------------------------------------
 
 def write_broker(fout, class_node):
 	
-	# TODO: Static ???
 	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_\n{"
 		% (class_node.spelling, class_node.spelling))
 
