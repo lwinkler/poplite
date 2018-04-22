@@ -16,7 +16,7 @@
 
 
 // this include should always be right before the parallel class declaration
-#include "test_child_class.iface.hpp"
+#include "TestChildClass.iface.hpp"
 
 struct abc {
 	abc(int a, char b, std::string c){}

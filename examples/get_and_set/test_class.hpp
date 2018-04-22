@@ -49,7 +49,7 @@ class gps_position
 };
 
 // this include should always be right before the parallel class declaration
-#include "test_class.iface.hpp"
+#include "TestClass.iface.hpp"
 
 POP_CLASS TestClass
 {

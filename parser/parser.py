@@ -80,7 +80,7 @@ def find_parallel_classes(node, parent, src):
 		# print "ASDFAS"
 		# print node.extent
 
-	if node.kind == cindex.CursorKind.ANNOTATE_ATTR and node.spelling == "parallel" and parent.location.file.name == src:
+	if node.kind == cindex.CursorKind.ANNOTATE_ATTR and node.spelling == "parallel": # and parent.location.file.name == src:
 		if parent.kind != cindex.CursorKind.CLASS_DECL:
 			print "Warning: node %s is annoted as parallel but is not a class" % parent.spelling
 		else:

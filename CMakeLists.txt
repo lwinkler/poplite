@@ -29,9 +29,10 @@ function(pop_add_object object_name header_name)
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
 
-	message("Add command to generate gen/${object_name}.ids${_ext} gen/${object_name}.iface${_ext} gen/${object_name}.brok${_ext} gen/main.${object_name}.cpp")
+	# message("Add command to generate gen/${object_name}.ids${_ext} gen/${object_name}.iface${_ext} gen/${object_name}.brok${_ext} gen/main.${object_name}.cpp")
 	# note: there are conflicts while generating multiple files with one command
-	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116 TODO
+	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
+	# Not fixed yet !
 	add_custom_command(OUTPUT gen/${object_name}.iface${_ext} gen/${object_name}.ids${_ext} gen/${object_name}.brok${_ext} gen/main.${object_name}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} ${INC_DIRS}
 	DEPENDS ${header_name})
@@ -51,21 +52,20 @@ function(pop_add_objects classnames dependencies)
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
 
-	foreach(cl ${classnames})
+	foreach(cl ${classnames}) # TODO: Used ?
 		set(deps_cpp "${deps_cpp};gen/${cl}.brok.hpp")
 	endforeach()
 
 	foreach(cl ${classnames})
 		set(cmd_out "${cmd_out};gen/${cl}.iface.hpp;gen/${cl}.ids.hpp;gen/${cl}.brok.hpp;gen/main.${cl}.cpp")
-		add_executable(${cl}.obj gen/main.${cl}.cpp ${deps_cpp})
+		add_executable(${cl}.obj gen/main.${cl}.cpp ${deps_cpp} ${dependencies})
 		target_link_libraries(${cl}.obj ${Boost_LIBRARIES})
 		# add_library(gen/main.${cl}.cpp)
 	endforeach()
 	string(REPLACE ";" "," classnames2 "${classnames}")
 
-	message("Add command to generate:${cmd_out}")
+	# message("Add command to generate:${cmd_out}")
 	list(GET dependencies 0 header)
-	message("${header}")
 	add_custom_command(
 		OUTPUT ${cmd_out}
 		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header} ${classnames2} ${INC_DIRS}

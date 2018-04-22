@@ -51,6 +51,8 @@ class interface
 			// Handle connection
 			combox_.run();
 		}
+		// This method only exists to facilitate inheritence (parser)
+		inline interface(const std::string& _executable, const pop::allocator& _allocator, bool _ignore) : interface(_executable, _allocator) {}
 
 		interface(const pop::accesspoint& _contact) :
 			combox_(),

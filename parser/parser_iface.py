@@ -66,7 +66,7 @@ public:
 		write_meth(fout, m, id, class_node.spelling, real_parents)
 		id += 1
 
-	# Constructors need to be inserted after methods to match in parent and child
+	# Constructors need to be inserted after methods to have matching ids in parent and child
 	for c in parser.find_constructors(class_node):
 		write_constr(fout, c, id, parent_ifaces)
 		id += 1
@@ -74,8 +74,8 @@ public:
 	fout.write("""
 protected:
 	// for inheritance
-	%s_iface(const std::string& _executable, const pop::allocator& _allocator) : %s{}
-""" % (class_node.spelling, ', '.join([iface + '(_executable, _allocator)' for iface in parent_ifaces])))
+	%s_iface(const std::string& _executable, const pop::allocator& _allocator, bool _ignore) : %s{}
+""" % (class_node.spelling, ', '.join([iface + '(_executable, _allocator, _ignore)' for iface in parent_ifaces])))
 
 	fout.write("};\n")
 
