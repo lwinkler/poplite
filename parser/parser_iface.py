@@ -20,13 +20,12 @@ def write_head(fout, classname):
 #ifndef _POP_%s_IFACE_H
 #define _POP_%s_IFACE_H
 #include "class/interface.hpp"
-#include "gen/%s.ids.hpp"
 
 #include "alloc/local.hpp"
 #include "alloc/manual.hpp"
 #include "alloc/ssh.hpp"
 
-""" % (parser.capitalize(classname), parser.capitalize(classname), classname))
+""" % (parser.capitalize(classname), parser.capitalize(classname)))
 
 #--------------------------------------------------------------------------------
 
@@ -48,8 +47,11 @@ def write_interface(fout, class_node):
 	fout.write("""
 class %s_iface : %s
 {
-public:
-""" % (class_node.spelling, ', '.join(['public ' + iface for iface in parent_ifaces])))
+private:""" % (class_node.spelling, ', '.join(['public ' + iface for iface in parent_ifaces])))
+
+	write_meth_ids(fout, class_node) 
+
+	fout.write('public:\n')
 
 	# Needed for virtual inheritence
 	# unused for the moment: each parclass can have only one parclass direct parent
@@ -83,14 +85,34 @@ protected:
 def write_constr(fout, c, id, parent_ifaces):
 	# note: virtual inheritence is not handled
 	parent_constr = ', '.join([iface + '(_executable, _allocator, false)' for iface in parent_ifaces])
-	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(%s_method_ids::%s%d%s);}\n' 
-		% (c.spelling, parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, c.spelling, id, parser.list_args2(c, True)))
+	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
+		% (c.spelling, parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id, classname, real_parents):
 	if m.lexical_parent.spelling not in real_parents:
 		fout.write('inline %s%s %s(%s) {' %('virtual ' if m.is_virtual_method() else '', m.result_type.spelling, m.spelling, parser.list_args(m)) 
-			+ 'return %s<%s%s>(%s_method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), classname, m.spelling, id, parser.list_args2(m, True)))
+			+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, parser.list_args2(m, True)))
+
+#--------------------------------------------------------------------------------
+def write_meth_ids(fout, class_node):
+	fout.write("""
+struct method_ids
+{
+""")
+
+	id = 0
+	methods = parser.find_methods(class_node)[0]
+	for m in methods:
+		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
+		id += 1
+
+	constructors = parser.find_constructors(class_node)
+	for m in constructors:
+		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
+		id += 1
+
+	fout.write("};\n")
 
 #--------------------------------------------------------------------------------
 

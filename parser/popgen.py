@@ -5,7 +5,6 @@
 import sys
 import os
 import parser
-import parser_ids
 import parser_brok
 import parser_iface
 from subprocess import call
@@ -32,20 +31,6 @@ def main():
 	if not os.path.exists(gendir):
 		os.makedirs(gendir)
 	
-	# Generate the file containing methods and constructors ids
-	for c in parclasses:
-		if c.spelling not in classnames_in:
-			continue
-		mid_out = gendir + "/%s.ids.hpp" % c.spelling
-		print "Generate %s containing methods and constructors ids" % mid_out
-		with open(mid_out, "w") as fout:
-
-			parser_ids.write_head(fout, c.spelling)
-			parser_ids.write_meth_ids(fout, c)
-			parser_ids.write_foot(fout)
-	
-		parser.align(mid_out)
-
 	# Generate the file containing the interface
 	for c in parclasses:
 		if c.spelling not in classnames_in:
