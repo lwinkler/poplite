@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Usage: call with <filename> <typename>
+""" Usage: call with <filename> <classname(s)>
 """
 
 import sys
@@ -14,76 +14,80 @@ from subprocess import call
 #--------------------------------------------------------------------------------
 
 def main():
-	filename_in = sys.argv[1]
-	gendir = "gen"
-	mid_out = parser.generate_file_name(filename_in, gendir, "ids")
-	iface_out = parser.generate_file_name(filename_in, gendir, "iface")
-	brok_out = parser.generate_file_name(filename_in, gendir, "brok")
-
-	# if os.path.exists(mid_out): os.remove(mid_out)
-	# if os.path.exists(iface_out):os.remove(iface_out)
-	# if os.path.exists(brok_out): os.remove(brok_out)
+	filename_in   = sys.argv[1]
+	classnames_in = sys.argv[2].split(',')
+	gendir = os.path.dirname(filename_in) + '/gen' if os.path.dirname(filename_in) else 'gen' 
 
 	tu = parser.init_tu(sys.argv)
 	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)
 
-	if len(parclasses) != 1:
-		raise Exception('Found %d parallel class(es) in %s' % (len(parclasses), filename_in))
-
 	print "found %d parallel classe(s):" % len(parclasses)
 	for c in parclasses:
-		print "parallel class %s at %s" % (c.spelling, c.location)
+		print "parallel class %s at %s" % (c.spelling, c.location.file)
+
+	for classname_in in classnames_in:
+		if classname_in not in [cl.spelling for cl in parclasses]:
+			raise Exception('Did not find parallel class %s in %s' % (classname_in, filename_in))
 
 	if not os.path.exists(gendir):
 		os.makedirs(gendir)
 	
 	# Generate the file containing methods and constructors ids
-	print "Generate %s containing methods and constructors ids" % mid_out
-	with open(mid_out, "w") as fout:
+	for c in parclasses:
+		if c.spelling not in classnames_in:
+			continue
+		mid_out = gendir + "/%s.ids.hpp" % c.spelling
+		print "Generate %s containing methods and constructors ids" % mid_out
+		with open(mid_out, "w") as fout:
 
-		parser_ids.write_head(fout, filename_in)
-
-		for c in parclasses:
+			parser_ids.write_head(fout, c.spelling)
 			parser_ids.write_meth_ids(fout, c)
-
-		parser_ids.write_foot(fout)
+			parser_ids.write_foot(fout)
 	
-	parser.align(mid_out)
+		parser.align(mid_out)
 
 	# Generate the file containing the interface
-	print "Generate %s containing the interface" % iface_out
-	with open(iface_out, "w") as fout:
+	for c in parclasses:
+		if c.spelling not in classnames_in:
+			continue
+		mid_out   = gendir + "/%s.ids.hpp" % c.spelling
+		iface_out = gendir + "/%s.iface.hpp" % c.spelling
+		print "Generate %s containing the interface" % iface_out
 
-		parser_iface.write_head(fout, filename_in, os.path.basename(mid_out))
-
-		for c in parclasses:
+		with open(iface_out, "w") as fout:
+			parser_iface.write_head(fout, c.spelling, os.path.basename(mid_out))
 			parser_iface.write_interface(fout, c)
-
-		parser_iface.write_foot(fout)
+			parser_iface.write_foot(fout)
 	
-	parser.align(iface_out)
+		parser.align(iface_out)
 
 	# Generate the file containing the broker
-	print "Generate %s containing the remote broker" % brok_out
-	with open(brok_out, "w") as fout:
+	for c in parclasses:
+		if c.spelling not in classnames_in:
+			continue
+		brok_out = gendir + "/%s.brok.hpp" % c.spelling
+		print "Generate %s containing the remote broker" % brok_out
 
-		parser_brok.write_head(fout, filename_in, os.path.basename(filename_in))
-
-		for c in parclasses:
+		with open(brok_out, "w") as fout:
+			parser_brok.write_head(fout, c.spelling, c.location.file)
 			parser_brok.write_broker(fout, c)
-
-		parser_brok.write_foot(fout)
+			parser_brok.write_foot(fout)
 	
-	parser.align(brok_out)
+		parser.align(brok_out)
 
 	# Generate the file containing the remote main used to launch the object
 	for c in parclasses:
-		obj_out = os.path.dirname(filename_in) + gendir + "/main.%s.cpp" % c.spelling
+		if c.spelling not in classnames_in:
+			continue
+		obj_out  = gendir + "/main.%s.cpp" % c.spelling
+		brok_out = gendir + "/%s.brok.hpp" % c.spelling
 		with open(obj_out, "w") as fout:
 			fout.write('#include "%s"\n' % os.path.basename(brok_out))
 
 		with open(obj_out, "a") as fout:
 			call(["sed", os.path.dirname(sys.argv[0]) + "/object_main.cpp", "-e", 's/_parclass_/%s/g' % c.spelling], stdout=fout)
+
+		parser.align(obj_out)
 		
 
 

@@ -10,22 +10,20 @@
 ## file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ##
 
-""" Usage: call with <filename> <typename>
-"""
 
 import clang.cindex as cindex
 import parser
 
 #--------------------------------------------------------------------------------
 
-def write_head(fout, filename):
+def write_head(fout, classname):
 	""" Write the header or the file """
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
 #ifndef _POP_%s_METH_IDS_H
 #define _POP_%s_METH_IDS_H
 
-""" % (parser.capitalize(filename), parser.capitalize(filename)))
+""" % (parser.capitalize(classname), parser.capitalize(classname)))
 
 #--------------------------------------------------------------------------------
 

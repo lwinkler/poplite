@@ -10,14 +10,11 @@
 ## file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ##
 
-""" Usage: call with <filename> <typename>
-"""
-
 import parser
 
 #--------------------------------------------------------------------------------
 
-def write_head(fout, filename, filename_in):
+def write_head(fout, classname, filename_in):
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
 #ifndef _POP_%s_BROKER_H
@@ -30,7 +27,7 @@ namespace pop
 {
 namespace remote
 {
-""" % (parser.capitalize(filename_in), parser.capitalize(filename_in), filename_in))
+""" % (parser.capitalize(classname), parser.capitalize(classname), filename_in))
 
 #--------------------------------------------------------------------------------
 

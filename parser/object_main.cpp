@@ -19,12 +19,12 @@ int main(int _argc, char* _argv[])
 	}
 	catch (std::exception& e)
 	{
-		LOG(error) << e.what();
+		LOG(error) << "Exception in object main: " << e.what();
 		return 1;
 	}
 	catch (...)
 	{
-		LOG(error) << "Unknown exception";
+		LOG(error) << "Unknown exception in object main";
 		return 1;
 	}
 

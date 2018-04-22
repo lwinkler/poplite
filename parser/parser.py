@@ -48,21 +48,13 @@ def describe_node(node, full = False):
 def init_tu(argv):
 	""" Initialize a translation unit with the clang parser
 	"""
-	if len(sys.argv) < 2:
-		print "usage: %s <header> <arguments...>" % sys.argv[0]
+	if len(sys.argv) < 3:
+		print "usage: %s <header> <classname> <arguments...>" % sys.argv[0]
 		exit(1)
 
 	index = cindex.Index.create()
 	src = argv[1]
-	return index.parse(src, ["-D_POP_PARSER_", "-x", "c++", "-std=c++17"] + argv[2:])
-
-def generate_file_name(header, directory, label):
-	""" Generate a filename with path with an added label
-	"""
-	fname, ext = os.path.splitext(os.path.basename(header))
-	if os.path.dirname(header):
-		directory = os.path.dirname(header) + '/' + directory
-	return directory + '/' + fname + '.' + label + ext
+	return index.parse(src, ["-D_POP_PARSER_", "-x", "c++", "-std=c++17"] + argv[3:])
 
 def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define
@@ -131,11 +123,11 @@ def find_methods1(class_node, meths, real_parents):
 	# Recurse for children of this node
 	for c in class_node.get_children():
 		if c.kind == cindex.CursorKind.CXX_METHOD and c.access_specifier == cindex.AccessSpecifier.PUBLIC:
-			print 'Found parallel method %s::%s [line=%s, col=%s] access=%s static=%s virtual=%s' % (class_node.spelling, c.displayname, c.location.line, c.location.column, c.access_specifier, c.is_static_method(), c.is_virtual_method())
+			# print 'Found parallel method %s::%s [line=%s, col=%s] access=%s static=%s virtual=%s' % (class_node.spelling, c.displayname, c.location.line, c.location.column, c.access_specifier, c.is_static_method(), c.is_virtual_method())
 			found = False
 			for meth in meths:
 				if meth.displayname == c.displayname and meth.is_virtual_method():
-					print 'Replace method %s' % meth.displayname
+					# print 'Replace method %s' % meth.displayname
 					meth = c
 					found = True
 					break
@@ -219,7 +211,7 @@ def get_direct_parents(node, parallel = None, public_only = True):
 				continue
 			if public_only and not cc.access_specifier == cindex.AccessSpecifier.PUBLIC:
 				continue
-			print "Found parent of %s: %s" % (node.spelling, cc.spelling)
+			# print "Found parent of %s: %s" % (node.spelling, cc.spelling)
 			parents += [cc.get_definition()]
 	return parents
 
