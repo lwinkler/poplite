@@ -51,7 +51,8 @@ def write_meth(fout, m, classname):
 
 def write_broker(fout, class_node):
 	
-	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_\n{"
+	# TODO: static
+	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_{\n"
 		% (class_node.spelling, class_node.spelling))
 
 	for m in parser.find_methods(class_node)[0]:

@@ -15,9 +15,7 @@
 #include "class/system.hpp"
 #include "com/accesspoint.hpp"
 
-#define MAX_STR 512
-
-namespace pop{
+namespace pop {
 
 /// Parent class for all allocators
 /// allocators can launch an object on a local or remote platform

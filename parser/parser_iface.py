@@ -14,20 +14,19 @@ import parser
 
 #--------------------------------------------------------------------------------
 
-def write_head(fout, classname, mid_file):
+def write_head(fout, classname):
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
 #ifndef _POP_%s_IFACE_H
 #define _POP_%s_IFACE_H
 #include "class/interface.hpp"
-#include "%s"
+#include "gen/%s.ids.hpp"
 
-#include "alloc/alloc.hpp"
 #include "alloc/local.hpp"
 #include "alloc/manual.hpp"
 #include "alloc/ssh.hpp"
 
-""" % (parser.capitalize(classname), parser.capitalize(classname), mid_file))
+""" % (parser.capitalize(classname), parser.capitalize(classname), classname))
 
 #--------------------------------------------------------------------------------
 

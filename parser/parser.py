@@ -59,7 +59,8 @@ def init_tu(argv):
 def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define
 	"""
-	return os.path.basename(name.upper()).replace('.', '_')
+	# return os.path.basename(name.upper()).replace('.', '_')
+	return name.upper()
 
 
 def print_ast(node, indent):

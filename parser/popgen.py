@@ -50,12 +50,11 @@ def main():
 	for c in parclasses:
 		if c.spelling not in classnames_in:
 			continue
-		mid_out   = gendir + "/%s.ids.hpp" % c.spelling
 		iface_out = gendir + "/%s.iface.hpp" % c.spelling
 		print "Generate %s containing the interface" % iface_out
 
 		with open(iface_out, "w") as fout:
-			parser_iface.write_head(fout, c.spelling, os.path.basename(mid_out))
+			parser_iface.write_head(fout, c.spelling)
 			parser_iface.write_interface(fout, c)
 			parser_iface.write_foot(fout)
 	
@@ -80,9 +79,8 @@ def main():
 		if c.spelling not in classnames_in:
 			continue
 		obj_out  = gendir + "/main.%s.cpp" % c.spelling
-		brok_out = gendir + "/%s.brok.hpp" % c.spelling
 		with open(obj_out, "w") as fout:
-			fout.write('#include "%s"\n' % os.path.basename(brok_out))
+			fout.write('#include "%s.brok.hpp"\n' % c.spelling)
 
 		with open(obj_out, "a") as fout:
 			call(["sed", os.path.dirname(sys.argv[0]) + "/object_main.cpp", "-e", 's/_parclass_/%s/g' % c.spelling], stdout=fout)

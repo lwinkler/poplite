@@ -11,13 +11,10 @@
 #ifndef POP_ALLOC_SSH_H
 #define POP_ALLOC_SSH_H
 
-
 #include "class/system.hpp"
 
-#define MAX_STR 512
-
 /// Class to allocate an object via ssh
-namespace pop{
+namespace pop {
 
 	class ssh_allocator : public allocator
 	{

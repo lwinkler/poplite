@@ -11,14 +11,10 @@
 #ifndef POP_ALLOC_LOCAL_H
 #define POP_ALLOC_LOCAL_H
 
-
 #include "class/system.hpp"
 #include "alloc/alloc.hpp"
 
-
-#define MAX_STR 512
-
-namespace pop{
+namespace pop {
 
 /// Class to allocate object locally, as a fork of the process
 class local_allocator : public allocator

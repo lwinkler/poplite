@@ -17,6 +17,7 @@ class simple_parent_a {
 	public:
 		void set_float_a(float _f){f_ = _f;}
 		float get_float_a(){return f_;}
+		virtual float more_magic(){return 123e2;}
 	private:
 		float f_ = 0;
 };
@@ -58,6 +59,7 @@ POP_CLASS parent_b : public parent_a
 		std::string get_non_virtual_name(){return "parent_b:" + str_;}
 		virtual std::string get_virtual_name(){return "parent_b:" + str_;}
 		static std::string get_static_name(){return "parent_b";}
+		virtual float more_magic(){return 456e2;}
 
 	private:
 		double d_;

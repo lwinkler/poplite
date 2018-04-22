@@ -17,7 +17,7 @@
 #include "com/interface_combox.hpp"
 #include "alloc/alloc.hpp"
 
-namespace pop{
+namespace pop {
 
 
 /// A template to allow the return of a variable, including null
