@@ -83,7 +83,7 @@ protected:
 
 def write_constr(fout, c, id, parent_ifaces):
 	# note: virtual inheritence is not handled
-	parent_constr = ', '.join([iface + '(_executable, _allocator)' for iface in parent_ifaces])
+	parent_constr = ', '.join([iface + '(_executable, _allocator, false)' for iface in parent_ifaces])
 	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(%s_method_ids::%s%d%s);}\n' 
 		% (c.spelling, parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------

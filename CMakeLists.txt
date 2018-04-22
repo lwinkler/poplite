@@ -52,13 +52,9 @@ function(pop_add_objects classnames dependencies)
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
 
-	foreach(cl ${classnames}) # TODO: Used ?
-		set(deps_cpp "${deps_cpp};gen/${cl}.brok.hpp")
-	endforeach()
-
 	foreach(cl ${classnames})
 		set(cmd_out "${cmd_out};gen/${cl}.iface.hpp;gen/${cl}.ids.hpp;gen/${cl}.brok.hpp;gen/main.${cl}.cpp")
-		add_executable(${cl}.obj gen/main.${cl}.cpp ${deps_cpp} ${dependencies})
+		add_executable(${cl}.obj gen/main.${cl}.cpp ${dependencies})
 		target_link_libraries(${cl}.obj ${Boost_LIBRARIES})
 		# add_library(gen/main.${cl}.cpp)
 	endforeach()
