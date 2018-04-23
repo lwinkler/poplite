@@ -11,9 +11,8 @@
 #ifndef TEST_CLASS_H
 #define TEST_CLASS_H
 
+// #include "class/interface.hpp"
 #include "class/system.hpp"
-#include "class/interface.hpp"
-#include "alloc/local.hpp"
 
 
 struct test_struct1 : boost::noncopyable
@@ -49,12 +48,12 @@ class gps_position
 		bool operator == (const gps_position& _gps){return degrees == _gps.degrees && minutes == _gps.minutes && seconds == _gps.seconds;}
 };
 
+// this include should always be right before the parallel class declaration
+#include "TestClass.iface.hpp"
 
 POP_CLASS TestClass
 {
 	public:
-		#include "TestClass.iface.hpp"
-		
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		POP_ALLOCATION(pop::local_allocator())
 		TestClass(std::string _s) {std::cout << "call constr with " << _s << std::endl;}

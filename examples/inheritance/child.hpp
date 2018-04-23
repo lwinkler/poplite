@@ -12,8 +12,6 @@
 #define TEST_CHILD_H
 
 #include "class/system.hpp"
-#include "class/interface.hpp"
-#include "alloc/local.hpp"
 
 class simple_parent_a {
 	public:
@@ -24,11 +22,11 @@ class simple_parent_a {
 		float f_ = 0;
 };
 
+// this include should always be right before the parallel class declaration
+#include "parent_a.iface.hpp"
 POP_CLASS parent_a : public simple_parent_a
 {
 	public:
-		#include "parent_a.iface.hpp"
-
 		POP_ALLOCATION(pop::local_allocator())
 		parent_a(std::string _str) : str_(_str) {
 			LOG(info) << "call constr of parent_a: " << _str;
@@ -46,11 +44,11 @@ POP_CLASS parent_a : public simple_parent_a
 };
 
 
+// this include should always be right before the parallel class declaration
+#include "parent_b.iface.hpp"
 POP_CLASS parent_b : public parent_a
 {
 	public:
-		#include "parent_b.iface.hpp"
-
 		POP_ALLOCATION(pop::local_allocator())
 		parent_b(std::string _str): parent_a("A: " + _str), str_(_str) {
 			LOG(info) << "call constr of parent_b: " << _str;
@@ -76,11 +74,11 @@ class simple_parent_c {
 		float f_ = 0;
 };
 
+// this include should always be right before the parallel class declaration
+#include "child.iface.hpp"
 POP_CLASS child : public parent_b, public simple_parent_c
 {
 	public:
-		#include "child.iface.hpp"
-		
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		POP_ALLOCATION(pop::local_allocator())
 		child(std::string _str) : str_(_str), parent_b("B:" + _str) {

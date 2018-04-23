@@ -15,34 +15,19 @@
 
 
 
+// this include should always be right before the parallel class declaration
+#include "TestChildClass.iface.hpp"
 
 // TODO: Test with const method
 
 POP_CLASS TestChildClass : public TestClass
 {
 	public:
-		struct wheel {
-			float radius = 0;
-			float price = 0;
-			friend class boost::serialization::access;
-			template<class Archive> void serialize(Archive & ar, const unsigned int version)
-			{
-				ar & radius;
-				ar & price;
-			}
-		};
-
-
-		#include "TestChildClass.iface.hpp"
-
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		POP_ALLOCATION(pop::local_allocator())
 		TestChildClass(std::string _s2, int myint) : TestClass("localhost") {std::cout << "call constr with " << _s2 << std::endl;}
 		void Print(){}
-		void SetWheel(const wheel& _wheel){wheel_ = _wheel;}
 
-	private:
-		wheel wheel_;
 };
 
 #endif
