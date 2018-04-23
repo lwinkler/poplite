@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 		pop::system::instance(&argc, argv);
 
 		child real1("abcd");
-		child_iface iface1("abcd");
+		child::iface iface1("abcd");
 
 		real1.child_method();
 		iface1.child_method();
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 		check_equal(real1.more_magic(), iface1.more_magic());
 
 		parent_a&       real2(dynamic_cast<parent_a&>(real1));
-		parent_a_iface& iface2(dynamic_cast<parent_a_iface&>(iface1));
+		parent_a::iface& iface2(dynamic_cast<parent_a::iface&>(iface1));
 
 		check_equal(real2.get_non_virtual_name(), iface2.get_non_virtual_name());
 		check_equal(real2.get_virtual_name(), iface2.get_virtual_name());
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 		check_equal(real2.more_magic(), iface2.more_magic());
 
 		parent_b&       real3(dynamic_cast<parent_b&>(real2));
-		parent_b_iface& iface3(dynamic_cast<parent_b_iface&>(iface2));
+		parent_b::iface& iface3(dynamic_cast<parent_b::iface&>(iface2));
 
 		check_equal(real3.get_non_virtual_name(), iface3.get_non_virtual_name());
 		check_equal(real3.get_virtual_name(), iface3.get_virtual_name());

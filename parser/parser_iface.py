@@ -15,6 +15,7 @@ import parser
 #--------------------------------------------------------------------------------
 
 def write_head(fout, classname):
+	return
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
 #ifndef _POP_%s_IFACE_H
@@ -30,6 +31,8 @@ def write_head(fout, classname):
 #--------------------------------------------------------------------------------
 
 def write_foot(fout):
+	return
+
 
 	fout.write("""
 #endif
@@ -41,13 +44,13 @@ def write_interface(fout, class_node):
 	parent_nodes = parser.get_direct_parents(class_node, True, True)
 	if len(parent_nodes) > 1:
 		raise Exception('Parallel class ' + class_node.spelling + ' cannot have more than one direct parent')
-	parent_ifaces = [node.spelling + "_iface" for node in  parent_nodes] if parent_nodes else ['pop::interface']
+	parent_ifaces = [node.spelling + '::iface' for node in  parent_nodes] if parent_nodes else ['pop::interface']
 
 	# note: we must have virtual inheritence to have multiple inheritance
 	fout.write("""
-class %s_iface : %s
+class iface : %s
 {
-private:""" % (class_node.spelling, ', '.join(['public ' + iface for iface in parent_ifaces])))
+private:""" % (', '.join(['public ' + iface for iface in parent_ifaces])))
 
 	write_meth_ids(fout, class_node) 
 
@@ -59,7 +62,7 @@ private:""" % (class_node.spelling, ', '.join(['public ' + iface for iface in pa
 		# parent_ifaces += ['pop::interface']
 
 	# Add a constructor from accesspoint for references to parallel objects
-	fout.write("%s_iface(pop::accesspoint _ap) : %s {}\n" % (class_node.spelling, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
+	fout.write("iface(pop::accesspoint _ap) : %s {}\n" % (', '.join([iface + '(_ap)' for iface in parent_ifaces])))
 
 	id = 0
 	[methods, real_parents] = parser.find_methods(class_node)
@@ -75,8 +78,8 @@ private:""" % (class_node.spelling, ', '.join(['public ' + iface for iface in pa
 	fout.write("""
 protected:
 	// for inheritance
-	%s_iface(const std::string& _executable, const pop::allocator& _allocator, bool _ignore) : %s{}
-""" % (class_node.spelling, ', '.join([iface + '(_executable, _allocator, _ignore)' for iface in parent_ifaces])))
+	iface(const std::string& _executable, const pop::allocator& _allocator, bool _ignore) : %s{}
+""" % (', '.join([iface + '(_executable, _allocator, _ignore)' for iface in parent_ifaces])))
 
 	fout.write("};\n")
 
@@ -85,8 +88,8 @@ protected:
 def write_constr(fout, c, id, parent_ifaces):
 	# note: virtual inheritence is not handled
 	parent_constr = ', '.join([iface + '(_executable, _allocator, false)' for iface in parent_ifaces])
-	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
-		% (c.spelling, parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
+	fout.write('iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
+		% (parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id, classname, real_parents):

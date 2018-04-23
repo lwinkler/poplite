@@ -13,7 +13,7 @@
 
 using namespace std;
 
-bool test_interface(TestClass_iface& testClass, bool set_values)
+bool test_interface(TestClass::iface& testClass, bool set_values)
 {
 	int i1 = 11, i2 = 22;
 	double d = 88;
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 		{
 			LOG(info) << "call constructor for TestClass";
 			// iface.call_sync<int>(0, i1);
-			TestClass_iface testClass("localhost");
+			TestClass::iface testClass("localhost");
 			if(!test_interface(testClass, true))
 				throw runtime_error("Test failed on testClass");
 
@@ -87,20 +87,20 @@ int main(int argc, char* argv[])
 				throw runtime_error("Test failed on testClass(2)");
 
 			LOG(info) << "create a second interface (reference)";
-			TestClass_iface testClass2(testClass.contact());
+			TestClass::iface testClass2(testClass.contact());
 
 			if(!test_interface(testClass2, false))
 				throw runtime_error("Test failed on testClass2");
 
 			LOG(info) << "create a third interface";
-			TestClass_iface testClass3(testClass.contact());
+			TestClass::iface testClass3(testClass.contact());
 			if(!test_interface(testClass3, false))
 				throw runtime_error("Test failed on testClass3");
 		}
 		{
 			// Child class
 			LOG(info) << "call constructor for TestChildClass";
-			TestChildClass_iface testClass("localhost", 12);
+			TestChildClass::iface testClass("localhost", 12);
 			if(!test_interface(testClass, true))
 				throw runtime_error("Test failed on testClass");
 
@@ -108,13 +108,13 @@ int main(int argc, char* argv[])
 				throw runtime_error("Test failed on testClass(2)");
 
 			LOG(info) << "create a second interface (reference)";
-			TestChildClass_iface testClass2(testClass.contact());
+			TestChildClass::iface testClass2(testClass.contact());
 
 			if(!test_interface(testClass2, false))
 				throw runtime_error("Test failed on testClass2");
 
 			LOG(info) << "create a third interface";
-			TestChildClass_iface testClass3(testClass.contact());
+			TestChildClass::iface testClass3(testClass.contact());
 			if(!test_interface(testClass3, false))
 				throw runtime_error("Test failed on testClass3");
 		}
