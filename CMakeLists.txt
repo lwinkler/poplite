@@ -8,7 +8,7 @@ find_package( Boost 1.40 COMPONENTS serialization system thread serialization co
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(.)
 
-set(CMAKE_CXX_FLAGS "-Wextra -Wno-unused-parameter -Wno-deprecated-register")
+set(CMAKE_CXX_FLAGS "-Wextra -Wno-unused-parameter")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g")
 set(CMAKE_CXX_FLAGS_RELEASE        "-O3")
 set(CMAKE_CXX_FLAGS_DEBUG          "-O2 -g")

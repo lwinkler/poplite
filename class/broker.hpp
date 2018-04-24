@@ -16,6 +16,7 @@
 #include "class/apply_tuple.hpp"
 #include "class/apply_tuple_constr.hpp"
 #include "class/apply_tuple_static.hpp"
+#include "class/apply_tuple_const.hpp"
 #include "com/serialize.hpp"
 
 
@@ -72,6 +73,16 @@ namespace pop
 					serialize_out<bufout, Args...>(_oa, tup);
 				}
 
+				/// A simple concurrent call to a static method 
+				template<typename R, typename ...Args> static void const_conc(bufin& _ia, bufout& _oa, ParClass*& _p_obj, R (ParClass::*_p_meth)(Args...) const)
+				{
+					if(!_p_obj)
+						throw std::runtime_error("Constructor has not been called");
+					std::tuple<typename std::decay<Args>::type...> tup;
+					_ia >> tup;
+					apply_tuple_const(_p_obj, _p_meth, tup, _oa);
+					serialize_out<bufout, Args...>(_oa, tup);
+				}
 
 
 			private:
