@@ -49,7 +49,7 @@ namespace pop
 	// Utils
 	using noncopyable = boost::noncopyable;
 
-	// Types for thread locks // TODO maybe create a util file
+	// Types for thread locks
 	using lock = boost::shared_mutex;
 	using write_lock = boost::unique_lock<lock>;
 	using read_lock =  boost::shared_lock<lock>;

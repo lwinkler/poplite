@@ -52,7 +52,7 @@ namespace pop {
 				std::vector<std::thread> workers;
 				// note: so far we can only set up a fixed number of threads
 				//       this determines the max number of simultaneous calls to the broker
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 10; i++) // TODO const in pop::system ?
 				{
 					workers.push_back(std::thread([&]() {io_service_.run();}));
 				}
@@ -63,40 +63,41 @@ namespace pop {
 
 		private:
 			/// Handle completion of a connect operation.
-			void handle_connect(const boost::system::error_code& e, boost::asio::ip::tcp::resolver::iterator endpoint_iterator, connection_ptr conn)
+			void handle_connect(const boost::system::error_code& _e, boost::asio::ip::tcp::resolver::iterator _endpoint_iterator, connection_ptr _conn)
 			{
-				if (!e)
+				if (!_e)
 				{
 					pop::accesspoint ap(pop::system::instance().host_name(), service_acceptor_.local_endpoint().port());
 					LOG(debug) << "send contact from broker"; // << ap;
-					conn->sync_write(ap);
+					_conn->sync_write(ap);
 
 					LOG(debug)<<"connected";
 				}
-				else if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
+				else if (_endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
 				{
 					// Try the next endpoint.
-					conn->socket().close();
-					boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-					conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, conn));
+					_conn->socket().close();
+					boost::asio::ip::tcp::endpoint endpoint = *_endpoint_iterator;
+					_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++_endpoint_iterator, _conn));
 				}
 				else
 				{
 					throw std::runtime_error("connection failed");
 				}
-				conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
+				LOG(debug) << "broker starts listening";
+				_conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, _conn));
 			}
 
 
-			void handle_read(const boost::system::error_code& e, connection_ptr conn)
+			void handle_read(const boost::system::error_code& _e, connection_ptr _conn)
 			{
-				if(e)
+				if(_e)
 				{
-					throw std::runtime_error("handle_read: " + e.message());
+					throw std::runtime_error("handle_read: " + _e.message());
 				}
 				// Receive an incomming remote method invocation
 				// Successfully accepted a new connection. Call method by id
-				bufin ia(conn->input_stream());
+				bufin ia(_conn->input_stream());
 				int meth_id = method_id::UNKNOWN;
 				ia >> meth_id;
 
@@ -114,22 +115,21 @@ namespace pop {
 				if(meth_id == method_id::DISCONNECT)
 				{
 					LOG(debug) << "disconnect iface and broker";
-					conn->socket().close();
+					_conn->socket().close();
 					return;
 				}
 				if(meth_id == method_id::DESTROY)
 				{
 					LOG(debug) << "received end signal";
-					conn->socket().close();
+					_conn->socket().close();
 					io_service_.stop();
 					return;
 				}
 				else if(is_async)
 				{
 					// if the call is asynchronous, we send the ack directly
-
 					oa << ack;
-					conn->sync_write_ss(oss);
+					_conn->sync_write_ss(oss);
 					LOG(debug) << "sent ack";
 					try {
 						brok_.remote_call(meth_id, ia, oa);
@@ -160,23 +160,23 @@ namespace pop {
 					LOG(debug) << "finish calling remote method " << meth_id;
 
 					oa << remote_exc;
-					// oa << ack;
-					conn->sync_write_ss(oss);
-					// LOG(debug) << "sent ack";
+					_conn->sync_write_ss(oss);
+					LOG(debug) << "sent ack";
 				}
 
-				conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, conn));
+				LOG(debug) << "broker re-starts listening";
+				_conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, _conn));
 			}
 
 			/// Handle contact by a new interface
-			void handle_accept_service(const boost::system::error_code& e, connection_ptr service_connection)
+			void handle_accept_service(const boost::system::error_code& _e, connection_ptr _service_connection)
 			{
-				if(e)
+				if(_e)
 				{
-					throw std::runtime_error(e.message());
+					throw std::runtime_error(_e.message());
 				}
-				service_connection->sync_read();
-				bufin ia(service_connection->input_stream());
+				_service_connection->sync_read();
+				bufin ia(_service_connection->input_stream());
 				service_type stype = service_type::UNKNOWN;
 				ia >> stype;
 				LOG(debug) << "Interface combox contacted";

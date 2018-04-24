@@ -78,7 +78,6 @@ int main(int argc, char* argv[])
 	{
 		{
 			LOG(info) << "call constructor for TestClass";
-			// iface.call_sync<int>(0, i1);
 			TestClass_iface testClass("localhost");
 			if(!test_interface(testClass, true))
 				throw runtime_error("Test failed on testClass");
