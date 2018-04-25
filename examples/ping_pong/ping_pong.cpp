@@ -8,7 +8,10 @@ void ping_pong::sync_ping(int _cpt)
 	if(_cpt)
 	{
 		// Call next target
-		next_one_->sync_ping(_cpt - 1);
+		// trick: with sync we need to create a new connection to avoid deadlocks !
+		// TODO: Maybe implement a multiplexer for sync communication
+		ping_pong_iface pp(next_one_->contact());
+		pp.sync_ping(_cpt - 1);
 	}
 }
 

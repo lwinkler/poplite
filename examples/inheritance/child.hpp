@@ -12,6 +12,7 @@
 #define TEST_CHILD_H
 
 #include "class/system.hpp"
+#include "alloc/local.hpp"
 
 class simple_parent_a {
 	public:

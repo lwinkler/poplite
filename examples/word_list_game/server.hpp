@@ -15,6 +15,8 @@
 #include <vector>
 #include <map>
 #include <set>
+
+#include "alloc/local.hpp"
 #include "com/accesspoint.hpp"
 
 class client_iface;

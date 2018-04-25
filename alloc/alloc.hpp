@@ -12,7 +12,6 @@
 #define POP_ALLOC_H
 
 #include <boost/asio/ip/tcp.hpp>
-#include "class/system.hpp"
 #include "com/accesspoint.hpp"
 
 namespace pop {

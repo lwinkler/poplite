@@ -44,7 +44,6 @@ int main(int argc, char* argv[])
 		{
 			// objects ping each other synchrounously
 			p2.sync_ping(atoi(argv[2]));
-			// TODO: At the moment the number of pings is limited. Fix this.
 		}
 	}
 	catch (std::exception& e)

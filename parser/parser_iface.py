@@ -21,10 +21,6 @@ def write_head(fout, classname):
 #define _POP_%s_IFACE_H
 #include "class/interface.hpp"
 
-#include "alloc/local.hpp"
-#include "alloc/manual.hpp"
-#include "alloc/ssh.hpp"
-
 """ % (parser.capitalize(classname), parser.capitalize(classname)))
 
 #--------------------------------------------------------------------------------

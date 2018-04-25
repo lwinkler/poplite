@@ -11,7 +11,6 @@
 #ifndef POPLITE_SERIALIZE_H
 #define POPLITE_SERIALIZE_H
 
-#include "class/system.hpp"
 #include "serialize_tuple.hpp"
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>

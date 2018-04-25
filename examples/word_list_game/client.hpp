@@ -11,6 +11,7 @@
 #ifndef WORDLIST_CLIENT_HPP
 #define WORDLIST_CLIENT_HPP
 
+#include "class/system.hpp"
 #include "com/accesspoint.hpp"
 #include "server.hpp"
 
