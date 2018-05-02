@@ -98,7 +98,7 @@ class interface
 				LOG(debug) << "call sync "<< _method_id;
 				std::tuple<Args...> tup(std::forward_as_tuple(args...));
 				std::stringstream oss;
-				bool is_async = false;
+				static const bool is_async = false;
 				bufout oa(oss);
 				oa << _method_id;
 				oa << is_async;
@@ -121,12 +121,8 @@ class interface
 
 				LOG(debug) << "received answer from broker";
 
+				// exception is our ack signal
 				ia >> exc;
-				// std::string ack;
-				// ia >> ack;
-				// LOG(debug) << "received ack=" << ack;
-				// if(ack != "ACK")
-					// throw std::runtime_error("did not receive ack");
 				if(exc.empty()) {
 					return ret.return_value();
 				}
@@ -146,7 +142,7 @@ class interface
 		}
 
 
-		template<typename R, typename ...Args> R async(int _method_id, Args& ...args)
+		template<typename ...Args> void async(int _method_id, Args& ...args)
 		{
 			try
 			{
@@ -165,26 +161,18 @@ class interface
 				if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY)
 				{
 					combox_.connec().socket().close();
-					return R();
+					return;
 				}
 
 				combox_.connec().sync_read();
 
 				bufin ia(combox_.connec().input_stream());
-				// return_class<R> ret(ia);
-				// serialize_out<bufin, Args... >(ia, tup); // TODO: Verify that async does not return anything
-
 				LOG(debug) << "received answer from broker";
 
 				pop::exception exc;
 				ia >> exc;
 				assert(exc.empty());
 
-				// std::string ack;
-				// ia >> ack;
-				// LOG(debug) << "received ack=" << ack;
-				// if(ack != "ACK")
-					// throw std::runtime_error("did not receive ack");
 				if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY)
 					combox_.connec().socket().close();
 
@@ -198,13 +186,10 @@ class interface
 			{
 				LOG(error) << "Unknown exception in async";
 			}
-			return R();
 		}
-
 
 		// inline const boost::asio::ip::tcp::endpoint endpoint() const {return combox_.endpoint();}
 		inline const pop::accesspoint& contact(){return combox_.contact();}
-
 
 	private:
 		pop::interface_combox combox_;
