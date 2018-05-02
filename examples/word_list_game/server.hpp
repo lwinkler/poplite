@@ -61,6 +61,7 @@ POP_CLASS server
 		std::map<std::string, std::vector<challenge>>  game_state_;
 
 		unsigned int seed_;
+		static const short nb_questions_ = 10;
 };
 
 #endif

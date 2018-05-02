@@ -18,16 +18,12 @@
 // this include should always be right before the parallel class declaration
 #include "TestChildClass.iface.hpp"
 
-// TODO: Test with const method
-
 POP_CLASS TestChildClass : public TestClass
 {
 	public:
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 		POP_ALLOCATION(pop::local_allocator())
 		TestChildClass(std::string _s2, int myint) : TestClass("localhost") {std::cout << "call constr with " << _s2 << std::endl;}
-		void Print() const {}
-
 };
 
 #endif

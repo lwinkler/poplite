@@ -67,12 +67,12 @@ POP_CLASS TestClass
 			std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 		}
 
-		int GetValue()
+		int GetValue() const
 		{
 			return 333;
 		}
 
-		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s)
+		void GetValues(int& _i1, int& _i2, double& _d, std::string& _s) const
 		{
 			_i1 = i1_;
 			_i2 = i2_;
@@ -81,18 +81,27 @@ POP_CLASS TestClass
 		}
 
 		void SetTest(const test_struct1& _test1){test1_.a = _test1.a;}
-		void GetTest(test_struct1& _test1){_test1.a = test1_.a;}
+		void GetTest(test_struct1& _test1) const {_test1.a = test1_.a;}
 		// test_struct1 GetTest(){return test1_;}
 
 		void SetGps(gps_position& _gps) { gps_ = _gps;}
-		void Print(){}
-		gps_position GetGps(){return gps_;}
+		gps_position GetGps() const {
+			return gps_;
+		}
 
-		std::string GetStr() {return s_;}
+		std::string GetStr() const {
+			return s_;
+		}
 
-		std::vector<int> GetVector1(){return vi_;}
-		std::vector<gps_position> GetVector2(){return vgps_;}
-		std::map<int, std::string> GetMap1(){return mstr_;}
+		std::vector<int> GetVector1() const {
+			return vi_;
+		}
+		std::vector<gps_position> GetVector2() const {
+			return vgps_;
+		}
+		std::map<int, std::string> GetMap1() const {
+			return mstr_;
+		}
 
 	private:
 		int i1_;

@@ -113,7 +113,7 @@ class interface
 					return R();
 				}
 
-				combox_.connec().sync_read(); //TODO: try sync_read(tup)
+				combox_.connec().sync_read();
 
 				bufin ia(combox_.connec().input_stream());
 				return_class<R> ret(ia);
@@ -168,7 +168,7 @@ class interface
 					return R();
 				}
 
-				combox_.connec().sync_read(); //TODO: try sync_read(tup)
+				combox_.connec().sync_read();
 
 				bufin ia(combox_.connec().input_stream());
 				// return_class<R> ret(ia);

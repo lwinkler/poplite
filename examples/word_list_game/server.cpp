@@ -138,7 +138,7 @@ void server::init_game()
 	game_state_.clear();
 	// Fill game state arrays with challenges
 	send_message("Starting game for " + to_string(p_clients_.size()) + " player(s)");
-	for(int i = 0 ; i < 10 ; i++)
+	for(int i = 0 ; i < nb_questions_ ; i++)
 	{
 		challenge chal = create_challenge(1, category_);
 
