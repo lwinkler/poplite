@@ -71,3 +71,4 @@ function(pop_add_objects classnames dependencies)
 endfunction(pop_add_objects)
 
 add_subdirectory(examples)
+add_subdirectory(popc_tests)
