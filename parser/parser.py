@@ -71,7 +71,7 @@ def print_ast(node, indent):
 		print_ast(c, indent + 1)
 
 def find_parallel_classes(node, parent, src):
-	""" Find all classes with annotation "parallel"
+	""" Find all classes with annotation "pop_parallel"
 	"""
 
 	found = []
@@ -81,7 +81,7 @@ def find_parallel_classes(node, parent, src):
 		# print "ASDFAS"
 		# print node.extent
 
-	if node.kind == cindex.CursorKind.ANNOTATE_ATTR and node.spelling == "parallel": # and parent.location.file.name == src:
+	if node.kind == cindex.CursorKind.ANNOTATE_ATTR and node.spelling == "pop_parallel": # and parent.location.file.name == src:
 		if parent.kind != cindex.CursorKind.CLASS_DECL:
 			print "Warning: node %s is annoted as parallel but is not a class" % parent.spelling
 		else:
@@ -176,18 +176,20 @@ def get_invoker(meth_node):
 
 	for c in meth_node.get_children():
 		if c.kind == cindex.CursorKind.ANNOTATE_ATTR:
-			return c.spelling
+			if c.spelling.startswith('pop_caller:'):
+				return c.spelling[len('pop_caller:'):]
 
 	return "sync" # our default
 
 def get_allocation(constr_node):
-	""" Return the allocation (sync, async)
+	""" Return the allocation
 	"""
 	# print "node %s %s %s [line=%s, col=%s]" % (constr_node.get_definition(), constr_node.spelling, constr_node.kind, constr_node.location.line, constr_node.location.column)
 
 	for c in constr_node.get_children():
 		if c.kind == cindex.CursorKind.ANNOTATE_ATTR:
-			return c.spelling
+			if c.spelling.startswith('pop_allocation:'):
+				return c.spelling[len('pop_allocation:'):]
 
 	return "pop::local_allocator()" # our default
 
@@ -196,7 +198,7 @@ def is_parallel(node):
 	"""
 	# describe_node(node)
 	for c in node.get_children():
-		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling == "parallel":
+		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling == "pop_parallel":
 			return True
 	return False
 
