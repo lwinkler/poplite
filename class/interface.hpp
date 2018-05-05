@@ -11,6 +11,7 @@
 #ifndef POPLITE_INTERFACE_H
 #define POPLITE_INTERFACE_H
 
+// #include <type_traits>
 
 #include "com/serialize.hpp"
 #include "com/exception.hpp"
@@ -142,8 +143,11 @@ class interface
 		}
 
 
-		template<typename ...Args> void async(int _method_id, Args& ...args)
+		template<typename R, typename ...Args> void async(int _method_id, Args& ...args)
 		{
+			// note:unused 
+			// static_assert(std::is_void<R>::value, "Return type of async methods must be void");
+			  
 			try
 			{
 				LOG(debug) << "call async "<< _method_id;
