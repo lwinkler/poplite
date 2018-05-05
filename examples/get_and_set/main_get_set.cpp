@@ -1,6 +1,6 @@
 //
-// main.cpp
-// ~~~~~~~~
+// main_get_set.cpp
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
 // 
@@ -19,13 +19,13 @@ bool test_interface(TestClass_iface& testClass, bool set_values)
 	double d = 88;
 	string s = "bla";
 
-	sleep(1);
+	// sleep(1);
 
 	LOG(info) << "call SetValues method to set new values: i1=" << i1 << " i2=" << i2 << " d=" << d << " s=" << s;
 	if(set_values)
 		testClass.SetValues(27, 42, 3.14, "new stuff");
 
-	sleep(1);
+	// sleep(1);
 
 	int val = testClass.GetValue();
 	LOG(info) << "GetValue: " << val;
@@ -53,7 +53,7 @@ bool test_interface(TestClass_iface& testClass, bool set_values)
 	if(!(gps1 == gps2))
 		return false;
 
-	sleep(1);
+	// sleep(1);
 
 	LOG(info) << "Tests with a second serializable class";
 	test_struct1 ts1, ts2;
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 		}
 
 		LOG(info) << "end of main";
-		sleep(3);
+		// sleep(3);
 	}
 	catch (std::exception& e)
 	{

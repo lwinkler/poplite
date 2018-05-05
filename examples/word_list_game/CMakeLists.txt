@@ -1,5 +1,3 @@
-project(poplite_world_list_game)
-
 include_directories(gen)
 
 find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log filesystem program_options REQUIRED )

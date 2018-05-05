@@ -1,5 +1,3 @@
-project(poplite_getset_example)
-
 include_directories(gen)
 
 # pop_add_object(chat_client chat_client.hpp chat_client.cpp)
