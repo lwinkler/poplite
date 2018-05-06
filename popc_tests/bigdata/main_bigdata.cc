@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 			arr.push_back('a');
 		}
 
-		POPObject o;
+		POPObject_iface o;
 		o.displayArray(arr);
 
 		assert(arr[2] == 'b');

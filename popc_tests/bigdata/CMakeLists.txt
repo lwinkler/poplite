@@ -1,6 +1,8 @@
+project(popc_tests_bigdata)
+
 include_directories(gen)
 
-pop_add_objects("POPObject" "POPObject.hpp")
+pop_add_object(POPObject POPObject.hpp)
 add_executable(main_bigdata main_bigdata.cc gen/POPObject.iface.hpp)
 target_link_libraries(main_bigdata ${Boost_LIBRARIES})
 
