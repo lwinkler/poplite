@@ -2,6 +2,7 @@
 #include "child.hpp"
 
 Mother::Mother() {
+	printf("Create Mother\n");
 	val = 0;
 }
 

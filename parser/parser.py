@@ -153,7 +153,7 @@ def find_constructors(class_node):
 	return found
 
 def find_arguments(meth_node):
-	""" Find all public methods in parallel class
+	""" Find all arguments in method
 	"""
 
 	found = []
@@ -218,29 +218,38 @@ def get_direct_parents(node, parallel = None, public_only = True):
 			parents += [cc.get_definition()]
 	return parents
 
-def list_args1(parent, front_comma = False, back_comma = False):
+def list_args1(parent, front_comma = False, back_comma = False, iface_as_ap = False):
 	""" List all types of arguments as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
-		out.append(arg.type.spelling)
+		if iface_as_ap and arg.type.spelling.endswith('_iface &'): # TODO improve
+			out.append('const pop::accesspoint&')
+		else:
+			out.append(arg.type.spelling)
 	fc = ', ' if out and front_comma else ''
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc
 
-def list_args2(parent, front_comma = False, back_comma = False):
+def list_args2(parent, front_comma = False, back_comma = False, iface_as_ap = False):
 	""" List all arguments without types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
-		out.append(arg.spelling)
+		if iface_as_ap and arg.type.spelling.endswith('_iface &'): # TODO improve
+			out.append(arg.spelling + '.contact()')
+		else:
+			out.append(arg.spelling)
 	fc = ', ' if out and front_comma else ''
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc
 
-def list_args(parent, front_comma = False, back_comma = False):
+def list_args(parent, front_comma = False, back_comma = False, iface_as_ap = False):
 	""" List all arguments with types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
-		out.append(arg.type.spelling + " " + arg.spelling)
+		if iface_as_ap and arg.type.spelling.endswith('_iface &'): # TODO improve
+			out.append('const pop::accesspoint& ' + arg.spelling)
+		else:
+			out.append(arg.type.spelling + " " + arg.spelling)
 	fc = ', ' if out and front_comma else ''
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc

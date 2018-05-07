@@ -2,6 +2,7 @@
 #include "child.hpp"
 
 Child::Child() {
+	printf("Create Child\n");
 	val = -1;
 }
 

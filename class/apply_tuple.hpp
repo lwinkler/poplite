@@ -38,6 +38,8 @@ namespace pop
 						std::tuple<ArgsT...>& t,
 						Args&&... args )
 				{
+//					auto val(std::get<N-1>( t ));
+//					return apply_obj_func<N-1>::apply_tuple( pObj, f, t, val, args... );
 					return apply_obj_func<N-1>::apply_tuple( pObj, f, t, std::get<N-1>( t ), args... );
 				}
 		};

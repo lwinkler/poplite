@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void callMethod(Mother_iface c, int v) {
+void callMethod(Mother_iface& c, int v) {
 	c.Method1();
 	c.SetVal(v);
 	c.Method1();
@@ -24,23 +24,23 @@ int main(int argc, char** argv) {
 
 	cout << "\nHeritage: Starting test..." << endl;
 
-	cout << "Heritage: Creation of object c of class Mother" << endl;
-	Mother_iface c;
+	cout << "Heritage: Creation of object m of class Mother" << endl;
+	Mother_iface m;
 
-	cout << "Heritage: Creation of object c1 of class Child" << endl;
-	Child_iface c1;
+	cout << "Heritage: Creation of object c of class Child" << endl;
+	Child_iface c;
 
-	cout << "Heritage: Call with Mother, c" << endl;
-	callMethod(c, 1);
+	cout << "Heritage: Call with Mother, m. SetVal to 1" << endl;
+	callMethod(m, 1);
 
-	cout << "Heritage: Call with Child, c1" << endl;
-	callMethod(c1, 2);
+	cout << "Heritage: Call with Child, c. SetVal to 2" << endl;
+	callMethod(c, 2);
 
-	cout << "Heritage: Call callMethod of Mother with Child, c1" << endl;
-	c.callMethod(c1, 3);
+	cout << "Heritage: Call callMethod of Mother with Child, c. SetVal to 3" << endl;
+	m.callMethod(c, 3);
 
-	cout << "Heritage: Call callMethod of Child with Mother, c" << endl;
-	c1.callMethod(c, 4);
+	cout << "Heritage: Call callMethod of Child with Mother, m. SetVal to 4" << endl;
+	c.callMethod(m, 4);
 
 	cout << "Heritage: Terminated, destroying objects..." << endl;
 
