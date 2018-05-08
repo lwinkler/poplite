@@ -13,11 +13,20 @@
 
 import subprocess
 
-dirs = ['get_and_set', 'ping_pong', 'inheritance']
+dirs = [
+	'examples/get_and_set', 
+	'examples/ping_pong', 
+	'examples/inheritance',
+	#'popc_tests/bigdata',
+	'popc_tests/callback',
+	'popc_tests/exceptions',
+	'popc_tests/heritage'
+]
 
 for dir1 in dirs:
 	print '======> run test %s' % dir1
-	process = subprocess.Popen('cd examples/%s && make run_%s' % (dir1, dir1), shell=True, stdout=subprocess.PIPE)
+	rname = dir1.split('/')[-1]
+	process = subprocess.Popen('cd %s && make run_%s' % (dir1, rname), shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	if process.returncode != 0:
 		print '======> Fail with exit code %d' % process.returncode

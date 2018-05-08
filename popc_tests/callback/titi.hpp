@@ -12,7 +12,7 @@ public:
 	~Titi();
 
 	void SetIdent(int i);
-	void ComputeIdent(const pop::accesspoint& t);
+	void ComputeIdent(Toto_iface& t);
 
 private:
 	int ident;

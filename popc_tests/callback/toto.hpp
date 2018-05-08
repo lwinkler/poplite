@@ -6,6 +6,7 @@
 #include "com/accesspoint.hpp"
 
 // this include should always be right before the parallel class declaration
+class Toto_iface;
 #include "Toto.iface.hpp"
 
 POP_CLASS Toto {

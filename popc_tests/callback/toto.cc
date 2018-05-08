@@ -18,9 +18,10 @@ void Toto::SetIdent(int i) {
 int Toto::GetIdent() {
 	printf("CallBack: GetIdent on Toto, ident =%d\n", ident);
 
-	Titi t;				 // create an object to call me back
-	this->SetIdent(222);	// test of "this"
-	t.ComputeIdent(contact);  // t is going to call me back
-	return (ident);		 // ident has changed because of the call back
+	Titi_iface t;            // create an object to call me back
+	this->SetIdent(222);     // test of "this"
+	Toto_iface me(contact);
+	t.ComputeIdent(me); // t is going to call me back
+	return (ident);          // ident has changed because of the call back
 }
 

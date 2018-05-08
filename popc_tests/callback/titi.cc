@@ -16,10 +16,8 @@ void Titi::SetIdent(int i) {
 	ident = i;
 }
 
-void Titi::ComputeIdent(const pop::accesspoint& _ap) {
+void Titi::ComputeIdent(Toto_iface& _toto) {
 	printf("CallBack: ComputeIdent() on Titi...\n");
-	// note: unlike popc, we cannot serialize an interface TODO ?
-	Toto_iface t(_ap);
-	t.SetIdent(ident);
+	_toto.SetIdent(ident);
 }
 
