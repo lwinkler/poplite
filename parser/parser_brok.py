@@ -39,7 +39,7 @@ def write_foot(fout):
 
 def write_constr(fout, m):
 	
-	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (m.spelling, parser.list_args1(m, False, False, False)))
+	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (m.spelling, parser.list_args1(m)))
 
 def write_meth(fout, m, classname):
 	
@@ -49,7 +49,7 @@ def write_meth(fout, m, classname):
 	elif m.is_const_method():
 		conc = 'const_conc'
 	fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		% (classname, conc, m.result_type.spelling, parser.list_args1(m, True, False, False), m.lexical_parent.spelling, m.spelling))
+		% (classname, conc, m.result_type.spelling, parser.list_args1(m, True), m.lexical_parent.spelling, m.spelling))
 
 #--------------------------------------------------------------------------------
 

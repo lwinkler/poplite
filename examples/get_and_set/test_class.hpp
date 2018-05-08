@@ -82,7 +82,7 @@ POP_CLASS TestClass
 
 		void SetTest(const test_struct1& _test1){test1_.a = _test1.a;}
 		void GetTest(test_struct1& _test1) const {_test1.a = test1_.a;}
-		// test_struct1 GetTest(){return test1_;}
+		// test_struct1 GetTest(){return test1_;} TODO
 
 		void SetGps(gps_position& _gps) { gps_ = _gps;}
 		gps_position GetGps() const {

@@ -66,14 +66,6 @@ template<class Archive, typename... Args>
 	{
 		SerializeOut<sizeof...(Args)>::template serialize_out<bufin, std::tuple<Args&...>, std::tuple<Args...> >(ar, t1);
 	}
-
-
-template<class Archive, typename... Args>
-	void serialize_out(Archive & ar, std::tuple<typename std::decay<Args>::type...> & t1)
-	{
-		SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename std::decay<Args>::type...> >(ar, t1);
-	}
 }
-
 
 #endif

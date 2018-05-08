@@ -14,7 +14,7 @@ using namespace std;
 // 60 MiB
 const int Size = 60 * 1024 * 1024;
 
-vector<char> arr;
+vector<char> arr(Size);
 
 }  // end of anonymous namespace
 
@@ -24,14 +24,12 @@ int main(int argc, char** argv) {
 
 	try {
 		cout << "Big data: Starting test..." << endl;
-
-		for (int i = 0; i < Size; i++) {
-			arr.push_back('a');
-		}
+		std::fill(arr.begin(), arr.end(), 'a');
 
 		POPObject_iface o;
 		o.displayArray(arr);
 
+		assert(arr[1] == 'a');
 		assert(arr[2] == 'b');
 		assert(arr[5] == 'c');
 		assert(arr[10495910] == 'z');

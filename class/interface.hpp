@@ -198,60 +198,27 @@ class interface
 	private:
 		pop::interface_combox combox_;
 		bool link_life_;
+	
+	protected: // note: special case, we want to use in children
+		friend class boost::serialization::access;
+		template<class Archive> void save(Archive & _ar, const unsigned int _version) const
+		{
+			LOG(debug) << "Save interface at " << contact().host_name;
+			_ar << contact();
+		}
+
+		template<class Archive>void load(Archive & _ar, const unsigned int _version)
+		{
+			accesspoint ap;
+			_ar >> ap;
+			// TODO if(ap != contact())
+				// TODO throw std::runtime_error("The accesspoint of an interface should never change during serialization.");
+		}
+
+		template<class Archive>void serialize(Archive & _ar, const unsigned int _version){
+			boost::serialization::split_member(_ar, *this, _version);
+		}
 };
 }
-
-/*
-namespace boost {
-namespace serialization {
-	template<class Archive> inline void save_construct_data(Archive &ar, const pop::interface *t, const unsigned int file_version) {
-		ar << t->contact();
-	}
-	template<class Archive> inline void load_construct_data(Archive &ar, pop::interface *t, const unsigned int file_version) {
-		// retrieve data from archive required to construct new instance
-		pop::accesspoint ap;
-		ar >> ap;
-		// invoke inplace constructor to initialize instance of pop::interface
-		::new(t)pop::interface(ap);
-	}
-	template<class Archive>void save(Archive& archive, const pop::interface& label, const unsigned int version)
-	{
-		;
-	}
-
-	template<class Archive>void load(Archive& archive, pop::interface& f, const unsigned int version)
-	{
-		;
-	}
-	template<class Archive> inline void serialize(Archive & ar, pop::interface & t, const unsigned int file_version) {
-		split_free(ar, t, file_version); 
-	}
-}
-}
-*/
-
-/* TODO clean
-namespace boost { namespace serialization {
-	template<class Archive>
-		inline void save_construct_data(
-				Archive & ar, const pop::interface * t, const unsigned long int file_version
-				){
-			// save data required to construct instance
-			ar << t->contact();
-		}
-
-	template<class Archive>
-		inline void load_construct_data(
-				Archive & ar, pop::interface * t, const unsigned long int file_version
-				){
-			// retrieve data from archive required to construct new instance
-			pop::accesspoint ap;
-			ar >> ap;
-			// invoke inplace constructor to initialize instance of pop::interface
-			::new(t)pop::interface(ap);
-		}
-} // namespace serialization
-} // namespace boost
-*/
 
 #endif

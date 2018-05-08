@@ -18,13 +18,70 @@
 #include "class/apply_tuple_static.hpp"
 #include "class/apply_tuple_const.hpp"
 #include "com/serialize.hpp"
+#include "class/interface.hpp"
 
+//TODO this should fail
+// static_assert(std::is_same<pop_decay<Mother_iface>::type, pop::accesspoint>::value, "AAAAARG1");
 
 namespace pop
 {
 	namespace remote
 	{
 		template<class ParClass> using parallel_method = std::function<void(bufin&, bufout&, std::unique_ptr<ParClass>&)>;
+
+		/// A utility container to store and serialize an interface
+		template<class T> struct iface_container final {
+				// overload cast to T
+				operator T&() {return *p_iface_;}
+				operator const T&() {return *p_iface_;}
+				~iface_container() {
+					delete p_iface_;
+				}
+
+
+			private:
+				T* p_iface_ = nullptr;
+				friend class boost::serialization::access;
+				template<class Archive> void save(Archive & _ar, const unsigned int _version) const
+				{
+					// invoke serialization of the base class 
+					LOG(debug) << "Save interface container at " << p_iface_->contact().host_name;
+					assert(p_iface_ != nullptr);
+					_ar << p_iface_->contact();
+				}
+
+				template<class Archive> void load(Archive & _ar, const unsigned int _version)
+				{
+					pop::accesspoint ap;
+					_ar >> ap;
+					assert(p_iface_ == nullptr);
+					p_iface_ = new T(ap);
+				}
+
+				template<class Archive> void serialize(Archive & _ar, const unsigned int _version){
+					boost::serialization::split_member(_ar, *this, _version);
+				}
+
+		};
+
+		/// A utility to decay incoming arguments
+		template<class T> struct pop_decay
+		{
+			typedef typename std::decay<T>::type type;
+		};
+
+		template<class T> struct pop_decay<T&>
+		{
+			/// typedef pop::accesspoint type;
+			typedef typename std::conditional<std::is_base_of<pop::interface, typename std::remove_reference<T>::type>::value, iface_container<T>, typename std::decay<T>::type>::type type;
+			// typedef typename std::decay<T>::type type;
+		};
+
+		template<class Archive, typename... Args>
+		void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> & t1)
+		{
+			SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename pop_decay<Args>::type...> >(ar, t1);
+		}
 
 		/// A broker is the (remote) part that contains the instantiation of the parallel object
 		template<class ParClass> class broker : private boost::noncopyable
@@ -39,7 +96,7 @@ namespace pop
 				{
 					if(_p_obj)
 						throw std::runtime_error("Constructor has been called twice");
-					std::tuple<typename std::decay<Args>::type...> tup;
+					std::tuple<typename pop_decay<Args>::type...> tup;
 					_ia >> tup;
 					_p_obj.reset(apply_tuple_constr(__constr<Args...>, tup));
 					serialize_out<bufout, Args...>(_oa, tup);
@@ -50,8 +107,9 @@ namespace pop
 				{
 					if(!_p_obj)
 						throw std::runtime_error("Constructor has not been called");
-					std::tuple<typename std::decay<Args>::type...> tup;
+					std::tuple<typename pop_decay<Args>::type...> tup;
 					_ia >> tup;
+					// TODO maybe one day use  http://en.cppreference.com/w/cpp/utility/apply
 					apply_tuple(_p_obj.get(), _p_meth, tup, _oa);
 					serialize_out<bufout, Args...>(_oa, tup);
 				}
@@ -59,7 +117,7 @@ namespace pop
 				/// A simple concurrent call to a static method 
 				template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (*_p_meth)(Args...))
 				{
-					std::tuple<typename std::decay<Args>::type...> tup;
+					std::tuple<typename pop_decay<Args>::type...> tup;
 					_ia >> tup;
 					apply_tuple_static( _p_meth, tup, _oa);
 					serialize_out<bufout, Args...>(_oa, tup);
@@ -70,7 +128,7 @@ namespace pop
 				{
 					if(!_p_obj)
 						throw std::runtime_error("Constructor has not been called");
-					std::tuple<typename std::decay<Args>::type...> tup;
+					std::tuple<typename pop_decay<Args>::type...> tup;
 					_ia >> tup;
 					apply_tuple_const(_p_obj.get(), _p_meth, tup, _oa);
 					serialize_out<bufout, Args...>(_oa, tup);
