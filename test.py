@@ -22,6 +22,7 @@ dirs = [
 	'popc_tests/exceptions',
 	'popc_tests/heritage',
 	'popc_tests/stresstest',
+	'popc_tests/stdlib',
 	'popc_tests/tree'
 ]
 

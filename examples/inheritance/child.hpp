@@ -19,6 +19,7 @@ class simple_parent_a {
 		void set_float_a(float _f){f_ = _f;}
 		float get_float_a(){return f_;}
 		virtual float more_magic(){return 123e2;}
+		virtual short pure_virtual() const = 0;
 	private:
 		float f_ = 0;
 };
@@ -38,6 +39,7 @@ POP_CLASS parent_a : public simple_parent_a
 		std::string get_non_virtual_name(){return "parent_a:" + str_;}
 		virtual std::string get_virtual_name(){return "parent_a:" + str_;}
 		static std::string get_static_name(){return "parent_a";}
+		virtual short pure_virtual() const override {return 55*2;};
 
 	private:
 		int i_;
@@ -61,6 +63,8 @@ POP_CLASS parent_b : public parent_a
 		virtual std::string get_virtual_name(){return "parent_b:" + str_;}
 		static std::string get_static_name(){return "parent_b";}
 		virtual float more_magic(){return 456e2;}
+
+		virtual short pure_virtual() const override {return 55*4;};
 
 	private:
 		double d_;
@@ -93,6 +97,8 @@ POP_CLASS child : public parent_b, public simple_parent_c
 		std::string get_non_virtual_name() {return "child:" + str_;}
 		std::string get_virtual_name(){return "child:" + str_;}
 		static std::string get_static_name(){return "child";}
+
+		virtual short pure_virtual() const override {return 55*5;};
 
 	protected:
 		const std::string str_ = "Child";

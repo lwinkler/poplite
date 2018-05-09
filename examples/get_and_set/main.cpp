@@ -116,6 +116,8 @@ int main(int argc, char* argv[])
 			TestChildClass_iface testClass3(testClass.contact());
 			if(!test_interface(testClass3, false))
 				throw runtime_error("Test failed on testClass3");
+
+			testClass3.void_method();
 		}
 
 		LOG(info) << "end of main";
