@@ -19,7 +19,7 @@ dirs = [
 	'examples/inheritance',
 	#'popc_tests/bigdata',
 	'popc_tests/callback',
-	'popc_tests/exceptions',
+	'popc_tests/exception',
 	'popc_tests/heritage',
 	'popc_tests/stresstest',
 	'popc_tests/stdlib',

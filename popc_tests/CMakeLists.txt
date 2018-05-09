@@ -1,5 +1,6 @@
 project(poplite_examples)
 
+add_subdirectory(asynccreation)
 add_subdirectory(bigdata)
 add_subdirectory(callback)
 add_subdirectory(exception)
