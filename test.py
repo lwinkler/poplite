@@ -20,7 +20,8 @@ dirs = [
 	#'popc_tests/bigdata',
 	'popc_tests/callback',
 	'popc_tests/exceptions',
-	'popc_tests/heritage'
+	'popc_tests/heritage',
+	'popc_tests/tree'
 ]
 
 for dir1 in dirs:
