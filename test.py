@@ -21,6 +21,7 @@ dirs = [
 	'popc_tests/callback',
 	'popc_tests/exceptions',
 	'popc_tests/heritage',
+	'popc_tests/stresstest',
 	'popc_tests/tree'
 ]
 

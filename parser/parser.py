@@ -24,8 +24,10 @@ cindex.Config.set_library_path("/usr/lib/llvm-5.0/lib")
 def describe_node(node, full = False):
 	""" Describe a node. For debug purposes
 	"""
-
-	print "node %s (%s) %s" % (node.spelling, node.displayname, node.kind)
+	try:
+		print "node %s (%s) %s" % (node.spelling, node.displayname, node.kind)
+	except:
+		print "node"
 	print node
 
 	if full:
@@ -60,7 +62,7 @@ def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define
 	"""
 	# return os.path.basename(name.upper()).replace('.', '_')
-	return name.upper()
+	return name # .upper()
 
 
 def print_ast(node, indent):
