@@ -37,9 +37,9 @@ def write_foot(fout):
 
 #--------------------------------------------------------------------------------
 
-def write_constr(fout, m):
+def write_constr(fout, m, classname):
 	
-	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (m.spelling, parser.list_args1(m)))
+	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (classname, parser.list_args1(m)))
 
 def write_meth(fout, m, classname):
 	
@@ -49,21 +49,22 @@ def write_meth(fout, m, classname):
 	elif m.is_const_method():
 		conc = 'const_conc'
 	fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		% (classname, conc, m.result_type.spelling, parser.list_args1(m, True), m.lexical_parent.spelling, m.spelling))
+		% (classname, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
 
 #--------------------------------------------------------------------------------
 
 def write_broker(fout, class_node):
 	
 	# implementation of static array of methods
+	full_name = parser.get_full_name(class_node)
 	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_{\n"
-		% (class_node.spelling, class_node.spelling))
+		% (full_name, full_name))
 
 	for m in parser.find_methods(class_node)[0]:
-		write_meth(fout, m, class_node.spelling)
+		write_meth(fout, m, full_name)
 
 	for c in parser.find_constructors(class_node):
-		write_constr(fout, c)
+		write_constr(fout, c, full_name)
 
 	fout.write("nullptr\n};\n")
 

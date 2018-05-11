@@ -62,7 +62,8 @@ def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define
 	"""
 	# return os.path.basename(name.upper()).replace('.', '_')
-	return name # .upper()
+	## TODO: Create a directory per namespace
+	return name.replace(':', '_') # .upper()
 
 
 def print_ast(node, indent):
@@ -72,6 +73,21 @@ def print_ast(node, indent):
 	for c in node.get_children():
 		print_ast(c, indent + 1)
 
+def get_full_name(node):
+	""" Return the full name of the node with namespaces
+	"""
+	ns = ''
+	parent = node
+	while hasattr(parent, 'lexical_parent'):
+		parent = parent.lexical_parent;
+		if parent is None:
+			break
+		if parent.kind != cindex.CursorKind.TRANSLATION_UNIT and parent.spelling:
+			# print parent.kind
+			ns = parent.spelling + '::' + ns
+
+	return ns + node.spelling
+
 def find_parallel_classes(node, parent, src):
 	""" Find all classes with annotation "pop_parallel"
 	"""
@@ -79,10 +95,6 @@ def find_parallel_classes(node, parent, src):
 	found = []
 
 	# print "node %s %s %s [line=%s, col=%s]" % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
-	# if node.kind == cindex.CursorKind.UNEXPOSED_ATTR:
-		# print "ASDFAS"
-		# print node.extent
-
 	if node.kind == cindex.CursorKind.ANNOTATE_ATTR and node.spelling == "pop_parallel": # and parent.location.file.name == src:
 		if parent.kind != cindex.CursorKind.CLASS_DECL:
 			print "Warning: node %s is annoted as parallel but is not a class" % parent.spelling
@@ -116,11 +128,12 @@ def find_methods1(class_node, meths, real_parents):
 			print "Warning: parallel class %s has more than one parallel class as parent. The interface will only be castable into the first parent" % class_node.spelling
 		if len(par_parents) >= 1:
 			find_methods1(par_parents[0], meths, real_parents)
-			real_parent = par_parents[0].spelling
+			real_parent = get_full_name(par_parents[0].get_definition())
+			print "real parent " + real_parent
 			real_parents.append(real_parent)
 		
 	for parent in get_direct_parents(class_node, False, True):
-		if parent.spelling != real_parent:
+		if get_full_name(parent) != real_parent:
 			find_methods1(parent, meths, None)
 
 	# Recurse for children of this node
@@ -130,7 +143,7 @@ def find_methods1(class_node, meths, real_parents):
 			found = False
 			for meth in meths:
 				if meth.displayname == c.displayname and meth.is_virtual_method():
-					# print 'Replace method %s' % meth.displayname
+					print 'Replace method %s' % meth.displayname
 					meth = c
 					found = True
 					break
@@ -224,7 +237,7 @@ def list_args1(parent, front_comma = False, back_comma = False):
 	""" List all types of arguments as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
-		out.append(arg.type.spelling)
+		out.append(get_full_name(arg.type))
 	fc = ', ' if out and front_comma else ''
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc
@@ -242,7 +255,7 @@ def list_args(parent, front_comma = False, back_comma = False):
 	""" List all arguments with types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
-		out.append(arg.type.spelling + " " + arg.spelling)
+		out.append(get_full_name(arg.type) + " " + arg.spelling)
 	fc = ', ' if out and front_comma else ''
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc

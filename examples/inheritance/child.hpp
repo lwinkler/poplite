@@ -14,6 +14,7 @@
 #include "class/system.hpp"
 #include "alloc/local.hpp"
 
+namespace simple_parent_a_ns {
 class simple_parent_a {
 	public:
 		void set_float_a(float _f){f_ = _f;}
@@ -23,10 +24,11 @@ class simple_parent_a {
 	private:
 		float f_ = 0;
 };
+} // namespace
 
 // this include should always be right before the parallel class declaration
 #include "parent_a.iface.hpp"
-POP_CLASS parent_a : public simple_parent_a
+POP_CLASS parent_a : public simple_parent_a_ns::simple_parent_a
 {
 	public:
 		POP_ALLOCATION(pop::local_allocator())
@@ -47,8 +49,10 @@ POP_CLASS parent_a : public simple_parent_a
 };
 
 
+
+namespace parent_b_ns {
 // this include should always be right before the parallel class declaration
-#include "parent_b.iface.hpp"
+#include "parent_b_ns__parent_b.iface.hpp"
 POP_CLASS parent_b : public parent_a
 {
 	public:
@@ -70,6 +74,7 @@ POP_CLASS parent_b : public parent_a
 		double d_;
 		const std::string str_;
 };
+} // namespace
 
 class simple_parent_c {
 	public:
@@ -80,8 +85,9 @@ class simple_parent_c {
 };
 
 // this include should always be right before the parallel class declaration
-#include "child.iface.hpp"
-POP_CLASS child : public parent_b, public simple_parent_c
+namespace child_ns {
+#include "child_ns__child.iface.hpp"
+POP_CLASS child : public parent_b_ns::parent_b, public simple_parent_c
 {
 	public:
 		// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
@@ -104,5 +110,6 @@ POP_CLASS child : public parent_b, public simple_parent_c
 		const std::string str_ = "Child";
 	
 };
+} // namespace
 
 #endif

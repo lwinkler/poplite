@@ -35,15 +35,16 @@ def write_foot(fout):
 
 def write_interface(fout, class_node):
 	parent_nodes = parser.get_direct_parents(class_node, True, True)
+	classname = class_node.spelling
 	if len(parent_nodes) > 1:
-		raise Exception('Parallel class ' + class_node.spelling + ' cannot have more than one direct parent')
-	parent_ifaces = [node.spelling + "_iface" for node in  parent_nodes] if parent_nodes else ['pop::interface']
+		raise Exception('Parallel class ' + classname + ' cannot have more than one direct parent')
+	parent_ifaces = [parser.get_full_name(node) + '_iface' for node in  parent_nodes] if parent_nodes else ['pop::interface']
 
 	# note: we must have virtual inheritence to have multiple inheritance
 	fout.write("""
 class %s_iface : %s
 {
-private:""" % (class_node.spelling, ', '.join(['public ' + iface for iface in parent_ifaces])))
+private:""" % (classname, ', '.join(['public ' + iface for iface in parent_ifaces])))
 
 	write_meth_ids(fout, class_node) 
 
@@ -55,12 +56,12 @@ private:""" % (class_node.spelling, ', '.join(['public ' + iface for iface in pa
 		# parent_ifaces += ['pop::interface']
 
 	# Add a constructor from accesspoint for references to parallel objects
-	fout.write("%s_iface(pop::accesspoint _ap) : %s {}\n" % (class_node.spelling, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
+	fout.write("%s_iface(pop::accesspoint _ap) : %s {}\n" % (classname, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
 
 	id = 0
 	[methods, real_parents] = parser.find_methods(class_node)
 	for m in methods:
-		write_meth(fout, m, id, class_node.spelling, real_parents)
+		write_meth(fout, m, id, real_parents)
 		id += 1
 
 	# Constructors need to be inserted after methods to have matching ids in parent and child
@@ -72,7 +73,7 @@ private:""" % (class_node.spelling, ', '.join(['public ' + iface for iface in pa
 protected:
 	// for inheritance
 	%s_iface(const std::string& _executable, const pop::allocator& _allocator, bool _ignore) : %s{}
-""" % (class_node.spelling, ', '.join([iface + '(_executable, _allocator, _ignore)' for iface in parent_ifaces])))
+""" % (classname, ', '.join([iface + '(_executable, _allocator, _ignore)' for iface in parent_ifaces])))
 
 	fout.write("};\n")
 
@@ -85,8 +86,8 @@ def write_constr(fout, c, id, parent_ifaces):
 		% (c.spelling, parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
-def write_meth(fout, m, id, classname, real_parents):
-	if m.lexical_parent.spelling not in real_parents:
+def write_meth(fout, m, id, real_parents):
+	if parser.get_full_name(m.lexical_parent) not in real_parents:
 		fout.write('inline %s%s %s(%s) {' %('virtual ' if m.is_virtual_method() else '', m.result_type.spelling, m.spelling, parser.list_args(m)) 
 			+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, parser.list_args2(m, True)))
 

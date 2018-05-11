@@ -2,8 +2,6 @@
 #define _TITI_PH
 #include "toto.hpp"
 
-// TODO namespace poptest {
-
 // this include should always be right before the parallel class declaration
 #include "Titi.iface.hpp"
 POP_CLASS Titi {
