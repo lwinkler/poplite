@@ -12,20 +12,22 @@
 #include "alloc/local.hpp"
 #include "class/interface.hpp"
 
+namespace stress_test {
 // this include should always be right before the parallel class declaration
-#include "POPObject2.iface.hpp"
+#include "stress_test/POPObject.iface.hpp"
 
-POP_CLASS POPObject2 {
+POP_CLASS POPObject {
 
 public:
-	POPObject2();
-	~POPObject2();
+	POPObject();
+	~POPObject();
 	POP_SYNC int getCounter();
 	POP_ASYNC void increment();
 private:
 	std::atomic<int> counter;
 
 };
+} // namespace
 
 
 #endif /*POPOBJECT_PH_*/

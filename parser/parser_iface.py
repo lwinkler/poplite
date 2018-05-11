@@ -82,8 +82,9 @@ protected:
 def write_constr(fout, c, id, parent_ifaces):
 	# note: virtual inheritence is not handled
 	parent_constr = ', '.join([iface + '(_executable, _allocator, false)' for iface in parent_ifaces])
+	objfile = parser.get_full_name(c.lexical_parent).replace('::', '.')
 	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
-		% (c.spelling, parser.list_args(c, False, True), c.spelling, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
+		% (c.spelling, parser.list_args(c, False, True), objfile, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id, real_parents):

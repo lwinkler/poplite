@@ -33,14 +33,15 @@ function(pop_add_object object_name header_name)
 	# note: there are conflicts while generating multiple files with one command
 	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
 	# Not fixed yet !
-	string(REPLACE ":" "_" object_name2 "${object_name}")
-	add_custom_command(OUTPUT gen/${object_name2}.iface${_ext}  gen/${object_name2}.brok${_ext} gen/main.${object_name2}.cpp
+	string(REPLACE "::" "/" object_name2 "${object_name}")
+	string(REPLACE "::" "." object_name3 "${object_name}")
+	add_custom_command(OUTPUT gen/${object_name2}.iface${_ext}  gen/${object_name2}.brok${_ext} gen/main.${object_name3}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} ${INC_DIRS}
 	DEPENDS ${header_name})
 
 	# extra arguments are seen as dependencies
-	add_executable(${object_name2}.obj gen/main.${object_name2}.cpp ${ARGN})
-	target_link_libraries(${object_name2}.obj ${Boost_LIBRARIES} )
+	add_executable(${object_name3}.obj gen/main.${object_name3}.cpp ${ARGN})
+	target_link_libraries(${object_name3}.obj ${Boost_LIBRARIES} )
 endfunction(pop_add_object)
 
 # Function used to add a parallel object to the compilation
@@ -54,10 +55,11 @@ function(pop_add_objects classnames dependencies)
 	endforeach()
 
 	foreach(cl ${classnames})
-		string(REPLACE ":" "_" cl2 "${cl}")
-		set(cmd_out "${cmd_out};gen/${cl2}.iface.hpp;gen/${cl2}.brok.hpp;gen/main.${cl2}.cpp")
-		add_executable(${cl2}.obj gen/main.${cl2}.cpp ${dependencies})
-		target_link_libraries(${cl2}.obj ${Boost_LIBRARIES})
+		string(REPLACE "::" "/" cl2 "${cl}")
+		string(REPLACE "::" "." cl3 "${cl}")
+		set(cmd_out "${cmd_out};gen/${cl2}.iface.hpp;gen/${cl2}.brok.hpp;gen/main.${cl3}.cpp")
+		add_executable(${cl3}.obj gen/main.${cl3}.cpp ${dependencies})
+		target_link_libraries(${cl3}.obj ${Boost_LIBRARIES})
 		# add_library(gen/main.${cl2}.cpp)
 	endforeach()
 	string(REPLACE ";" "," classnames2 "${classnames}")

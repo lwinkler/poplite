@@ -8,6 +8,7 @@
 
 
 using namespace std;
+using namespace stress_test;
 
 int main(int argc, char** argv) {
 	// Init the pop system with arguments
@@ -15,7 +16,7 @@ int main(int argc, char** argv) {
 	try {
 		{
 			printf("Stress test: Starting test...\n");
-			POPObject2_iface o1;
+			POPObject_iface o1;
 			for (int i = 0; i < 10000; i++) {
 				o1.increment();
 			}
@@ -34,7 +35,7 @@ int main(int argc, char** argv) {
 			printf("ulimit -n XX\t To change the limit (XX must be a number)\n");
 			printf("For this test ulimit can be set to 1024\n");
 			assert(argc > 1);
-			POPObject2_iface o[atoi(argv[1])];
+			POPObject_iface o[atoi(argv[1])];
 		}
 	} catch (exception& e) {
 		printf("Stress test failed: error '%s', destroying objects:\n", e.what());

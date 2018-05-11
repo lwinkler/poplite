@@ -9,21 +9,22 @@
 
 
 using namespace std;
+namespace stress_test {
 
-POPObject2::POPObject2() {
+POPObject::POPObject() {
 	counter = 0;
 	// cout << "POPObject created (by JobMgr) on machine:" << pop::system::instance().host_name() << endl;
 }
 
-POPObject2::~POPObject2() {
+POPObject::~POPObject() {
 	// cout << "POPObject on machine " << pop::system::instance().host_name() << " is being destroyed" << endl;
 }
 
-int POPObject2::getCounter() {
+int POPObject::getCounter() {
 	return counter;
 }
 
-void POPObject2::increment() {
+void POPObject::increment() {
 	counter++;
 }
-
+} // namespace

@@ -87,7 +87,7 @@ class interface
 					combox_.close_service();
 				}
 			} catch(std::exception& exc) {
-				LOG(info) << "Cannot " << (link_life_ ? "close" : "disconnect") << " broker service remotely: " << exc.what();
+				LOG(debug) << "Cannot " << (link_life_ ? "close" : "disconnect") << " broker service remotely: " << exc.what();
 			}
 		}
 
