@@ -14,6 +14,7 @@
 // #include "class/interface.hpp"
 #include "class/system.hpp"
 #include "alloc/local.hpp"
+#include "class/interface.hpp"
 
 struct test_struct1 : boost::noncopyable
 {

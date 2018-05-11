@@ -11,13 +11,12 @@
 using namespace std;
 
 POPObject2::POPObject2() {
-	cout << "POPObject is processing its construction (5 secondes delay) on machine:" << pop::system::instance().host_name() << endl;
 	counter = 0;
-	cout << "POPObject created (by JobMgr) on machine:" << pop::system::instance().host_name() << endl;
+	// cout << "POPObject created (by JobMgr) on machine:" << pop::system::instance().host_name() << endl;
 }
 
 POPObject2::~POPObject2() {
-	cout << "POPObject on machine " << pop::system::instance().host_name() << " is being destroyed" << endl;
+	// cout << "POPObject on machine " << pop::system::instance().host_name() << " is being destroyed" << endl;
 }
 
 int POPObject2::getCounter() {

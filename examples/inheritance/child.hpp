@@ -13,6 +13,9 @@
 
 #include "class/system.hpp"
 #include "alloc/local.hpp"
+#include "class/interface.hpp"
+
+namespace global_ns {
 
 namespace simple_parent_a_ns {
 class simple_parent_a {
@@ -27,7 +30,7 @@ class simple_parent_a {
 } // namespace
 
 // this include should always be right before the parallel class declaration
-#include "parent_a.iface.hpp"
+#include "global_ns__parent_a.iface.hpp"
 POP_CLASS parent_a : public simple_parent_a_ns::simple_parent_a
 {
 	public:
@@ -52,7 +55,7 @@ POP_CLASS parent_a : public simple_parent_a_ns::simple_parent_a
 
 namespace parent_b_ns {
 // this include should always be right before the parallel class declaration
-#include "parent_b_ns__parent_b.iface.hpp"
+#include "global_ns__parent_b_ns__parent_b.iface.hpp"
 POP_CLASS parent_b : public parent_a
 {
 	public:
@@ -86,7 +89,7 @@ class simple_parent_c {
 
 // this include should always be right before the parallel class declaration
 namespace child_ns {
-#include "child_ns__child.iface.hpp"
+#include "global_ns__child_ns__child.iface.hpp"
 POP_CLASS child : public parent_b_ns::parent_b, public simple_parent_c
 {
 	public:
@@ -110,6 +113,7 @@ POP_CLASS child : public parent_b_ns::parent_b, public simple_parent_c
 		const std::string str_ = "Child";
 	
 };
+} // namespace
 } // namespace
 
 #endif

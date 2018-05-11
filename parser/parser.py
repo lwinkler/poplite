@@ -129,7 +129,6 @@ def find_methods1(class_node, meths, real_parents):
 		if len(par_parents) >= 1:
 			find_methods1(par_parents[0], meths, real_parents)
 			real_parent = get_full_name(par_parents[0].get_definition())
-			print "real parent " + real_parent
 			real_parents.append(real_parent)
 		
 	for parent in get_direct_parents(class_node, False, True):
@@ -143,8 +142,8 @@ def find_methods1(class_node, meths, real_parents):
 			found = False
 			for meth in meths:
 				if meth.displayname == c.displayname and meth.is_virtual_method():
-					print 'Replace method %s' % meth.displayname
-					meth = c
+					# print 'Replace method %s' % meth.displayname
+					# meth = c
 					found = True
 					break
 			if not found:

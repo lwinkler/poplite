@@ -11,6 +11,7 @@
 #include "child.hpp"
 
 using namespace std;
+using namespace global_ns;
 
 template<typename T> void check_equal(const T& _a, const T& _b) {
 	if(_a != _b) {

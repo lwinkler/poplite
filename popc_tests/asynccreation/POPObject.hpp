@@ -8,7 +8,7 @@
 
 #include "class/system.hpp"
 #include "alloc/local.hpp"
-#include "com/accesspoint.hpp"
+#include "class/interface.hpp"
 
 // this include should always be right before the parallel class declaration
 #include "POPObject3.iface.hpp"

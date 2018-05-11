@@ -18,6 +18,7 @@
 
 #include "alloc/local.hpp"
 #include "com/accesspoint.hpp"
+#include "class/interface.hpp"
 
 class client_iface;
 

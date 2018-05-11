@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
 		}
 	} catch (exception& e) {
 		printf("Stress test failed: error '%s', destroying objects:\n", e.what());
+		return 1;
 	}
 	return 0;
 }
