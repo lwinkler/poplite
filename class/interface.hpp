@@ -211,8 +211,8 @@ class interface
 		{
 			accesspoint ap;
 			_ar >> ap;
-			// TODO if(ap != contact())
-				// TODO throw std::runtime_error("The accesspoint of an interface should never change during serialization.");
+			if(ap != contact())
+				throw std::runtime_error("The accesspoint of an interface should never change during serialization.");
 		}
 
 		template<class Archive>void serialize(Archive & _ar, const unsigned int _version){

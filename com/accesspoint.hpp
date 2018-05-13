@@ -30,6 +30,10 @@ namespace pop {
 				host_name(_host_name),
 				port(_port) 
 			{}
+
+			bool operator == (const accesspoint& _ap){return host_name == _ap.host_name && port == _ap.port;}
+			bool operator != (const accesspoint& _ap){return host_name != _ap.host_name || port != _ap.port;}
+
 			std::string host_name;
 			int port;
 

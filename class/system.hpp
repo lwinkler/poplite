@@ -105,6 +105,8 @@ namespace pop
 						boost::program_options::notify(vm);    
 
 						if (vm.count("pop-help")) {
+							// print help
+							std::cout << desc << std::endl;
 							exit(0);
 						}
 
@@ -165,7 +167,7 @@ namespace pop
 			bool is_empty() const {return empty_;}
 
 			// System options
-			int log_level;
+			int log_level = 2;
 
 			void print_args(std::ostream& _os) const {
 				for(const auto& arg: args_) {

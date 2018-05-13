@@ -76,6 +76,7 @@ int main(int argc, char* argv[])
 			};
 		} catch (const exception& exc) {
 			cerr << "Exception in main: " << exc.what() << endl;
+			return 1;
 		}
 	}
 

@@ -61,8 +61,6 @@ def init_tu(argv):
 def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define
 	"""
-	# return os.path.basename(name.upper()).replace('.', '_')
-	## TODO: Create a directory per namespace
 	return name.replace(':', '_') # .upper()
 
 

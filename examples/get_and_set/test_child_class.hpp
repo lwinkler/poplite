@@ -25,7 +25,7 @@ POP_CLASS TestChildClass : public TestClass
 		POP_ALLOCATION(pop::local_allocator())
 		TestChildClass(std::string _s2, int myint) : TestClass("localhost") {std::cout << "call constr with " << _s2 << std::endl;}
 
-		void void_method(void){std::cout << "Test method(void) syntax}" << std::endl;}
+		void void_method(void){std::cout << "Test method(void) syntax" << std::endl;}
 };
 
 #endif

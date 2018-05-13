@@ -20,9 +20,6 @@
 #include "com/serialize.hpp"
 #include "class/interface.hpp"
 
-//TODO this should fail
-// static_assert(std::is_same<pop_decay<Mother_iface>::type, pop::accesspoint>::value, "AAAAARG1");
-
 namespace pop
 {
 	namespace remote
@@ -109,7 +106,7 @@ namespace pop
 						throw std::runtime_error("Constructor has not been called");
 					std::tuple<typename pop_decay<Args>::type...> tup;
 					_ia >> tup;
-					// TODO maybe one day use  http://en.cppreference.com/w/cpp/utility/apply
+					// TODO: maybe one day use  http://en.cppreference.com/w/cpp/utility/apply
 					apply_tuple(_p_obj.get(), _p_meth, tup, _oa);
 					serialize_out<bufout, Args...>(_oa, tup);
 				}

@@ -118,6 +118,10 @@ int main(int argc, char* argv[])
 				throw runtime_error("Test failed on testClass3");
 
 			testClass3.void_method();
+
+			// TODO: Avoid copies
+			const test_struct2& a = testClass3.GetTestRef();
+			cout << a.a << endl;
 		}
 
 		LOG(info) << "end of main";

@@ -16,7 +16,7 @@
 #include "alloc/local.hpp"
 #include "class/interface.hpp"
 
-struct test_struct1 : boost::noncopyable
+struct test_struct1  : boost::noncopyable
 {
 	int a;
 	test_struct1() : a(0){}	
@@ -26,6 +26,18 @@ struct test_struct1 : boost::noncopyable
 	}
 };
 
+struct test_struct2
+{
+	test_struct2(const test_struct2& _a) : a( _a.a){std::cout << "copy constr" << std::endl;}
+	test_struct2& operator = (const test_struct2& _a) {a = _a.a; std::cout << "copy operator" << std::endl;}
+
+	int a;
+	test_struct2() : a(0){}	
+	template<class Archive> void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & a;
+	}
+};
 
 class gps_position
 {
@@ -83,7 +95,7 @@ POP_CLASS TestClass
 
 		void SetTest(const test_struct1& _test1){test1_.a = _test1.a;}
 		void GetTest(test_struct1& _test1) const {_test1.a = test1_.a;}
-		// test_struct1 GetTest(){return test1_;} TODO
+		test_struct2 GetTestRef(){return test2_;}
 
 		void SetGps(gps_position& _gps) { gps_ = _gps;}
 		gps_position GetGps() const {
@@ -111,6 +123,7 @@ POP_CLASS TestClass
 		std::string s_;
 		gps_position gps_;
 		test_struct1 test1_;
+		test_struct2 test2_;
 		std::vector<int> vi_;
 		std::vector<gps_position> vgps_;
 		std::map<int, std::string> mstr_;
