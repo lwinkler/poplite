@@ -119,9 +119,8 @@ int main(int argc, char* argv[])
 
 			testClass3.void_method();
 
-			// TODO: Avoid copies
-			const test_struct2& a = testClass3.GetTestRef();
-			cout << a.a << endl;
+			unique_ptr<test_struct1> a(testClass3.GetTestPtr());
+			cout << a->a << endl;
 		}
 
 		LOG(info) << "end of main";
