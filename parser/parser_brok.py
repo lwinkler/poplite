@@ -48,8 +48,13 @@ def write_meth(fout, m, classname):
 		conc = 'static_conc'
 	elif m.is_const_method():
 		conc = 'const_conc'
-	fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		% (classname, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
+	if parser.is_template_method(m):
+		for t in parser.get_template_types(m):
+			fout.write("create_binded_method(&remote::broker<%s>::%s, &%s::%s%s),\n"
+				% (classname, conc, parser.get_full_name(m.lexical_parent), m.spelling, t))
+	else:
+		fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+			% (classname, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
 
 #--------------------------------------------------------------------------------
 

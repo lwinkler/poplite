@@ -46,7 +46,8 @@ class %s_iface : %s
 {
 private:""" % (classname, ', '.join(['public ' + iface for iface in parent_ifaces])))
 
-	write_meth_ids(fout, class_node) 
+	definitions = []
+	write_meth_ids(fout, class_node, definitions)
 
 	fout.write('public:\n')
 
@@ -61,8 +62,13 @@ private:""" % (classname, ', '.join(['public ' + iface for iface in parent_iface
 	id = 0
 	[methods, real_parents] = parser.find_methods(class_node)
 	for m in methods:
-		write_meth(fout, m, id, real_parents)
-		id += 1
+		if parser.get_full_name(m.lexical_parent) in real_parents:
+			continue
+		if parser.is_template_method(m):
+			id = write_template_meth(fout, m, id)
+		else:
+			write_meth(fout, m, id)
+			id += 1
 
 	# Constructors need to be inserted after methods to have matching ids in parent and child
 	for c in parser.find_constructors(class_node):
@@ -77,6 +83,10 @@ protected:
 
 	fout.write("};\n")
 
+	# TODO: Maybe we can avoid this
+	if definitions:
+		fout.write('#define POP_SPECIFICATIONS_%s \\\n%s\n' % (classname, '\\\n'.join(definitions)))
+
 #--------------------------------------------------------------------------------
 
 def write_constr(fout, c, id, parent_ifaces):
@@ -87,13 +97,26 @@ def write_constr(fout, c, id, parent_ifaces):
 		% (c.spelling, parser.list_args(c, False, True), objfile, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
-def write_meth(fout, m, id, real_parents):
-	if parser.get_full_name(m.lexical_parent) not in real_parents:
-		fout.write('inline %s%s %s(%s) {' %('virtual ' if m.is_virtual_method() else '', m.result_type.spelling, m.spelling, parser.list_args(m)) 
-			+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, parser.list_args2(m, True)))
+def write_meth(fout, m, id):
+	virtual  = 'virtual ' if m.is_virtual_method() else ''
+	fout.write('inline %s%s %s(%s) {' %(virtual, m.result_type.spelling, m.spelling, parser.list_args(m)) 
+		+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, parser.list_args2(m, True)))
+
+def write_template_meth(fout, m, id):
+	ttypes = parser.get_template_types(m)
+	virtual = 'virtual ' if m.is_virtual_method() else ''
+	ttparams = parser.get_template_type_parameters(m)
+	ttparams1 = '<%s>' % (', '.join(ttparams))
+	ttparams2 = '<%s>' % (', '.join(('typename ' + t) for t in ttparams))
+	invoker = parser.get_template_invoker(m)
+	print ttparams1
+	print ttparams2
+	fout.write('template%s inline %s%s %s(%s) {' %(ttparams2, virtual, m.result_type.spelling, m.spelling, parser.list_args(m))
+			+ 'return %s<%s%s>(method_ids::%s%d%s::value%s);}\n' % (invoker, m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, ttparams1, parser.list_args2(m, True)))
+	return id + len(ttypes)
 
 #--------------------------------------------------------------------------------
-def write_meth_ids(fout, class_node):
+def write_meth_ids(fout, class_node, definitions):
 	fout.write("""
 struct method_ids
 {
@@ -102,15 +125,22 @@ struct method_ids
 	id = 0
 	methods = parser.find_methods(class_node)[0]
 	for m in methods:
-		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
-		id += 1
+		if parser.is_template_method(m):
+			id0 = id
+			fout.write('template<class T> struct %s%d{static const int value;};\n' % (m.spelling, id0))
+			for t in parser.get_template_types(m):
+				definitions.append('template<> const int %s_iface::method_ids::%s%d%s::value = %d;' % (parser.get_full_name(class_node), m.spelling, id0, t, id))
+				id += 1
+		else:
+			fout.write('static const int %s%d = %d;\n' % (m.spelling, id, id))
+			id += 1
 
 	constructors = parser.find_constructors(class_node)
 	for m in constructors:
-		fout.write("static const int %s%d = %d;\n" % (m.spelling, id, id))
+		fout.write('static const int %s%d = %d;\n' % (m.spelling, id, id))
 		id += 1
 
-	fout.write("};\n")
+	fout.write('};\n')
 
 #--------------------------------------------------------------------------------
 

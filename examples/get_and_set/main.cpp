@@ -125,6 +125,7 @@ int main(int argc, char* argv[])
 
 		LOG(info) << "end of main";
 		// sleep(3);
+		// TODO: test serialization of unique ptr and ptr
 	}
 	catch (std::exception& e)
 	{

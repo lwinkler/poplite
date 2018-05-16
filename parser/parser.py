@@ -64,7 +64,7 @@ def capitalize(name):
 	return name.replace(':', '_') # .upper()
 
 
-def print_ast(node, indent):
+def print_ast(node, indent = 0):
 	""" Print the content of source tree
 	"""
 	print "\t" * indent + "node %s %s %s [line=%s, col=%s]" % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
@@ -135,7 +135,8 @@ def find_methods1(class_node, meths, real_parents):
 
 	# Recurse for children of this node
 	for c in class_node.get_children():
-		if c.kind == cindex.CursorKind.CXX_METHOD and c.access_specifier == cindex.AccessSpecifier.PUBLIC:
+		# describe_node(c, True)
+		if (c.kind == cindex.CursorKind.CXX_METHOD or c.kind == cindex.CursorKind.FUNCTION_TEMPLATE) and c.access_specifier == cindex.AccessSpecifier.PUBLIC:
 			# print 'Found parallel method %s::%s [line=%s, col=%s] access=%s static=%s virtual=%s' % (class_node.spelling, c.displayname, c.location.line, c.location.column, c.access_specifier, c.is_static_method(), c.is_virtual_method())
 			found = False
 			for meth in meths:
@@ -188,8 +189,8 @@ def get_invoker(meth_node):
 
 	for c in meth_node.get_children():
 		if c.kind == cindex.CursorKind.ANNOTATE_ATTR:
-			if c.spelling.startswith('pop_caller:'):
-				return c.spelling[len('pop_caller:'):]
+			if c.spelling.startswith('pop_invoker:'):
+				return c.spelling[len('pop_invoker:'):]
 
 	return "sync" # our default
 
@@ -213,6 +214,41 @@ def is_parallel(node):
 		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling == "pop_parallel":
 			return True
 	return False
+
+def is_template_method(meth):
+	""" Check if a method is a template """
+	return  meth.kind == cindex.CursorKind.FUNCTION_TEMPLATE
+
+def get_template_types(meth):
+	""" Return the template types of a template method (represent all usable instances of the template method) """
+
+	for c1 in meth.lexical_parent.get_children():
+		# Search other attribute with specific name (since annotations are not valid on templates). TODO: see if fixed in clang
+		if c1.spelling == 'template_types_of_' + meth.spelling:
+			for c2 in c1.get_children():
+				if c2.kind == cindex.CursorKind.ANNOTATE_ATTR:
+					if c2.spelling.startswith('pop_template_method:'):
+						return c2.spelling[len('pop_template_method:'):].split(';')
+	return None
+
+def get_template_invoker(meth):
+	""" Return the invoker of a template method """
+	for c1 in meth.lexical_parent.get_children():
+		# Search other attribute with specific name (since annotations are not valid on templates). TODO: see if fixed in clang
+		if c1.spelling == 'template_types_of_' + meth.spelling:
+			for c2 in c1.get_children():
+				if c2.kind == cindex.CursorKind.ANNOTATE_ATTR:
+					if c2.spelling.startswith('pop_invoker:'):
+						return c2.spelling[len('pop_invoker:'):]
+	return None
+
+def get_template_type_parameters(meth):
+	""" Return template type parameters, e.g. <T> """
+	ttp = []
+	for c in meth.get_children():
+		if c.kind == cindex.CursorKind.TEMPLATE_TYPE_PARAMETER:
+			ttp.append(c.spelling)
+	return ttp
 
 def get_direct_parents(node, parallel = None, public_only = True):
 	""" Return all parent nodes of a class
