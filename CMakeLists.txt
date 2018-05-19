@@ -18,7 +18,6 @@ set(POPLITE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Function used to add a parallel object to the compilation
 function(pop_add_object object_name header_name)
-	get_filename_component(_ext      ${header_name} EXT)
 	get_filename_component(_dir      ${header_name} ABSOLUTE)
 	get_filename_component(_filename ${header_name} NAME_WE)
 
@@ -29,13 +28,13 @@ function(pop_add_object object_name header_name)
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
 
-	# message("Add command to generate gen/${object_name}.iface${_ext} gen/${object_name}.brok${_ext} gen/main.${object_name}.cpp")
+	# message("Add command to generate gen/${object_name}.iface.hpp gen/main.${object_name}.cpp")
 	# note: there are conflicts while generating multiple files with one command
 	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
 	# Not fixed yet !
 	string(REPLACE "::" "/" object_name2 "${object_name}")
 	string(REPLACE "::" "." object_name3 "${object_name}")
-	add_custom_command(OUTPUT gen/${object_name2}.iface${_ext}  gen/${object_name2}.brok${_ext} gen/main.${object_name3}.cpp
+	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/main.${object_name3}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} ${INC_DIRS}
 	DEPENDS ${header_name})
 
@@ -57,7 +56,7 @@ function(pop_add_objects classnames dependencies)
 	foreach(cl ${classnames})
 		string(REPLACE "::" "/" cl2 "${cl}")
 		string(REPLACE "::" "." cl3 "${cl}")
-		set(cmd_out "${cmd_out};gen/${cl2}.iface.hpp;gen/${cl2}.brok.hpp;gen/main.${cl3}.cpp")
+		set(cmd_out "${cmd_out};gen/${cl2}.iface.hpp;gen/main.${cl3}.cpp")
 		add_executable(${cl3}.obj gen/main.${cl3}.cpp ${dependencies})
 		target_link_libraries(${cl3}.obj ${Boost_LIBRARIES})
 		# add_library(gen/main.${cl2}.cpp)
@@ -76,7 +75,6 @@ endfunction(pop_add_objects)
 
 # Function used to add a parallel object to the compilation
 function(pop_add_template_object object_name header_name instances)
-	get_filename_component(_ext      ${header_name} EXT)
 	get_filename_component(_dir      ${header_name} ABSOLUTE)
 	get_filename_component(_filename ${header_name} NAME_WE)
 
@@ -87,13 +85,13 @@ function(pop_add_template_object object_name header_name instances)
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
 
-	# message("Add command to generate gen/${object_name}.iface${_ext} gen/${object_name}.brok${_ext} gen/main.${object_name}.cpp")
+	# message("Add command to generate gen/${object_name}.iface.hpp gen/main.${object_name}.cpp")
 	# note: there are conflicts while generating multiple files with one command
 	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
 	# Not fixed yet !
 	string(REPLACE "::" "/" object_name2 "${object_name}")
 	string(REPLACE "::" "." object_name3 "${object_name}-${instances}")
-	add_custom_command(OUTPUT gen/${object_name2}.iface${_ext}  gen/${object_name2}.brok${_ext} gen/main.${object_name3}.cpp
+	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/main.${object_name3}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} ${INC_DIRS}
 	DEPENDS ${header_name})
 

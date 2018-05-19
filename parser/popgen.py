@@ -54,39 +54,25 @@ def main():
 
 	# Generate the file containing the broker
 	# TODO 
-	typename = 'int'
+	template_types = '<int>'
 	for c in parclasses:
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
 			continue
-		brok_out = gendir + "/%s.brok.hpp" % parser.convert_to_classname(full_name)
-		print "Generate %s containing the remote broker" % brok_out
-
-		with open(brok_out, "w") as fout:
-			parser_brok.write_head(fout, full_name, c.location.file)
-			parser_brok.write_broker(fout, c, typename)
-			parser_brok.write_foot(fout)
-
-		parser.align(brok_out)
 
 	# Generate the file containing the remote main used to launch the object
 	for c in parclasses:
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
 			continue
-		obj_out  = gendir + "/main.%s-%s.cpp" % (parser.convert_to_objname(full_name), typename)
-		with open(obj_out, "w") as fout:
-			fout.write('#include "%s.brok.hpp"\n' % parser.convert_to_classname(full_name))
+		obj_out  = gendir + "/main.%s%s.cpp" % (parser.convert_to_objname(full_name), template_types.replace('<', '-').replace('>', '').replace(',', '-'))
 
 		with open(obj_out, "a") as fout:
-			if typename:
-				full_name += '<%s>' % typename
-			print full_name
-			call(["sed", os.path.dirname(sys.argv[0]) + "/object_main.cpp", "-e", 's/_parclass_/%s/g' % (full_name)], stdout=fout)
+			parser_brok.write_head(fout, full_name, c.location.file)
+			parser_brok.write_broker(fout, c, template_types)
+			# parser_brok.write_foot(fout)
 
 		parser.align(obj_out)
-		
-
 
 
 if __name__ == "__main__":

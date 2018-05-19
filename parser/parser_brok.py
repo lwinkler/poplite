@@ -28,9 +28,6 @@ namespace remote
 
 #--------------------------------------------------------------------------------
 
-def write_foot(fout):
-
-	fout.write('}\n}\n')
 
 #--------------------------------------------------------------------------------
 
@@ -38,40 +35,79 @@ def write_constr(fout, m, classname):
 	
 	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (classname, parser.list_args1(m)))
 
-def write_meth(fout, m, classname):
+def write_meth(fout, m, classname, template_str):
 	
 	conc = 'conc'
+	create = 'create_binded_method'
 	if m.is_static_method():
 		conc = 'static_conc'
+		create = 'create_binded_method'
 	elif m.is_const_method():
 		conc = 'const_conc'
+		create = 'const_create_binded_method'
 	if parser.is_template_method(m):
 		for t in parser.get_template_types(m):
-			fout.write("create_binded_method(&remote::broker<%s>::%s, &%s::%s%s),\n"
-				% (classname, conc, parser.get_full_name(m.lexical_parent), m.spelling, t))
+			fout.write("%s(&remote::broker<%s>::%s, &%s::%s%s),\n"
+				% (create, classname, conc, parser.get_full_name(m.lexical_parent), m.spelling, t))
 	else:
 		# fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		fout.write("create_binded_method(&remote::broker<%s>::%s, &%s::%s),\n"
-			% (classname, conc, parser.get_full_name(m.lexical_parent), m.spelling))
+		fout.write("%s(&remote::broker<%s>::%s, &%s%s::%s),\n"
+			% (create, classname, conc, parser.get_full_name(m.lexical_parent), template_str, m.spelling))
 
 #--------------------------------------------------------------------------------
 
-def write_broker(fout, class_node, typename):
+def write_broker(fout, class_node, template_str):
 	
 	# implementation of static array of methods
-	full_name = parser.get_full_name(class_node)
-	if typename:
-		full_name += '<int>' # TODO: T
+	full_name = parser.get_full_name(class_node) + template_str
 	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_{\n"
 		% (full_name, full_name))
 
+
 	for m in parser.find_methods(class_node)[0]:
-		write_meth(fout, m, full_name)
+		write_meth(fout, m, full_name, template_str)
 
 	for c in parser.find_constructors(class_node):
 		write_constr(fout, c, full_name)
 
 	fout.write("nullptr\n};\n")
+	fout.write('}\n}\n')
+
+	fout.write("""
+#include "com/broker_combox.hpp"
+
+int main(int _argc, char* _argv[])
+{
+	pop::system::instance(&_argc, _argv);
+
+	try
+	{
+		// Check command line arguments.
+		if (_argc < 3)
+		{
+			LOG(error) << "Usage: " << _argv[0] << " <hostname of interface> <port of interface>";
+			return -1;
+		}
+		pop::remote::broker<%s> brok;
+		boost::asio::ip::tcp::resolver::query query(_argv[1], _argv[2]);
+		pop::broker_combox<%s> combox(brok, query);
+		combox.run();
+	}
+	catch (std::exception& e)
+	{
+		LOG(error) << "Exception in object main: " << e.what();
+		return 1;
+	}
+	catch (...)
+	{
+		LOG(error) << "Unknown exception in object main";
+		return 1;
+	}
+
+	return 0;
+}
+""" % (full_name, full_name))
+
 
 #--------------------------------------------------------------------------------
 
