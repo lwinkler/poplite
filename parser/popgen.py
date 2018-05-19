@@ -19,7 +19,7 @@ def main():
 
 	# Generate fake interface files before parsing
 	for cl in classnames_in:
-		iface_out = gendir + "/%s.iface.hpp" % cl.replace('::', '/')
+		iface_out = gendir + "/%s.iface.hpp" % parser.convert_to_classname(cl)
 		idir = os.path.dirname(iface_out)
 		if not os.path.exists(idir):
 			os.makedirs(idir)
@@ -27,7 +27,8 @@ def main():
 			fout.write('class %s_iface;\n' % cl)
 
 	tu = parser.init_tu(sys.argv)
-	parclasses = parser.find_parallel_classes(tu.cursor, None, filename_in)
+	#parser.print_ast(tu.cursor)
+	parclasses = parser.find_parallel_classes(tu.cursor, classnames_in)
 
 	print "found %d parallel classe(s):" % len(parclasses)
 	for c in parclasses:
@@ -41,7 +42,7 @@ def main():
 	for c in parclasses:
 		if parser.get_full_name(c) not in classnames_in:
 			continue
-		iface_out = gendir + "/%s.iface.hpp" % parser.get_full_name(c).replace('::', '/')
+		iface_out = gendir + "/%s.iface.hpp" % parser.convert_to_classname(parser.get_full_name(c))
 
 		print "Generate %s containing the interface" % iface_out
 		with open(iface_out, "w") as fout:
@@ -52,18 +53,20 @@ def main():
 		parser.align(iface_out)
 
 	# Generate the file containing the broker
+	# TODO 
+	typename = 'int'
 	for c in parclasses:
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
 			continue
-		brok_out = gendir + "/%s.brok.hpp" % full_name.replace('::', '/')
+		brok_out = gendir + "/%s.brok.hpp" % parser.convert_to_classname(full_name)
 		print "Generate %s containing the remote broker" % brok_out
 
 		with open(brok_out, "w") as fout:
 			parser_brok.write_head(fout, full_name, c.location.file)
-			parser_brok.write_broker(fout, c)
+			parser_brok.write_broker(fout, c, typename)
 			parser_brok.write_foot(fout)
-	
+
 		parser.align(brok_out)
 
 	# Generate the file containing the remote main used to launch the object
@@ -71,12 +74,15 @@ def main():
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
 			continue
-		obj_out  = gendir + "/main.%s.cpp" % full_name.replace('::', '.')
+		obj_out  = gendir + "/main.%s-%s.cpp" % (parser.convert_to_objname(full_name), typename)
 		with open(obj_out, "w") as fout:
-			fout.write('#include "%s.brok.hpp"\n' % full_name.replace('::', '/'))
+			fout.write('#include "%s.brok.hpp"\n' % parser.convert_to_classname(full_name))
 
 		with open(obj_out, "a") as fout:
-			call(["sed", os.path.dirname(sys.argv[0]) + "/object_main.cpp", "-e", 's/_parclass_/%s/g' % full_name], stdout=fout)
+			if typename:
+				full_name += '<%s>' % typename
+			print full_name
+			call(["sed", os.path.dirname(sys.argv[0]) + "/object_main.cpp", "-e", 's/_parclass_/%s/g' % (full_name)], stdout=fout)
 
 		parser.align(obj_out)
 		

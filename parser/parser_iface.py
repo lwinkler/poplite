@@ -39,12 +39,13 @@ def write_interface(fout, class_node):
 	if len(parent_nodes) > 1:
 		raise Exception('Parallel class ' + classname + ' cannot have more than one direct parent')
 	parent_ifaces = [parser.get_full_name(node) + '_iface' for node in  parent_nodes] if parent_nodes else ['pop::interface']
+	template = 'template<typename T> ' if parser.is_template_class(class_node) else '' # TODO: <T>
 
 	# note: we must have virtual inheritence to have multiple inheritance
 	fout.write("""
-class %s_iface : %s
+%sclass %s_iface : %s
 {
-private:""" % (classname, ', '.join(['public ' + iface for iface in parent_ifaces])))
+private:""" % (template, classname, ', '.join(['public ' + iface for iface in parent_ifaces])))
 
 	definitions = []
 	write_meth_ids(fout, class_node, definitions)
@@ -93,8 +94,9 @@ def write_constr(fout, c, id, parent_ifaces):
 	# note: virtual inheritence is not handled
 	parent_constr = ', '.join([iface + '(_executable, _allocator, false)' for iface in parent_ifaces])
 	objfile = parser.get_full_name(c.lexical_parent).replace('::', '.')
+	constr = c.spelling.split('<')[0]
 	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
-		% (c.spelling, parser.list_args(c, False, True), objfile, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), c.spelling, id, parser.list_args2(c, True)))
+		% (constr, parser.list_args(c, False, True), objfile, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id):
@@ -109,8 +111,6 @@ def write_template_meth(fout, m, id):
 	ttparams1 = '<%s>' % (', '.join(ttparams))
 	ttparams2 = '<%s>' % (', '.join(('typename ' + t) for t in ttparams))
 	invoker = parser.get_template_invoker(m)
-	print ttparams1
-	print ttparams2
 	fout.write('template%s inline %s%s %s(%s) {' %(ttparams2, virtual, m.result_type.spelling, m.spelling, parser.list_args(m))
 			+ 'return %s<%s%s>(method_ids::%s%d%s::value%s);}\n' % (invoker, m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, ttparams1, parser.list_args2(m, True)))
 	return id + len(ttypes)
@@ -137,7 +137,7 @@ struct method_ids
 
 	constructors = parser.find_constructors(class_node)
 	for m in constructors:
-		fout.write('static const int %s%d = %d;\n' % (m.spelling, id, id))
+		fout.write('static const int %s%d = %d;\n' % (m.spelling.split('<')[0], id, id))
 		id += 1
 
 	fout.write('};\n')

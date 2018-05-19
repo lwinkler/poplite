@@ -63,6 +63,11 @@ def capitalize(name):
 	"""
 	return name.replace(':', '_') # .upper()
 
+def convert_to_classname(name):
+	return name.replace('::', '/')
+
+def convert_to_objname(name):
+	return name.replace('::', '.')
 
 def print_ast(node, indent = 0):
 	""" Print the content of source tree
@@ -86,23 +91,20 @@ def get_full_name(node):
 
 	return ns + node.spelling
 
-def find_parallel_classes(node, parent, src):
+def find_parallel_classes(node, classnames):
 	""" Find all classes with annotation "pop_parallel"
 	"""
 
 	found = []
 
 	# print "node %s %s %s [line=%s, col=%s]" % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
-	if node.kind == cindex.CursorKind.ANNOTATE_ATTR and node.spelling == "pop_parallel": # and parent.location.file.name == src:
-		if parent.kind != cindex.CursorKind.CLASS_DECL:
-			print "Warning: node %s is annoted as parallel but is not a class" % parent.spelling
-		else:
-			# print 'Found parallel class %s [line=%s, col=%s]' % (parent.spelling, parent.location.line, parent.location.column)
-			found.append(parent)
+	if node.kind in (cindex.CursorKind.CLASS_DECL, cindex.CursorKind.CLASS_TEMPLATE) and get_full_name(node) in classnames:
+		# print 'Found parallel class %s [line=%s, col=%s]' % (node.spelling, node.location.line, node.location.column)
+		found.append(node)
 
 	# Recurse for children of this node
 	for c in node.get_children():
-		found += find_parallel_classes(c, node, src)
+		found += find_parallel_classes(c, classnames)
 	
 	return found
 
@@ -218,6 +220,10 @@ def is_parallel(node):
 def is_template_method(meth):
 	""" Check if a method is a template """
 	return  meth.kind == cindex.CursorKind.FUNCTION_TEMPLATE
+
+def is_template_class(meth):
+	""" Check if a class is a template """
+	return  meth.kind == cindex.CursorKind.CLASS_TEMPLATE
 
 def get_template_types(meth):
 	""" Return the template types of a template method (represent all usable instances of the template method) """

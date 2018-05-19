@@ -17,9 +17,6 @@ import parser
 def write_head(fout, classname, filename_in):
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
-#ifndef _POP_%s_BROKER_H
-#define _POP_%s_BROKER_H
-
 #include "class/broker.hpp"
 #include "%s"
 
@@ -27,13 +24,13 @@ namespace pop
 {
 namespace remote
 {
-""" % (parser.capitalize(classname), parser.capitalize(classname), filename_in))
+""" % (filename_in))
 
 #--------------------------------------------------------------------------------
 
 def write_foot(fout):
 
-	fout.write("}\n}\n#endif\n")
+	fout.write('}\n}\n')
 
 #--------------------------------------------------------------------------------
 
@@ -53,15 +50,18 @@ def write_meth(fout, m, classname):
 			fout.write("create_binded_method(&remote::broker<%s>::%s, &%s::%s%s),\n"
 				% (classname, conc, parser.get_full_name(m.lexical_parent), m.spelling, t))
 	else:
-		fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-			% (classname, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
+		# fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+		fout.write("create_binded_method(&remote::broker<%s>::%s, &%s::%s),\n"
+			% (classname, conc, parser.get_full_name(m.lexical_parent), m.spelling))
 
 #--------------------------------------------------------------------------------
 
-def write_broker(fout, class_node):
+def write_broker(fout, class_node, typename):
 	
 	# implementation of static array of methods
 	full_name = parser.get_full_name(class_node)
+	if typename:
+		full_name += '<int>' # TODO: T
 	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_{\n"
 		% (full_name, full_name))
 
