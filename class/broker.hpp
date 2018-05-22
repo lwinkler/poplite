@@ -92,6 +92,14 @@ namespace pop
 			return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
 		}
 
+		// create a method pointer for broker method array
+		/*
+		template<typename O, typename R, typename ...Args>
+		parallel_method<O> static_create_binded_method(void (*_invoker)(bufin&, bufout&, std::unique_ptr<O>&, R (O::*)(Args...)), R(O::*_p_meth)(Args...)) {
+			return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+		}
+		*/
+
 		/// A broker is the (remote) part that contains the instantiation of the parallel object
 		template<class ParClass> class broker : private boost::noncopyable
 		{

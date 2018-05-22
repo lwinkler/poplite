@@ -41,7 +41,7 @@ def write_meth(fout, m, classname, template_str):
 	create = 'create_binded_method'
 	if m.is_static_method():
 		conc = 'static_conc'
-		create = 'create_binded_method'
+		create = 'static_create_binded_method'
 	elif m.is_const_method():
 		conc = 'const_conc'
 		create = 'const_create_binded_method'
@@ -50,31 +50,38 @@ def write_meth(fout, m, classname, template_str):
 			fout.write("%s(&remote::broker<%s>::%s, &%s::%s%s),\n"
 				% (create, classname, conc, parser.get_full_name(m.lexical_parent), m.spelling, t))
 	else:
-		# fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-		fout.write("%s(&remote::broker<%s>::%s, &%s%s::%s),\n"
-			% (create, classname, conc, parser.get_full_name(m.lexical_parent), template_str, m.spelling))
+		fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+				% (classname, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
+		# fout.write("%s(&remote::broker<%s>::%s, &%s%s::%s),\n"
+				# % (create, classname, conc, parser.get_full_name(m.lexical_parent), template_str, m.spelling))
 
 #--------------------------------------------------------------------------------
 
-def write_broker(fout, class_node, template_str):
+def write_broker(fout, class_node, templates_str):
 	
 	# implementation of static array of methods
-	full_name = parser.get_full_name(class_node) + template_str
-	fout.write("template<> const std::vector<remote::parallel_method<%s>> broker<%s>::methods_{\n"
-		% (full_name, full_name))
+	for template_str in templates_str:
+		full_name = parser.get_full_name(class_node) + template_str
+		fout.write("template<> const std::vector<parallel_method<%s>> broker<%s>::methods_{\n"
+			% (full_name, full_name))
 
+		for m in parser.find_methods(class_node)[0]:
+			write_meth(fout, m, full_name, template_str)
 
-	for m in parser.find_methods(class_node)[0]:
-		write_meth(fout, m, full_name, template_str)
+		for c in parser.find_constructors(class_node):
+			write_constr(fout, c, full_name)
 
-	for c in parser.find_constructors(class_node):
-		write_constr(fout, c, full_name)
-
-	fout.write("nullptr\n};\n")
+		fout.write("nullptr\n};\n")
 	fout.write('}\n}\n')
 
 	fout.write("""
 #include "com/broker_combox.hpp"
+
+template<typename T> inline void run_broker(const boost::asio::ip::tcp::resolver::query& _query) {
+	pop::remote::broker<T> brok;
+	pop::broker_combox<T> combox(brok, _query);
+	combox.run();
+}
 
 int main(int _argc, char* _argv[])
 {
@@ -88,10 +95,21 @@ int main(int _argc, char* _argv[])
 			LOG(error) << "Usage: " << _argv[0] << " <hostname of interface> <port of interface>";
 			return -1;
 		}
-		pop::remote::broker<%s> brok;
-		boost::asio::ip::tcp::resolver::query query(_argv[1], _argv[2]);
-		pop::broker_combox<%s> combox(brok, query);
-		combox.run();
+		boost::asio::ip::tcp::resolver::query query(_argv[2], _argv[3]);
+""")
+
+	for t in templates_str:
+		full_name = parser.get_full_name(class_node) + t
+		fout.write("""
+		if(_argv[1] == "%s") {
+			run_broker<%s>(query);
+			return 0;
+		}
+""" % (full_name, full_name))
+
+	fout.write("""
+		LOG(error) << "Object type " << _argv[1] << " not found in : " << _argv[0];
+		return 1;
 	}
 	catch (std::exception& e)
 	{
@@ -106,7 +124,7 @@ int main(int _argc, char* _argv[])
 
 	return 0;
 }
-""" % (full_name, full_name))
+""")
 
 
 #--------------------------------------------------------------------------------

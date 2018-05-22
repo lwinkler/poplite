@@ -35,7 +35,7 @@ function(pop_add_object object_name header_name)
 	string(REPLACE "::" "/" object_name2 "${object_name}")
 	string(REPLACE "::" "." object_name3 "${object_name}")
 	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/main.${object_name3}.cpp
-	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} ${INC_DIRS}
+	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} -- ${INC_DIRS}
 	DEPENDS ${header_name})
 
 	# extra arguments are seen as dependencies
@@ -67,7 +67,7 @@ function(pop_add_objects classnames dependencies)
 	list(GET dependencies 0 header)
 	add_custom_command(
 		OUTPUT ${cmd_out}
-		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header} ${classnames2} ${INC_DIRS}
+		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header} ${classnames2} -- ${INC_DIRS}
 		DEPENDS ${dependencies}
 	)
 
@@ -90,10 +90,11 @@ function(pop_add_template_object object_name header_name instances)
 	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
 	# Not fixed yet !
 	string(REPLACE "::" "/" object_name2 "${object_name}")
-	string(REPLACE "::" "." object_name3 "${object_name}-${instances}")
+	string(REPLACE "::" "." object_name3 "${object_name}")
 	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/main.${object_name3}.cpp
-	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} ${INC_DIRS}
-	DEPENDS ${header_name})
+		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} '${instances}' -- ${INC_DIRS}
+		DEPENDS ${header_name}
+	)
 
 	# extra arguments are seen as dependencies
 	add_executable(${object_name3}.obj gen/main.${object_name3}.cpp ${ARGN})

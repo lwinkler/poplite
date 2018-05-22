@@ -48,7 +48,8 @@ def write_interface(fout, class_node):
 private:""" % (template, classname, ', '.join(['public ' + iface for iface in parent_ifaces])))
 
 	definitions = []
-	write_meth_ids(fout, class_node, definitions)
+	[methods, real_parents] = parser.find_methods(class_node)
+	write_meth_ids(fout, class_node, methods, real_parents, definitions)
 
 	fout.write('public:\n')
 
@@ -61,7 +62,6 @@ private:""" % (template, classname, ', '.join(['public ' + iface for iface in pa
 	fout.write("%s_iface(pop::accesspoint _ap) : %s {}\n" % (classname, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
 
 	id = 0
-	[methods, real_parents] = parser.find_methods(class_node)
 	for m in methods:
 		if parser.get_full_name(m.lexical_parent) in real_parents:
 			continue
@@ -116,15 +116,16 @@ def write_template_meth(fout, m, id):
 	return id + len(ttypes)
 
 #--------------------------------------------------------------------------------
-def write_meth_ids(fout, class_node, definitions):
+def write_meth_ids(fout, class_node, methods, real_parents, definitions):
 	fout.write("""
 struct method_ids
 {
 """)
 
 	id = 0
-	methods = parser.find_methods(class_node)[0]
 	for m in methods:
+		if parser.get_full_name(m.lexical_parent) in real_parents:
+			continue
 		if parser.is_template_method(m):
 			id0 = id
 			fout.write('template<class T> struct %s%d{static const int value;};\n' % (m.spelling, id0))

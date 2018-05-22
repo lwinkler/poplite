@@ -13,8 +13,24 @@ from subprocess import call
 #--------------------------------------------------------------------------------
 
 def main():
-	filename_in   = sys.argv[1]
-	classnames_in = sys.argv[2].split(',')
+	argv1 = sys.argv
+	argv2 = []
+	# cut arg list at --
+	if '--' in sys.argv:
+		ddash = sys.argv.index('--')
+		argv1 = sys.argv[:ddash]
+		argv2 = sys.argv[ddash + 1:]
+	if len(argv1) < 3:
+		print "usage: %s <header> <classname> (<template instances>) -- <compilation arguments...>" % sys.argv[0]
+		print " e.g.: %s my_class.hpp ns::my_class -- -I/usr/include -I..." % sys.argv[0]
+		exit(1)
+
+	filename_in   = argv1[1]
+	classnames_in = argv1[2].split(',')
+	templates_str_tmp = argv1[3].split(' ') if len(argv1) > 3 else ['']
+	templates_str = []
+	for t in templates_str_tmp:
+		templates_str.append('<' + t + '>' if t else '')
 	gendir = os.path.dirname(filename_in) + '/gen' if os.path.dirname(filename_in) else 'gen' 
 
 	# Generate fake interface files before parsing
@@ -26,7 +42,7 @@ def main():
 		with open(iface_out, "w") as fout:
 			fout.write('class %s_iface;\n' % cl)
 
-	tu = parser.init_tu(sys.argv)
+	tu = parser.init_tu(filename_in, argv2)
 	#parser.print_ast(tu.cursor)
 	parclasses = parser.find_parallel_classes(tu.cursor, classnames_in)
 
@@ -54,7 +70,6 @@ def main():
 
 	# Generate the file containing the broker
 	# TODO 
-	template_types = '<int>'
 	for c in parclasses:
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
@@ -65,11 +80,11 @@ def main():
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
 			continue
-		obj_out  = gendir + "/main.%s%s.cpp" % (parser.convert_to_objname(full_name), template_types.replace('<', '-').replace('>', '').replace(',', '-'))
+		obj_out  = gendir + "/main.%s.cpp" % (parser.convert_to_objname(full_name))
 
 		with open(obj_out, "a") as fout:
 			parser_brok.write_head(fout, full_name, c.location.file)
-			parser_brok.write_broker(fout, c, template_types)
+			parser_brok.write_broker(fout, c, templates_str)
 			# parser_brok.write_foot(fout)
 
 		parser.align(obj_out)

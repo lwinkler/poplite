@@ -47,16 +47,11 @@ def describe_node(node, full = False):
 			descr(c, tabs + '\t')
 	descr(node, '\t')
 
-def init_tu(argv):
+def init_tu(src, argv):
 	""" Initialize a translation unit with the clang parser
 	"""
-	if len(sys.argv) < 3:
-		print "usage: %s <header> <classname> <arguments...>" % sys.argv[0]
-		exit(1)
-
 	index = cindex.Index.create()
-	src = argv[1]
-	return index.parse(src, ["-D_POP_PARSER_", "-x", "c++", "-std=c++17"] + argv[3:])
+	return index.parse(src, ["-D_POP_PARSER_", "-x", "c++", "-std=c++17"] + argv)
 
 def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define

@@ -1,5 +1,3 @@
-project(poplite_examples)
-
 add_subdirectory(chat)
 add_subdirectory(inheritance)
 add_subdirectory(get_and_set)
