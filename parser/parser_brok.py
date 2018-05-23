@@ -35,25 +35,29 @@ def write_constr(fout, m, classname):
 	
 	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (classname, parser.list_args1(m)))
 
-def write_meth(fout, m, classname, template_str):
+def write_meth(fout, m, full_name, template_str):
 	
 	conc = 'conc'
 	create = 'create_binded_method'
+	cast = ''
 	if m.is_static_method():
 		conc = 'static_conc'
 		create = 'static_create_binded_method'
 	elif m.is_const_method():
 		conc = 'const_conc'
 		create = 'const_create_binded_method'
+	
+	if parser.get_full_name(m.lexical_parent) + template_str != full_name:
+		cast = 'reinterpret_cast<%s(%s::*)(%s)>' % (parser.get_full_name(m.result_type), full_name, parser.list_args1(m) )
 	if parser.is_template_method(m):
 		for t in parser.get_template_types(m):
-			fout.write("%s(&remote::broker<%s>::%s, &%s::%s%s),\n"
-				% (create, classname, conc, parser.get_full_name(m.lexical_parent), m.spelling, t))
+			fout.write("%s(&remote::broker<%s>::%s, %s(&%s::%s%s)),\n"
+				% (create, full_name, conc, cast, full_name, m.spelling, t))
 	else:
-		fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
-				% (classname, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
-		# fout.write("%s(&remote::broker<%s>::%s, &%s%s::%s),\n"
-				# % (create, classname, conc, parser.get_full_name(m.lexical_parent), template_str, m.spelling))
+		# fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
+		fout.write("%s(&remote::broker<%s>::%s, %s(&%s::%s)),\n"
+				% (create, full_name, conc, cast, full_name, m.spelling))
 
 #--------------------------------------------------------------------------------
 
@@ -90,9 +94,9 @@ int main(int _argc, char* _argv[])
 	try
 	{
 		// Check command line arguments.
-		if (_argc < 3)
+		if (_argc < 4)
 		{
-			LOG(error) << "Usage: " << _argv[0] << " <hostname of interface> <port of interface>";
+			LOG(error) << "Usage: " << _argv[0] << " <object_type> <hostname of interface> <port of interface>";
 			return -1;
 		}
 		boost::asio::ip::tcp::resolver::query query(_argv[2], _argv[3]);
@@ -101,7 +105,7 @@ int main(int _argc, char* _argv[])
 	for t in templates_str:
 		full_name = parser.get_full_name(class_node) + t
 		fout.write("""
-		if(_argv[1] == "%s") {
+		if(strcmp(_argv[1], "%s") == 0) {
 			run_broker<%s>(query);
 			return 0;
 		}

@@ -25,10 +25,6 @@ int main(int argc, char* argv[])
 	// Init the pop system with arguments
 	pop::system::instance(&argc, argv);
 
-	cout << "taipe " << typeid(int).name() << endl;
-	cout << "taipe " << typeid(vector<int>).name() << endl;
-	cout << "taipe " << typeid(pop::system).name() << endl;
-
 	try
 	{
 		template_ns::storage_iface<int> stor1;
