@@ -20,12 +20,12 @@ class manual_allocator : public allocator
 {
 	public:
 	manual_allocator(){}
-	void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const
+	void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const
 	{
 		std::stringstream ss;
-		ss << "./" << _obj_name << " " << _callback.host_name << " " << _callback.port;
+		ss << "./" << _executable << " '" << _class_name << "'" << " " << _callback.host_name << " " << _callback.port;
 		pop::system::instance().print_args(ss);
-		LOG(info) << "Start object " << _obj_name << " with command :";
+		LOG(info) << "Start object " << _executable << " with command :";
 		LOG(info) << ss.str();
 	}
 };

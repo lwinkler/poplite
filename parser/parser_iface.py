@@ -79,8 +79,8 @@ private:""" % (template, classname, ', '.join(['public ' + iface for iface in pa
 	fout.write("""
 protected:
 	// for inheritance
-	%s_iface(const std::string& _executable, const pop::allocator& _allocator, bool _ignore) : %s{}
-""" % (classname, ', '.join([iface + '(_executable, _allocator, _ignore)' for iface in parent_ifaces])))
+	%s_iface(const std::string& _executable, const std::string& _class_name, const pop::allocator& _allocator, bool _ignore) : %s{}
+""" % (classname, ', '.join([iface + '(_executable, _class_name, _allocator, _ignore)' for iface in parent_ifaces])))
 
 	fout.write("};\n")
 
@@ -92,11 +92,11 @@ protected:
 
 def write_constr(fout, c, id, parent_ifaces):
 	# note: virtual inheritence is not handled
-	parent_constr = ', '.join([iface + '(_executable, _allocator, false)' for iface in parent_ifaces])
+	parent_constr = ', '.join([iface + '(_executable, _class_name, _allocator, false)' for iface in parent_ifaces])
 	objfile = parser.get_full_name(c.lexical_parent).replace('::', '.')
 	constr = c.spelling.split('<')[0]
-	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
-		% (constr, parser.list_args(c, False, True), objfile, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
+	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const std::string& _class_name = "%s", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
+		% (constr, parser.list_args(c, False, True), objfile, parser.get_full_name(c.lexical_parent), parser.get_allocation(c), parent_constr, parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id):

@@ -23,7 +23,7 @@ class allocator
 {
 	public:
 	/// Allocate an object at endpoint
-	virtual void allocate(const std::string& _obj_name, const pop::accesspoint& _callback) const = 0;
+	virtual void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const = 0;
 };
 }
 

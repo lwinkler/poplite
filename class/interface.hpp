@@ -44,16 +44,16 @@ public:
 class interface
 {
 	public:
-		interface(const std::string& _executable, const pop::allocator& _allocator) :
+		interface(const std::string& _executable, const std::string& _class_name, const pop::allocator& _allocator) :
 			combox_(),
 			link_life_(true)
 		{
-			_allocator.allocate(_executable, combox_.callback());
+			_allocator.allocate(_executable, _class_name, combox_.callback());
 			// Handle connection
 			combox_.run();
 		}
 		// This method only exists to facilitate inheritence (parser)
-		inline interface(const std::string& _executable, const pop::allocator& _allocator, bool _ignore) : interface(_executable, _allocator) {}
+		inline interface(const std::string& _executable, const std::string& _class_name, const pop::allocator& _allocator, bool _ignore) : interface(_executable, _class_name, _allocator) {}
 
 		interface(const pop::accesspoint& _contact) :
 			combox_(),
