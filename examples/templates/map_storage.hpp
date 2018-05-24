@@ -8,10 +8,10 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef TEST_STORAGE_HPP
-#define TEST_STORAGE_HPP
+#ifndef TEST_MAP_STORAGE_HPP
+#define TEST_MAP_STORAGE_HPP
 
-#include <vector>
+#include <map>
 
 #include "class/system.hpp"
 #include "alloc/local.hpp"
@@ -20,27 +20,29 @@
 namespace template_ns {
 
 // this include should always be right before the parallel class declaration
-#include "template_ns/storage.iface.hpp"
+#include "template_ns/map_storage.iface.hpp"
 
-template<typename T> POP_CLASS storage
+template<typename T1, typename T2> POP_CLASS map_storage
 {
 	public:
 		POP_ALLOCATION(pop::local_allocator())
-		storage() {}
-		POP_ASYNC void push(const T& _el) {stack_.push_back(_el);}
-		T pop() {
-			T val = stack_.back();
-			stack_.pop_back();
+		map_storage() {}
+		POP_ASYNC void insert(const T1& _index, const T2& _el) {map_.insert(std::pair<T1,T2>(_index, _el));}
+		T2 erase(const T1& _index) {
+			auto it = map_.find(_index);
+			assert(it != map_.end());
+			T2 val = it->second;
+			map_.erase(it);
 			return val;
 		}
 		POP_ASYNC void print() const {
-			for(const auto& el : stack_)
-				std::cout << el << ", ";
+			for(const auto& el : map_)
+				std::cout << el.first << ":" << el.second << ", ";
 			std::cout << std::endl;
 		}
 	
 	protected:
-		std::vector<T> stack_;
+		std::map<T1, T2> map_;
 };
 } // namespace
 

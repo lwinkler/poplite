@@ -68,13 +68,6 @@ def main():
 	
 		parser.align(iface_out)
 
-	# Generate the file containing the broker
-	# TODO 
-	for c in parclasses:
-		full_name = parser.get_full_name(c)
-		if full_name not in classnames_in:
-			continue
-
 	# Generate the file containing the remote main used to launch the object
 	for c in parclasses:
 		full_name = parser.get_full_name(c)
@@ -82,7 +75,7 @@ def main():
 			continue
 		obj_out  = gendir + "/main.%s.cpp" % (parser.convert_to_objname(full_name))
 
-		with open(obj_out, "a") as fout:
+		with open(obj_out, "w") as fout:
 			parser_brok.write_head(fout, full_name, c.location.file)
 			parser_brok.write_broker(fout, c, templates_str)
 			# parser_brok.write_foot(fout)

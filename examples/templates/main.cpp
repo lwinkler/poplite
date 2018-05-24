@@ -9,10 +9,12 @@
 //
 
 #include "storage.hpp"
+#include "map_storage.hpp"
 
 using namespace std;
 
 POP_SPECIFICATIONS_storage
+POP_SPECIFICATIONS_map_storage
 
 /*
 template<typename T> test_interface(storage_iface<T>& testClass, bool set_values)
@@ -29,13 +31,49 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		template_ns::storage_iface<int> stor1;
-		stor1.push(11);
-		stor1.push(22);
-		stor1.push(33);
-		stor1.print();
+		{
+			template_ns::storage_iface<int> stor1;
+			stor1.push(11);
+			stor1.push(22);
+			stor1.push(33);
+			stor1.print();
+			cout << stor1.pop() << endl;
+			stor1.print();
+			cout << "--------------------" << endl;
+		}
 
-		LOG(info) << "end of main";
+		{
+			template_ns::storage_iface<std::string> stor2;
+			stor2.push("eleven");
+			stor2.push("twenty two");
+			stor2.push("thirty three");
+			stor2.print();
+			cout << stor2.pop() << endl;
+			stor2.print();
+			cout << "--------------------" << endl;
+		}
+
+		{
+			template_ns::map_storage_iface<int,string> stor1;
+			stor1.insert(11, "eleven");
+			stor1.insert(22, "twenty two");
+			stor1.insert(33, "thirty three");
+			stor1.print();
+			cout << stor1.erase(22) << endl;
+			stor1.print();
+			cout << "--------------------" << endl;
+		}
+
+		{
+			template_ns::map_storage_iface<string, float> stor1;
+			stor1.insert("eleven", 11);
+			stor1.insert("twenty two", 22.0);
+			stor1.insert("thirty three", 33.0);
+			stor1.print();
+			cout << stor1.erase("twenty two") << endl;
+			stor1.print();
+			cout << "--------------------" << endl;
+		}
 	}
 	catch (std::exception& e)
 	{
