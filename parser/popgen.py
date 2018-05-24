@@ -28,7 +28,7 @@ def main():
 	filename_in   = argv1[1]
 	classnames_in = argv1[2].split(',')
 	templates_str_tmp = argv1[3].split(' ') if len(argv1) > 3 else ['']
-	templates_str = []
+	templates_str = [] # all instanciations of templates as string. E.g. '<int,float>'
 	for t in templates_str_tmp:
 		templates_str.append('<' + t + '>' if t else '')
 	gendir = os.path.dirname(filename_in) + '/gen' if os.path.dirname(filename_in) else 'gen' 
@@ -63,7 +63,7 @@ def main():
 		print "Generate %s containing the interface" % iface_out
 		with open(iface_out, "w") as fout:
 			parser_iface.write_head(fout, parser.get_full_name(c))
-			parser_iface.write_interface(fout, c)
+			parser_iface.write_interface(fout, c, templates_str)
 			parser_iface.write_foot(fout)
 	
 		parser.align(iface_out)

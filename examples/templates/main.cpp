@@ -12,6 +12,8 @@
 
 using namespace std;
 
+POP_SPECIFICATIONS_storage
+
 /*
 template<typename T> test_interface(storage_iface<T>& testClass, bool set_values)
 {

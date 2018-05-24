@@ -10,5 +10,5 @@ add_executable(main_exception main.cc gen/ClassExcep.iface.hpp)
 
 target_link_libraries(main_exception ${Boost_LIBRARIES} popc_tests_exception)
 
-add_custom_target(run_exception ./main_exception DEPENDS main_exception ClassExep.obj)
+add_custom_target(run_exception ./main_exception DEPENDS main_exception ClassExcep.obj)
 

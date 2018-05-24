@@ -35,13 +35,13 @@ def write_foot(fout):
 
 #--------------------------------------------------------------------------------
 
-def write_interface(fout, class_node):
+def write_interface(fout, class_node, templates_str):
 	parent_nodes = parser.get_direct_parents(class_node, True, True)
 	classname = class_node.spelling
 	if len(parent_nodes) > 1:
 		raise Exception('Parallel class ' + classname + ' cannot have more than one direct parent')
 	parent_ifaces = [parser.get_full_name(node) + '_iface' for node in  parent_nodes] if parent_nodes else ['pop::interface']
-	template = 'template<typename T> ' if parser.is_template_class(class_node) else '' # TODO: <T>
+	template = 'template<' + ','.join('typename ' + t for t in parser.get_template_type_parameters(class_node)) + '> ' if parser.is_template_class(class_node) else ''
 
 	# note: we must have virtual inheritence to have multiple inheritance
 	fout.write("""
@@ -85,9 +85,19 @@ protected:
 	%s_iface(const std::string& _executable, const std::string& _class_name, const pop::allocator& _allocator, bool _ignore) : %s{}
 """ % (classname, ', '.join([iface + '(_executable, _class_name, _allocator, _ignore)' for iface in parent_ifaces])))
 
+	class_name = parser.get_full_name(class_node)
+	if templates_str:
+		for t in templates_str:
+			definitions.append('template<> const std::string %s_iface%s::_iface_name = "%s%s";' % (class_name, t, class_name, t))
+		# class_name += '<' + ','.join(parser.get_template_type_parameters(class_node)) + '>'
+		fout.write("""
+private:
+	static const std::string _iface_name;
+""");
+
 	fout.write("};\n")
 
-	# TODO: Maybe we can avoid this
+	# TODO: Maybe we can avoid this or create a .cpp
 	if definitions:
 		fout.write('#define POP_SPECIFICATIONS_%s \\\n%s\n' % (classname, '\\\n'.join(definitions)))
 
@@ -96,10 +106,10 @@ protected:
 def write_constr(fout, c, id, parent_ifaces):
 	# note: virtual inheritence is not handled
 	parent_constr = ', '.join([iface + '(_executable, _class_name, _allocator, false)' for iface in parent_ifaces])
-	objfile = parser.get_full_name(c.lexical_parent).replace('::', '.')
 	constr = c.spelling.split('<')[0]
-	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const std::string& _class_name = "%s", const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
-		% (constr, parser.list_args(c, False, True), objfile, parser.get_full_name(c.lexical_parent), parser.get_allocation(c), parent_constr, parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
+	objfile = parser.get_full_name(c.lexical_parent).replace('::', '.')
+	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const std::string& _class_name = _iface_name, const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
+		% (constr, parser.list_args(c, False, True), objfile, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id):
