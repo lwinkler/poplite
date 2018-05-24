@@ -17,6 +17,7 @@ dirs = [
 	'examples/get_and_set', 
 	'examples/ping_pong', 
 	'examples/inheritance',
+	'examples/templates',
 	#'popc_tests/bigdata',
 	'popc_tests/callback',
 	'popc_tests/exception',
