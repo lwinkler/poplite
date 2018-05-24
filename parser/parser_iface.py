@@ -10,6 +10,8 @@
 ## file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ##
 
+# TODO: Delete generated files before creating them and if exception
+
 import parser
 
 #--------------------------------------------------------------------------------
@@ -64,6 +66,7 @@ private:""" % (template, classname, ', '.join(['public ' + iface for iface in pa
 	id = 0
 	for m in methods:
 		if parser.get_full_name(m.lexical_parent) in real_parents:
+			id += 1
 			continue
 		if parser.is_template_method(m):
 			id = write_template_meth(fout, m, id)
@@ -124,8 +127,6 @@ struct method_ids
 
 	id = 0
 	for m in methods:
-		if parser.get_full_name(m.lexical_parent) in real_parents:
-			continue
 		if parser.is_template_method(m):
 			id0 = id
 			fout.write('template<class T> struct %s%d{static const int value;};\n' % (m.spelling, id0))

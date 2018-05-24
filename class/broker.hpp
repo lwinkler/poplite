@@ -111,6 +111,7 @@ namespace pop
 				{
 					if(_p_obj)
 						throw std::runtime_error("Constructor has been called twice");
+					LOG(debug) << "Call constructor";
 					std::tuple<typename pop_decay<Args>::type...> tup;
 					_ia >> tup;
 					_p_obj.reset(apply_tuple_constr(__constr<Args...>, tup));
