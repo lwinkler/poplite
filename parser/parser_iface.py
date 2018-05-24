@@ -75,8 +75,10 @@ private:""" % (template, classname, ', '.join(['public ' + iface for iface in pa
 			id += 1
 
 	# Constructors need to be inserted after methods to have matching ids in parent and child
+	class_name = parser.get_full_name(class_node)
+	iface_name = '_iface_name' if parser.is_template_class(class_node) else '"%s"' % class_name
 	for c in parser.find_constructors(class_node):
-		write_constr(fout, c, id, parent_ifaces)
+		write_constr(fout, c, id, parent_ifaces, iface_name)
 		id += 1
 
 	fout.write("""
@@ -85,15 +87,15 @@ protected:
 	%s_iface(const std::string& _executable, const std::string& _class_name, const pop::allocator& _allocator, bool _ignore) : %s{}
 """ % (classname, ', '.join([iface + '(_executable, _class_name, _allocator, _ignore)' for iface in parent_ifaces])))
 
-	class_name = parser.get_full_name(class_node)
-	if templates_str:
+	if parser.is_template_class(class_node):
 		for t in templates_str:
 			definitions.append('template<> const std::string %s_iface%s::_iface_name = "%s%s";' % (class_name, t, class_name, t))
 		# class_name += '<' + ','.join(parser.get_template_type_parameters(class_node)) + '>'
+		iface_name = ''
 		fout.write("""
 private:
-	static const std::string _iface_name;
-""");
+	static const std::string _iface_name%s;
+""" % (iface_name));
 
 	fout.write("};\n")
 
@@ -103,13 +105,13 @@ private:
 
 #--------------------------------------------------------------------------------
 
-def write_constr(fout, c, id, parent_ifaces):
+def write_constr(fout, c, id, parent_ifaces, iface_name):
 	# note: virtual inheritence is not handled
 	parent_constr = ', '.join([iface + '(_executable, _class_name, _allocator, false)' for iface in parent_ifaces])
 	constr = c.spelling.split('<')[0]
 	objfile = parser.get_full_name(c.lexical_parent).replace('::', '.')
-	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const std::string& _class_name = _iface_name, const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
-		% (constr, parser.list_args(c, False, True), objfile, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
+	fout.write('%s_iface(%sconst std::string& _executable = "%s.obj", const std::string& _class_name = %s, const pop::allocator& _allocator = %s) : %s {sync<void%s>(method_ids::%s%d%s);}\n' 
+		% (constr, parser.list_args(c, False, True), objfile, iface_name, parser.get_allocation(c), parent_constr, parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
 #--------------------------------------------------------------------------------
 
 def write_meth(fout, m, id):
