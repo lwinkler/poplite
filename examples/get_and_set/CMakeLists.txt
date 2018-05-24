@@ -7,5 +7,5 @@ add_executable(main_get_set main.cpp gen/TestClass.iface.hpp gen/TestChildClass.
 
 target_link_libraries(main_get_set ${Boost_LIBRARIES})
 
-add_custom_target(run_get_and_set ./main_get_set DEPENDS main_get_set)
+add_custom_target(run_get_and_set ./main_get_set DEPENDS main_get_set TestClass.obj TestChildClass.obj)
 
