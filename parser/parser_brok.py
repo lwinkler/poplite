@@ -46,17 +46,17 @@ def write_meth(fout, m, full_name, template_str):
 		conc = 'const_conc'
 		create = 'const_create_binded_method'
 	
-	create += '<%s>' % (full_name) # , parser.get_full_name(m.result_type), parser.list_args1(m, True))
+	create += '<%s>' % (full_name)
 	
 	if parser.is_template_method(m):
 		for t in parser.get_template_types(m):
 			fout.write("%s(&remote::broker<%s>::%s, &%s::%s%s),\n"
-				% (create, full_name, conc, full_name, m.spelling, t))
+				% (create, full_name, conc, parser.get_full_name(m.lexical_parent), m.spelling, t))
 	else:
 		# fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
 				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
 		fout.write("%s(&remote::broker<%s>::%s, &%s::%s),\n"
-				% (create, full_name, conc, full_name, m.spelling))
+				% (create, full_name, conc, parser.get_full_name(m.lexical_parent), m.spelling))
 
 #--------------------------------------------------------------------------------
 

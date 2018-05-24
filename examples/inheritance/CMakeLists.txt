@@ -6,4 +6,4 @@ add_executable(main_inheritance main.cpp gen/global_ns/parent_a.iface.hpp gen/gl
 
 target_link_libraries(main_inheritance ${Boost_LIBRARIES})
 
-add_custom_target(run_inheritance ./main_inheritance DEPENDS main_inheritance global_ns.child_ns.child.obj global_ns.parent_a.obj global_ns.parent_b_ns.parent_b)
+add_custom_target(run_inheritance ./main_inheritance DEPENDS main_inheritance global_ns.child_ns.child.obj global_ns.parent_a.obj global_ns.parent_b_ns.parent_b.obj)
