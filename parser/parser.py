@@ -19,15 +19,15 @@ import clang.cindex as cindex
 from subprocess import call
 from pprint import pprint
 
-cindex.Config.set_library_path("/usr/lib/llvm-5.0/lib")
+cindex.Config.set_library_path('/usr/lib/llvm-5.0/lib')
 
 def describe_node(node, full = False):
 	""" Describe a node. For debug purposes
 	"""
 	try:
-		print "node %s (%s) %s" % (node.spelling, node.displayname, node.kind)
+		print 'node %s (%s) %s' % (node.spelling, node.displayname, node.kind)
 	except:
-		print "node"
+		print 'node'
 	print node
 
 	if full:
@@ -40,7 +40,7 @@ def describe_node(node, full = False):
 	# Recurse for children of this node
 	def descr(node, tabs):
 		for c in node.get_children():
-			print "%s- %s (%s): %s %s" % (tabs, c.spelling, c.displayname, c.kind, c.data)
+			print '%s- %s (%s): %s %s' % (tabs, c.spelling, c.displayname, c.kind, c.data)
 			if full:
 				print dir(c)
 				pprint(c._tu.index.obj.__dict__)
@@ -51,7 +51,7 @@ def init_tu(src, argv):
 	""" Initialize a translation unit with the clang parser
 	"""
 	index = cindex.Index.create()
-	return index.parse(src, ["-D_POP_PARSER_", "-x", "c++", "-std=c++17"] + argv)
+	return index.parse(src, ['-D_POP_PARSER_', '-x', 'c++', '-std=c++17'] + argv)
 
 def capitalize(name):
 	""" Return a capitalized version of name for use in ifndef/define
@@ -67,7 +67,7 @@ def convert_to_objname(name):
 def print_ast(node, indent = 0):
 	""" Print the content of source tree
 	"""
-	print "\t" * indent + "node %s %s %s [line=%s, col=%s]" % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
+	print '\t' * indent + 'node %s %s %s [line=%s, col=%s]' % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
 	for c in node.get_children():
 		print_ast(c, indent + 1)
 
@@ -92,7 +92,7 @@ def find_parallel_classes(node, classnames):
 
 	found = []
 
-	# print "node %s %s %s [line=%s, col=%s]" % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
+	# print 'node %s %s %s [line=%s, col=%s]' % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
 	if node.kind in (cindex.CursorKind.CLASS_DECL, cindex.CursorKind.CLASS_TEMPLATE) and get_full_name(node) in classnames:
 		# print 'Found parallel class %s [line=%s, col=%s]' % (node.spelling, node.location.line, node.location.column)
 		found.append(node)
@@ -115,12 +115,12 @@ def find_methods1(class_node, meths, real_parents):
 	""" Find all public methods in parallel class (mapped by signature)
 	"""
 
-	# print "class %s %s %s [line=%s, col=%s]" % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
+	# print 'class %s %s %s [line=%s, col=%s]' % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
 	real_parent = ''
 	if real_parents is not None:
 		par_parents = get_direct_parents(class_node, True, True)
 		if len(par_parents) > 1:
-			print "Warning: parallel class %s has more than one parallel class as parent. The interface will only be castable into the first parent" % class_node.spelling
+			print 'Warning: parallel class %s has more than one parallel class as parent. The interface will only be castable into the first parent' % class_node.spelling
 		if len(par_parents) >= 1:
 			find_methods1(par_parents[0], meths, real_parents)
 			real_parent = get_full_name(par_parents[0].get_definition())
@@ -151,7 +151,7 @@ def find_constructors(class_node):
 
 	found = []
 
-	# print "class %s %s %s [line=%s, col=%s]" % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
+	# print 'class %s %s %s [line=%s, col=%s]' % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
 
 
 	# Recurse for children of this node
@@ -168,7 +168,7 @@ def find_arguments(meth_node):
 
 	found = []
 
-	# print "class %s %s %s [line=%s, col=%s]" % (meth_node.get_definition(), meth_node.spelling, meth_node.kind, meth_node.location.line, meth_node.location.column)
+	# print 'class %s %s %s [line=%s, col=%s]' % (meth_node.get_definition(), meth_node.spelling, meth_node.kind, meth_node.location.line, meth_node.location.column)
 
 
 	# Recurse for children of this node
@@ -182,33 +182,33 @@ def find_arguments(meth_node):
 def get_invoker(meth_node):
 	""" Return the method invoker (sync, async)
 	"""
-	# print "node %s %s %s [line=%s, col=%s]" % (meth_node.get_definition(), meth_node.spelling, meth_node.kind, meth_node.location.line, meth_node.location.column)
+	# print 'node %s %s %s [line=%s, col=%s]' % (meth_node.get_definition(), meth_node.spelling, meth_node.kind, meth_node.location.line, meth_node.location.column)
 
 	for c in meth_node.get_children():
 		if c.kind == cindex.CursorKind.ANNOTATE_ATTR:
 			if c.spelling.startswith('pop_invoker:'):
 				return c.spelling[len('pop_invoker:'):]
 
-	return "sync" # our default
+	return 'sync' # our default
 
 def get_allocation(constr_node):
 	""" Return the allocation
 	"""
-	# print "node %s %s %s [line=%s, col=%s]" % (constr_node.get_definition(), constr_node.spelling, constr_node.kind, constr_node.location.line, constr_node.location.column)
+	# print 'node %s %s %s [line=%s, col=%s]' % (constr_node.get_definition(), constr_node.spelling, constr_node.kind, constr_node.location.line, constr_node.location.column)
 
 	for c in constr_node.get_children():
 		if c.kind == cindex.CursorKind.ANNOTATE_ATTR:
 			if c.spelling.startswith('pop_allocation:'):
 				return c.spelling[len('pop_allocation:'):]
 
-	return "pop::local_allocator()" # our default
+	return 'pop::local_allocator()' # our default
 
 def is_parallel(node):
 	""" Return true if a node has parallel class annotation
 	"""
 	# describe_node(node)
 	for c in node.get_children():
-		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling == "pop_parallel":
+		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling == 'pop_parallel':
 			return True
 	return False
 
@@ -263,7 +263,7 @@ def get_direct_parents(node, parallel = None, public_only = True):
 				continue
 			if public_only and not cc.access_specifier == cindex.AccessSpecifier.PUBLIC:
 				continue
-			# print "Found parent of %s: %s" % (node.spelling, cc.spelling)
+			# print 'Found parent of %s: %s' % (node.spelling, cc.spelling)
 			parents += [cc.get_definition()]
 	return parents
 
@@ -289,7 +289,7 @@ def list_args(parent, front_comma = False, back_comma = False):
 	""" List all arguments with types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
-		out.append(get_full_name(arg.type) + " " + arg.spelling)
+		out.append(get_full_name(arg.type) + ' ' + arg.spelling)
 	fc = ', ' if out and front_comma else ''
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc
@@ -297,7 +297,7 @@ def list_args(parent, front_comma = False, back_comma = False):
 
 def align(filename):
 	""" Align the file with command astyle """
-	call(["astyle", "-nT", filename])
+	call(['astyle', '-nT', filename])
 
-if __name__ == "__main__":
-	print "this file is a Python library: try using popgen instead"
+if __name__ == '__main__':
+	print 'this file is a Python library: try using popgen instead'

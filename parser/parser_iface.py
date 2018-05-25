@@ -10,8 +10,6 @@
 ## file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ##
 
-# TODO: Delete generated files before creating them and if exception
-
 import parser
 
 #--------------------------------------------------------------------------------
@@ -61,7 +59,7 @@ private:""" % (template, classname, ', '.join(['public ' + iface for iface in pa
 		# parent_ifaces += ['pop::interface']
 
 	# Add a constructor from accesspoint for references to parallel objects
-	fout.write("%s_iface(pop::accesspoint _ap) : %s {}\n" % (classname, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
+	fout.write('%s_iface(pop::accesspoint _ap) : %s {}\n' % (classname, ', '.join([iface + '(_ap)' for iface in parent_ifaces])))
 
 	id = 0
 	for m in methods:
@@ -97,7 +95,7 @@ private:
 	static const std::string _iface_name%s;
 """ % (iface_name));
 
-	fout.write("};\n")
+	fout.write('};\n')
 
 	# TODO: Maybe we can avoid this or create a .cpp
 	if definitions:
@@ -158,6 +156,6 @@ struct method_ids
 
 #--------------------------------------------------------------------------------
 
-if __name__ == "__main__":
-	print "this file is a Python library: try using popgen instead"
+if __name__ == '__main__':
+	print 'this file is a Python library: try using popgen instead'
 

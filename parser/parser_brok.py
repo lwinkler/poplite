@@ -33,7 +33,7 @@ namespace remote
 
 def write_constr(fout, m, classname):
 	
-	fout.write("std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n" % (classname, parser.list_args1(m)))
+	fout.write('std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n' % (classname, parser.list_args1(m)))
 
 def write_meth(fout, m, full_name, template_str):
 	
@@ -51,12 +51,12 @@ def write_meth(fout, m, full_name, template_str):
 	if parser.is_template_method(m):
 		for t in parser.get_template_types(m):
 			# TODO: Difficult case: if the template inherits from a different template or a non-template class. Not handled yet.
-			fout.write("%s(&remote::broker<%s>::%s, &%s::%s%s),\n"
+			fout.write('%s(&remote::broker<%s>::%s, &%s::%s%s),\n'
 				% (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling, t))
 	else:
-		# fout.write("std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n"
+		# fout.write('std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n'
 				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
-		fout.write("%s(&remote::broker<%s>::%s, &%s::%s),\n"
+		fout.write('%s(&remote::broker<%s>::%s, &%s::%s),\n'
 				% (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling))
 
 #--------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ def write_broker(fout, class_node, templates_str):
 	# implementation of static array of methods
 	for template_str in templates_str:
 		full_name = parser.get_full_name(class_node) + template_str
-		fout.write("template<> const std::vector<parallel_method<%s>> broker<%s>::methods_{\n"
+		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s>::methods_{\n'
 			% (full_name, full_name))
 
 		for m in parser.find_methods(class_node)[0]:
@@ -75,7 +75,7 @@ def write_broker(fout, class_node, templates_str):
 		for c in parser.find_constructors(class_node):
 			write_constr(fout, c, full_name)
 
-		fout.write("nullptr\n};\n")
+		fout.write('nullptr\n};\n')
 	fout.write('}\n}\n')
 
 	fout.write("""
@@ -133,5 +133,5 @@ int main(int _argc, char* _argv[])
 
 #--------------------------------------------------------------------------------
 
-if __name__ == "__main__":
-	print "this file is a Python library: try using popgen instead"
+if __name__ == '__main__':
+	print 'this file is a Python library: try using popgen instead'

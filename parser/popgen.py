@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Usage: call with <filename> <classname(s)>
+""" Usage: call with <filename> <classname(s)> (<template instances>)
 """
 
 import sys
@@ -21,8 +21,8 @@ def main():
 		argv1 = sys.argv[:ddash]
 		argv2 = sys.argv[ddash + 1:]
 	if len(argv1) < 3:
-		print "usage: %s <header> <classname> (<template instances>) -- <compilation arguments...>" % sys.argv[0]
-		print " e.g.: %s my_class.hpp ns::my_class -- -I/usr/include -I..." % sys.argv[0]
+		print 'usage: %s <header> <classname> (<template instances>) -- <compilation arguments...>' % sys.argv[0]
+		print ' e.g.: %s my_class.hpp ns::my_class -- -I/usr/include -I...' % sys.argv[0]
 		exit(1)
 
 	filename_in   = argv1[1]
@@ -35,20 +35,20 @@ def main():
 
 	# Generate fake interface files before parsing
 	for cl in classnames_in:
-		iface_out = gendir + "/%s.iface.hpp" % parser.convert_to_classname(cl)
+		iface_out = gendir + '/%s.iface.hpp' % parser.convert_to_classname(cl)
 		idir = os.path.dirname(iface_out)
 		if not os.path.exists(idir):
 			os.makedirs(idir)
-		with open(iface_out, "w") as fout:
+		with open(iface_out, 'w') as fout:
 			fout.write('class %s_iface;\n' % cl)
 
 	tu = parser.init_tu(filename_in, argv2)
 	#parser.print_ast(tu.cursor)
 	parclasses = parser.find_parallel_classes(tu.cursor, classnames_in)
 
-	print "found %d parallel classe(s):" % len(parclasses)
+	print 'found %d parallel classe(s):' % len(parclasses)
 	for c in parclasses:
-		print "parallel class %s at %s" % (parser.get_full_name(c), c.location.file)
+		print 'parallel class %s at %s' % (parser.get_full_name(c), c.location.file)
 
 	for classname_in in classnames_in:
 		if classname_in not in [parser.get_full_name(cl) for cl in parclasses]:
@@ -58,10 +58,10 @@ def main():
 	for c in parclasses:
 		if parser.get_full_name(c) not in classnames_in:
 			continue
-		iface_out = gendir + "/%s.iface.hpp" % parser.convert_to_classname(parser.get_full_name(c))
+		iface_out = gendir + '/%s.iface.hpp' % parser.convert_to_classname(parser.get_full_name(c))
 
-		print "Generate %s containing the interface" % iface_out
-		with open(iface_out, "w") as fout:
+		print 'Generate %s containing the interface' % iface_out
+		with open(iface_out, 'w') as fout:
 			parser_iface.write_head(fout, parser.get_full_name(c))
 			parser_iface.write_interface(fout, c, templates_str)
 			parser_iface.write_foot(fout)
@@ -73,9 +73,9 @@ def main():
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
 			continue
-		obj_out  = gendir + "/main.%s.cpp" % (parser.convert_to_objname(full_name))
+		obj_out  = gendir + '/main.%s.cpp' % (parser.convert_to_objname(full_name))
 
-		with open(obj_out, "w") as fout:
+		with open(obj_out, 'w') as fout:
 			parser_brok.write_head(fout, full_name, c.location.file)
 			parser_brok.write_broker(fout, c, templates_str)
 			# parser_brok.write_foot(fout)
@@ -83,5 +83,5 @@ def main():
 		parser.align(obj_out)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	main()
