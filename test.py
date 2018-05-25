@@ -18,7 +18,7 @@ dirs = [
 	'examples/ping_pong', 
 	'examples/inheritance',
 	'examples/templates',
-	#'popc_tests/bigdata',
+	'popc_tests/bigdata',
 	'popc_tests/callback',
 	'popc_tests/exception',
 	'popc_tests/heritage',

@@ -17,6 +17,7 @@
 POP_CLASS POPObject {
 
 public:
+	// POP_ALLOCATION(pop::manual_allocator())
 	POPObject() {
 		std::cout << "POPCobject created (by JobMgr) on machine: " << pop::system::instance().host_name() << std::endl;
 	}

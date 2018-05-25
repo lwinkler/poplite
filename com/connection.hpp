@@ -105,8 +105,7 @@ namespace pop {
 			{
 				std::istreambuf_iterator<char> eos;
 				std::string outbound_data(std::istreambuf_iterator<char>(_iss), eos);
-
-				LOG(debug) << "sync write " << outbound_data.size() << " " << outbound_data;
+				LOG(debug) << "sync written " << outbound_data.size() << " bytes";
 
 				// Format the header.
 				std::ostringstream header_stream;
@@ -187,7 +186,7 @@ namespace pop {
 					throw std::runtime_error("error in sync_read: " + std::string(e.what()));
 				}
 
-				LOG(debug) << "data read: " << inbound_data_[0];
+				LOG(debug) << "data read: " << inbound_data_.size() << " bytes";
 			}
 
 			/// Handle a completed read of a message header. The handler is passed using
@@ -235,6 +234,7 @@ namespace pop {
 						// Extract the data structure from the data just received.
 						try
 						{
+							LOG(debug) << "Start copying data"; // TODO: Avoid this copy for efficiency
 							copy(inbound_data_.begin(), inbound_data_.end(), std::ostream_iterator<unsigned char>(_oss));
 							/*
 							std::string archive_data(&inbound_data_[0], inbound_data_.size());

@@ -32,16 +32,19 @@
 
 #define LOG BOOST_LOG_TRIVIAL
 
+#ifndef POP_TEXT_SERIALIZATION
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#endif
+
 namespace pop
 {
-#ifndef POP_BINARY_SERIALIZATION
+#ifdef POP_TEXT_SERIALIZATION
 	// use text serialization
 	using bufin = boost::archive::text_iarchive;
 	using bufout = boost::archive::text_oarchive;
 #else
 	// use binary serialization
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 	using bufin = boost::archive::binary_iarchive;
 	using bufout = boost::archive::binary_oarchive;
 #endif

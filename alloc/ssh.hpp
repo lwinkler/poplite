@@ -12,6 +12,7 @@
 #define POP_ALLOC_SSH_H
 
 #include "class/system.hpp"
+#include "alloc/alloc.hpp"
 
 /// Class to allocate an object via ssh
 namespace pop {
