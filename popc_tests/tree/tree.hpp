@@ -10,6 +10,8 @@
 class Tree_iface;
 #include "Tree.iface.hpp"
 
+#define MAX_W 100
+
 POP_CLASS Tree {
 public:
 
@@ -22,7 +24,7 @@ public:
 
 private:
 	int myid;
-	Tree_iface *test[100];
+	Tree_iface *test[MAX_W];
 	int n;
 
 };

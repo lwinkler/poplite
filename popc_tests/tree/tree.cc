@@ -22,6 +22,7 @@ Tree::~Tree() {
 
 void Tree::Create(int w, int d, int startid) {
 	n = 0;
+	assert(w < MAX_W);
 	if (d <= 0 || w <= 0) {
 		printf("Node\t%d:  leaf\n", myid);
 	} else {
