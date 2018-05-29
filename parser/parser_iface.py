@@ -33,7 +33,7 @@ def write_foot(fout):
 
 #--------------------------------------------------------------------------------
 
-def write_interface(fout, class_node, templates_str):
+def write_interface(fout, class_node, templates_str, definitions):
 	parent_nodes = parser.get_direct_parents(class_node, True, True)
 	classname = class_node.spelling
 	if len(parent_nodes) > 1:
@@ -47,7 +47,6 @@ def write_interface(fout, class_node, templates_str):
 {
 private:""" % (template, classname, ', '.join(['public ' + iface for iface in parent_ifaces])))
 
-	definitions = []
 	[methods, real_parents] = parser.find_methods(class_node)
 	write_meth_ids(fout, class_node, methods, real_parents, definitions)
 
@@ -96,10 +95,6 @@ private:
 """ % (iface_name));
 
 	fout.write('};\n')
-
-	# TODO: Maybe we can avoid this or create a .cpp
-	if definitions:
-		fout.write('#define POP_SPECIFICATIONS_%s \\\n%s\n' % (classname, '\\\n'.join(definitions)))
 
 #--------------------------------------------------------------------------------
 

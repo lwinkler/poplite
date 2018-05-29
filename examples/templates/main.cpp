@@ -10,11 +10,9 @@
 
 #include "storage.hpp"
 #include "map_storage.hpp"
+#include "proxy_storage.hpp"
 
 using namespace std;
-
-POP_SPECIFICATIONS_storage
-POP_SPECIFICATIONS_map_storage
 
 /*
 template<typename T> test_interface(storage_iface<T>& testClass, bool set_values)
@@ -32,7 +30,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		{
-			template_ns::storage_iface<int> stor1;
+			template_ns::proxy_storage_iface<int> stor1;
 			stor1.push(11);
 			stor1.push(22);
 			stor1.push(33);
@@ -43,7 +41,7 @@ int main(int argc, char* argv[])
 		}
 
 		{
-			template_ns::storage_iface<std::string> stor2;
+			template_ns::proxy_storage_iface<std::string> stor2;
 			stor2.push("eleven");
 			stor2.push("twenty two");
 			stor2.push("thirty three");

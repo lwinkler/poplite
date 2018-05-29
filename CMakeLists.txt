@@ -34,7 +34,7 @@ function(pop_add_object object_name header_name)
 	# Not fixed yet !
 	string(REPLACE "::" "/" object_name2 "${object_name}")
 	string(REPLACE "::" "." object_name3 "${object_name}")
-	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/main.${object_name3}.cpp
+	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/${object_name2}.iface.cpp gen/main.${object_name3}.cpp
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} -- ${INC_DIRS}
 	DEPENDS ${header_name})
 
@@ -56,7 +56,7 @@ function(pop_add_objects classnames dependencies)
 	foreach(cl ${classnames})
 		string(REPLACE "::" "/" cl2 "${cl}")
 		string(REPLACE "::" "." cl3 "${cl}")
-		set(cmd_out "${cmd_out};gen/${cl2}.iface.hpp;gen/main.${cl3}.cpp")
+		set(cmd_out "${cmd_out};gen/${cl2}.iface.hpp;gen/${cl2}.iface.cpp;gen/main.${cl3}.cpp")
 		add_executable(${cl3}.obj gen/main.${cl3}.cpp ${dependencies})
 		target_link_libraries(${cl3}.obj ${Boost_LIBRARIES})
 		# add_library(gen/main.${cl2}.cpp)
@@ -91,7 +91,7 @@ function(pop_add_template_object object_name header_name instances)
 	# Not fixed yet !
 	string(REPLACE "::" "/" object_name2 "${object_name}")
 	string(REPLACE "::" "." object_name3 "${object_name}")
-	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/main.${object_name3}.cpp
+	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/${object_name2}.iface.cpp gen/main.${object_name3}.cpp
 		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} '${instances}' -- ${INC_DIRS}
 		DEPENDS ${header_name}
 	)

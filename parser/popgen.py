@@ -58,13 +58,21 @@ def main():
 	for c in parclasses:
 		if parser.get_full_name(c) not in classnames_in:
 			continue
-		iface_out = gendir + '/%s.iface.hpp' % parser.convert_to_classname(parser.get_full_name(c))
+		iface_out  = gendir + '/%s.iface.hpp' % parser.convert_to_classname(parser.get_full_name(c))
+		definitions = []
 
 		print 'Generate %s containing the interface' % iface_out
 		with open(iface_out, 'w') as fout:
 			parser_iface.write_head(fout, parser.get_full_name(c))
-			parser_iface.write_interface(fout, c, templates_str)
+			parser_iface.write_interface(fout, c, templates_str, definitions)
 			parser_iface.write_foot(fout)
+
+		# generate cpp file of the interface
+		iface_out2 = gendir + '/%s.iface.cpp' % parser.convert_to_classname(parser.get_full_name(c))
+		print 'Generate %s containing the interface' % iface_out2
+		with open(iface_out2, 'w') as fout2:
+			if definitions:
+				fout2.write('#include "%s"\n%s\n' % (filename_in, '\n'.join(definitions)))
 	
 		parser.align(iface_out)
 
