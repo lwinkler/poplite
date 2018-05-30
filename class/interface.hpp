@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
-// 
+//
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -25,8 +25,12 @@ namespace pop {
 template<typename R> class return_class
 {
 public:
-	return_class(bufin& _ia){_ia >> r_;}
-	R return_value(){return r_;}
+	return_class(bufin& _ia) {
+		_ia >> r_;
+	}
+	R return_value() {
+		return r_;
+	}
 
 private:
 	R r_;
@@ -36,17 +40,19 @@ private:
 template<> class return_class<void>
 {
 public:
-	return_class(bufin& /*_ia*/){}
-	void return_value(){return;}
+	return_class(bufin& /*_ia*/) {}
+	void return_value() {
+		return;
+	}
 };
 
 /// Interface is the local part used to communicate with a broker (remote) that contains the instantiation of the parallel object
 class interface
-{
-	public:
+	{
+public:
 		interface(const std::string& _executable, const std::string& _class_name, const pop::allocator& _allocator) :
-			combox_(),
-			link_life_(true)
+				combox_(),
+				link_life_(true)
 		{
 			_allocator.allocate(_executable, _class_name, combox_.callback());
 			// Handle connection
@@ -56,12 +62,12 @@ class interface
 		inline interface(const std::string& _executable, const std::string& _class_name, const pop::allocator& _allocator, bool _ignore) : interface(_executable, _class_name, _allocator) {}
 
 		interface(const pop::accesspoint& _contact) :
-			combox_(),
-			link_life_(false)
+				combox_(),
+				link_life_(false)
 		{
 			// Send our endpoint
 			combox_.send_my_contact(_contact);
-			
+
 			// Wait for the broker to call us back
 			combox_.run();
 		}
@@ -73,7 +79,7 @@ class interface
 		interface(const interface&) = delete;
 		interface& operator=(const interface&) = delete;
 
-		
+
 		virtual ~interface()
 		{
 			try {
@@ -145,9 +151,9 @@ class interface
 
 		template<typename R, typename ...Args> void async(int _method_id, Args& ...args)
 		{
-			// note:unused 
+			// note:unused
 			// static_assert(std::is_void<R>::value, "Return type of async methods must be void");
-			  
+
 			try
 			{
 				LOG(debug) << "call async "<< _method_id;
@@ -193,13 +199,15 @@ class interface
 		}
 
 		// inline const boost::asio::ip::tcp::endpoint endpoint() const {return combox_.endpoint();}
-		inline const pop::accesspoint& contact() const {return combox_.contact();}
+		inline const pop::accesspoint& contact() const {
+			return combox_.contact();
+		}
 
-	private:
+private:
 		pop::interface_combox combox_;
 		bool link_life_;
-	
-	protected: // note: special case, we want to use in children
+
+protected: // note: special case, we want to use in children
 		friend class boost::serialization::access;
 		template<class Archive> void save(Archive & _ar, const unsigned int _version) const
 		{
@@ -215,10 +223,10 @@ class interface
 				throw std::runtime_error("The accesspoint of an interface should never change during serialization.");
 		}
 
-		template<class Archive>void serialize(Archive & _ar, const unsigned int _version){
+		template<class Archive>void serialize(Archive & _ar, const unsigned int _version) {
 			boost::serialization::split_member(_ar, *this, _version);
 		}
-};
+	};
 }
 
 #endif
