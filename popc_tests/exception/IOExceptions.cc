@@ -28,7 +28,7 @@ IOException::IOException(const std::string& message, const std::string& position
 	size_t tracesize = backtrace(tracearray, 25);			   // obtains backtrace for current thread
 	char** symbols = backtrace_symbols(tracearray, tracesize);  // translate pointers to strings
 	msg += "\n\n\033[01;30m**** backtrace ****\n";			  // we use ASCII color codes to make the backtrace less
-																// visible/aggressive
+	// visible/aggressive
 	for (unsigned int ii = 1; ii < tracesize; ii++) {
 		msg += "\tat " + string(symbols[ii]) + "\n";
 	}

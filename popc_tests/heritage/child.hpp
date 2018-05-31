@@ -4,7 +4,8 @@
 
 // this include should always be right before the parallel class declaration
 #include "Child.iface.hpp"
-POP_CLASS Child : public Mother {
+POP_CLASS Child :
+public Mother {
 
 public:
 	Child();

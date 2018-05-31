@@ -11,12 +11,19 @@
 #ifndef TEST_CLASS_H
 #define TEST_CLASS_H
 
-// #include "class/interface.hpp"
+#include <iostream>
+#include <string>
+#include <boost/core/noncopyable.hpp>
+
+#ifndef _POP_PARSER_ // this accelerates parsing
 #include "class/system.hpp"
 #include "alloc/local.hpp"
 #include "class/interface.hpp"
+#endif
 
-struct test_struct1  : boost::noncopyable
+#include "parser/defs.hpp"
+
+struct test_struct1 : boost::noncopyable
 {
 	int a;
 	test_struct1() : a(0) {}

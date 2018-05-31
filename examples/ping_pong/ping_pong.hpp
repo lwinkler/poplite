@@ -11,9 +11,17 @@
 #ifndef PING_PONG_HPP
 #define PING_PONG_HPP
 
+#include <iostream>
+#include <memory>
+
+#ifndef _POP_PARSER_ // this accelerates parsing
 #include "class/system.hpp"
 #include "alloc/local.hpp"
 #include "class/interface.hpp"
+#endif
+
+#include "parser/defs.hpp"
+#include "com/accesspoint.hpp"
 
 // this include should always be right before the parallel class declaration
 #include "ping_pong.iface.hpp"
@@ -30,7 +38,7 @@ public:
 	// An example of synchronous method
 	void POP_SYNC  sync_ping(int _cpt);
 	void POP_ASYNC async_ping(int _cpt);
-	void set_next_one(const pop::accesspoint& _ap) {
+	void POP_SYNC set_next_one(const pop::accesspoint& _ap) {
 		next_one_.reset(new ping_pong_iface(_ap));
 	}
 
