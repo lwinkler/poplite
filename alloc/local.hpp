@@ -3,7 +3,7 @@
 // ~~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
-// 
+//
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -19,8 +19,8 @@ namespace pop {
 /// Class to allocate object locally, as a fork of the process
 class local_allocator : public allocator
 {
-	public:
-	local_allocator(){}
+public:
+	local_allocator() {}
 	void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const {
 		std::stringstream ss;
 		const auto& popsys = pop::system::instance();
