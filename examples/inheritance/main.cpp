@@ -3,7 +3,7 @@
 // ~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
-// 
+//
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 		check_equal(real3.more_magic(), iface3.more_magic(), __LINE__);
 		check_equal(real3.pure_virtual(), iface3.pure_virtual(), __LINE__);
 	} catch(exception& exc) {
-		LOG(error) << "Exception in main: " << exc.what(); 
+		LOG(error) << "Exception in main: " << exc.what();
 		return 1;
 	}
 

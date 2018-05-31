@@ -3,7 +3,7 @@
 // ~~~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
-// 
+//
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -98,7 +98,7 @@ int server::guess(const string& _user, const string& _word)
 		send_message("The game has been won by player " + _user);
 		return points;
 	}
-	
+
 	// Re-print the state of the game
 	print_game(_user);
 
