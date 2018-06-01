@@ -28,7 +28,7 @@ public:
 		std::cout << "call constr with " << _s2 << std::endl;
 	}
 
-	void void_method(void) {
+	POP_ASYNC void void_method(void) {
 		std::cout << "Test method(void) syntax" << std::endl;
 	}
 };

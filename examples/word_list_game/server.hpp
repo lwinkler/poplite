@@ -52,10 +52,10 @@ public:
 	server();
 	virtual ~server();
 
-	int guess(const std::string& _user, const std::string& _word);
+	POP_SYNC int guess(const std::string& _user, const std::string& _word);
 
-	void connect_client(const std::string& _user, const pop::accesspoint& _client_contact);
-	void init_game();
+	POP_SYNC void connect_client(const std::string& _user, const pop::accesspoint& _client_contact);
+	POP_SYNC void init_game();
 	void POP_ASYNC print_game(const std::string& _username = "");
 
 private:

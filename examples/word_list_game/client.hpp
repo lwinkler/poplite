@@ -23,19 +23,19 @@ public:
 	client(std::string _user, pop::accesspoint _server_ap);
 	virtual ~client();
 
-	inline void message(std::string msg_)
+	POP_SYNC inline void message(std::string msg_)
 	{
 		std::cout << msg_ << std::endl;
 	}
 
-	inline std::string get_username() {
+	POP_SYNC inline std::string get_username() {
 		return username_;
 	}
-	inline int get_points() {
+	POP_SYNC inline int get_points() {
 		return points_;
 	}
 
-	void run();
+	POP_SYNC void run();
 
 private:
 	server_iface server_;

@@ -78,12 +78,12 @@ public:
 		std::cout << "SetValues " << i1_ << " " << i2_ << " " << d_ << " " << s_ << std::endl;
 	}
 
-	int GetValue() const
+	POP_SYNC int GetValue() const
 	{
 		return 333;
 	}
 
-	void GetValues(int& _i1, int& _i2, double& _d, std::string& _s) const
+	POP_SYNC void GetValues(int& _i1, int& _i2, double& _d, std::string& _s) const
 	{
 		_i1 = i1_;
 		_i2 = i2_;
@@ -91,32 +91,32 @@ public:
 		_s  = s_;
 	}
 
-	void SetTest(const test_struct1& _test1) {
+	POP_SYNC void SetTest(const test_struct1& _test1) {
 		test1_.a = _test1.a;
 	}
-	void GetTest(test_struct1& _test1) const {_test1.a = test1_.a;}
-	test_struct1* GetTestPtr() {
+	POP_SYNC void GetTest(test_struct1& _test1) const {_test1.a = test1_.a;}
+	POP_SYNC test_struct1* GetTestPtr() {
 		return &test1_;
 	}
 
-	void SetGps(gps_position& _gps) {
+	POP_SYNC void SetGps(gps_position& _gps) {
 		gps_ = _gps;
 	}
-	gps_position GetGps() const {
+	POP_SYNC gps_position GetGps() const {
 		return gps_;
 	}
 
-	std::string GetStr() const {
+	POP_SYNC std::string GetStr() const {
 		return s_;
 	}
 
-	std::vector<int> GetVector1() const {
+	POP_SYNC std::vector<int> GetVector1() const {
 		return vi_;
 	}
-	std::vector<gps_position> GetVector2() const {
+	POP_SYNC std::vector<gps_position> GetVector2() const {
 		return vgps_;
 	}
-	std::map<int, std::string> GetMap1() const {
+	POP_SYNC std::map<int, std::string> GetMap1() const {
 		return mstr_;
 	}
 

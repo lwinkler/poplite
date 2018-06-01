@@ -34,7 +34,7 @@ public:
 	POP_ASYNC void push(const T& _el) {
 		stack_.push_back(_el);
 	}
-	T pop() {
+	POP_SYNC T pop() {
 		T val = stack_.back();
 		stack_.pop_back();
 		return val;

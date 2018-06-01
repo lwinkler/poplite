@@ -34,7 +34,7 @@ public:
 	POP_ASYNC void insert(const T1& _index, const T2& _el) {
 		map_.insert(std::pair<T1,T2>(_index, _el));
 	}
-	T2 erase(const T1& _index) {
+	POP_SYNC T2 erase(const T1& _index) {
 		auto it = map_.find(_index);
 		assert(it != map_.end());
 		T2 val = it->second;

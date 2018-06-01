@@ -189,6 +189,7 @@ def get_invoker(meth_node):
 			if c.spelling.startswith('pop_invoker:'):
 				return c.spelling[len('pop_invoker:'):]
 
+	print '%s:%d:0 : warning: No invoker (sync or async) for method %s' % (meth_node.location.file, meth_node.location.line, meth_node.spelling)
 	return 'sync' # our default
 
 def get_allocation(constr_node):

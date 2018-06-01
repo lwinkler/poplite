@@ -19,10 +19,10 @@ public:
 
 	Mother();
 
-	virtual void Method1();
-	virtual void callMethod(Mother_iface& c, int v);
-	void SetVal(int v);
-	int GetVal();
+	POP_SYNC virtual void Method1();
+	POP_SYNC virtual void callMethod(Mother_iface& c, int v);
+	POP_SYNC void SetVal(int v);
+	POP_SYNC int GetVal();
 
 protected:
 	int val;

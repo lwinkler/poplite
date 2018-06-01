@@ -11,8 +11,8 @@ public:
 	Titi();
 	~Titi();
 
-	void SetIdent(int i);
-	void ComputeIdent(Toto_iface& t);
+	POP_SYNC void SetIdent(int i);
+	POP_SYNC void ComputeIdent(Toto_iface& t);
 
 private:
 	int ident;

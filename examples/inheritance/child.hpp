@@ -27,16 +27,16 @@ namespace global_ns {
 namespace simple_parent_a_ns {
 class simple_parent_a {
 public:
-	void set_float_a(float _f) {
+	POP_SYNC void set_float_a(float _f) {
 		f_ = _f;
 	}
-	float get_float_a() {
+	POP_SYNC float get_float_a() {
 		return f_;
 	}
-	virtual float more_magic() {
+	POP_SYNC virtual float more_magic() {
 		return 123e2;
 	}
-	virtual short pure_virtual() const = 0;
+	POP_SYNC virtual short pure_virtual() const = 0;
 private:
 	float f_ = 0;
 };
@@ -53,19 +53,19 @@ public:
 		LOG(info) << "call constr of parent_a: " << _str;
 	}
 
-	virtual void set_int(int _i) {
+	POP_SYNC virtual void set_int(int _i) {
 		i_ = _i;
 	}
-	virtual int get_int() {
+	POP_SYNC virtual int get_int() {
 		return i_;
 	}
-	std::string get_non_virtual_name() {
+	POP_SYNC std::string get_non_virtual_name() {
 		return "parent_a:" + str_;
 	}
-	virtual std::string get_virtual_name() {
+	POP_SYNC virtual std::string get_virtual_name() {
 		return "parent_a:" + str_;
 	}
-	static std::string get_static_name() {
+	POP_SYNC static std::string get_static_name() {
 		return "parent_a";
 	}
 	virtual short pure_virtual() const override {return 55*2;};
@@ -89,19 +89,19 @@ public:
 		LOG(info) << "call constr of parent_b: " << _str;
 	}
 
-	virtual void set_double(double _d) {
+	POP_SYNC virtual void set_double(double _d) {
 		d_ = _d;
 	}
-	virtual int get_double() {
+	POP_SYNC virtual int get_double() {
 		return d_;
 	}
-	std::string get_non_virtual_name() {
+	POP_SYNC std::string get_non_virtual_name() {
 		return "parent_b:" + str_;
 	}
 	virtual std::string get_virtual_name() {
 		return "parent_b:" + str_;
 	}
-	static std::string get_static_name() {
+	POP_SYNC static std::string get_static_name() {
 		return "parent_b";
 	}
 	virtual float more_magic() {
@@ -118,10 +118,10 @@ private:
 
 class simple_parent_c {
 public:
-	void set_float(float _f) {
+	POP_SYNC void set_float(float _f) {
 		f_ = _f;
 	}
-	float get_float() {
+	POP_SYNC float get_float() {
 		return f_;
 	}
 private:
@@ -141,17 +141,17 @@ public:
 		LOG(info) << "call child constr";
 	}
 
-	void child_method() {
+	POP_SYNC void child_method() {
 		LOG(info) << "Called a child method from " << str_;
 	}
 
-	std::string get_non_virtual_name() {
+	POP_SYNC std::string get_non_virtual_name() {
 		return "child:" + str_;
 	}
-	std::string get_virtual_name() {
+	POP_SYNC std::string get_virtual_name() {
 		return "child:" + str_;
 	}
-	static std::string get_static_name() {
+	POP_SYNC static std::string get_static_name() {
 		return "child";
 	}
 
