@@ -33,7 +33,7 @@ def write_foot(fout):
 
 #--------------------------------------------------------------------------------
 
-def write_interface(fout, class_node, templates_str, definitions):
+def write_interface(fout, class_node, definitions):
 	parent_nodes = parser.get_direct_parents(class_node, True, True)
 	classname = class_node.spelling
 	if len(parent_nodes) > 1:
@@ -85,7 +85,7 @@ protected:
 """ % (classname, ', '.join([iface + '(_executable, _class_name, _allocator, _ignore)' for iface in parent_ifaces])))
 
 	if parser.is_template_class(class_node):
-		for t in templates_str:
+		for t in parser.get_template_types(class_node):
 			definitions.append('template<> const std::string %s_iface%s::_iface_name = "%s%s";' % (class_name, t, class_name, t))
 		# class_name += '<' + ','.join(parser.get_template_type_parameters(class_node)) + '>'
 		iface_name = ''

@@ -73,33 +73,5 @@ function(pop_add_objects classnames dependencies)
 
 endfunction(pop_add_objects)
 
-# Function used to add a parallel object to the compilation
-function(pop_add_template_object object_name header_name instances)
-	get_filename_component(_dir      ${header_name} ABSOLUTE)
-	get_filename_component(_filename ${header_name} NAME_WE)
-
-	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-	set(INC_DIRS "")
-	foreach(dir ${dirs})
-		# Create the include path artificially
-		set(INC_DIRS "${INC_DIRS};-I${dir}")
-	endforeach()
-
-	# message("Add command to generate gen/${object_name}.iface.hpp gen/main.${object_name}.cpp")
-	# note: there are conflicts while generating multiple files with one command
-	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
-	# Not fixed yet !
-	string(REPLACE "::" "/" object_name2 "${object_name}")
-	string(REPLACE "::" "." object_name3 "${object_name}")
-	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/${object_name2}.iface.cpp gen/main.${object_name3}.cpp
-		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} '${instances}' -- ${INC_DIRS}
-		DEPENDS ${header_name}
-	)
-
-	# extra arguments are seen as dependencies
-	add_executable(${object_name3}.obj gen/main.${object_name3}.cpp ${ARGN})
-	target_link_libraries(${object_name3}.obj ${Boost_LIBRARIES} )
-endfunction(pop_add_template_object)
-
 add_subdirectory(examples)
 add_subdirectory(popc_tests)

@@ -12,7 +12,7 @@
 #define POP_ASYNC    __attribute__((annotate("pop_invoker:async")))
 #define POP_ALLOCATION(x) __attribute__((annotate("pop_allocation:"#x)))
 
-#define POP_TEMPLATE_TYPES(types) __attribute__((annotate("pop_template_types:"#types)))\
+#define POP_TEMPLATE_TYPES(...) __attribute__((annotate("pop_template_types:"#__VA_ARGS__)))\
 
 /* For clang version older than 6, use this
 #define POP_TEMPLATE_METHOD(name, invoker, types)\
@@ -28,7 +28,7 @@ static int template_types_of_##name;
 #define POP_SYNC
 #define POP_ASYNC
 #define POP_ALLOCATION(x)
-#define POP_TEMPLATE_TYPES(x)
+#define POP_TEMPLATE_TYPES(...)
 // #define POP_TEMPLATE_METHOD(x,y,z)
 
 #endif

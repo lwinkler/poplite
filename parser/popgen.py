@@ -20,17 +20,13 @@ def main():
 		ddash = sys.argv.index('--')
 		argv1 = sys.argv[:ddash]
 		argv2 = sys.argv[ddash + 1:]
-	if len(argv1) < 3:
-		print 'usage: %s <header> <classname> (<template instances>) -- <compilation arguments...>' % sys.argv[0]
+	if len(argv1) != 3:
+		print 'usage: %s <header> <classname> -- <compilation arguments...>' % sys.argv[0]
 		print ' e.g.: %s my_class.hpp ns::my_class -- -I/usr/include -I...' % sys.argv[0]
 		exit(1)
 
 	filename_in   = argv1[1]
 	classnames_in = argv1[2].split(',')
-	templates_str_tmp = argv1[3].split(' ') if len(argv1) > 3 else ['']
-	templates_str = [] # all instanciations of templates as string. E.g. '<int,float>'
-	for t in templates_str_tmp:
-		templates_str.append('<' + t + '>' if t else '')
 	gendir = os.path.dirname(filename_in) + '/gen' if os.path.dirname(filename_in) else 'gen' 
 
 	# Generate fake interface files before parsing
@@ -64,7 +60,7 @@ def main():
 		print 'Generate %s containing the interface' % iface_out
 		with open(iface_out, 'w') as fout:
 			parser_iface.write_head(fout, parser.get_full_name(c))
-			parser_iface.write_interface(fout, c, templates_str, definitions)
+			parser_iface.write_interface(fout, c, definitions)
 			parser_iface.write_foot(fout)
 
 		# generate cpp file of the interface
@@ -85,7 +81,7 @@ def main():
 
 		with open(obj_out, 'w') as fout:
 			parser_brok.write_head(fout, full_name, c.location.file)
-			parser_brok.write_broker(fout, c, templates_str)
+			parser_brok.write_broker(fout, c)
 			# parser_brok.write_foot(fout)
 
 		parser.align(obj_out)

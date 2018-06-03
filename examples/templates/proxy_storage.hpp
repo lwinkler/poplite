@@ -19,7 +19,9 @@ namespace template_ns {
 // this include should always be right before the parallel class declaration
 #include "template_ns/proxy_storage.iface.hpp"
 
-template<typename T> POP_CLASS proxy_storage
+template<typename T>
+POP_CLASS POP_TEMPLATE_TYPES(<int>;<std::string>)
+proxy_storage
 {
 public:
 	POP_ALLOCATION(pop::local_allocator())
@@ -27,7 +29,7 @@ public:
 	POP_ASYNC void push(const T& _el) {
 		storage_.push(_el);
 	}
-	T pop() {
+	POP_SYNC T pop() {
 		return storage_.pop();
 	}
 	POP_ASYNC void print() {

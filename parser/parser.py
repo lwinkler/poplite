@@ -217,21 +217,23 @@ def is_template_method(meth):
 	""" Check if a method is a template """
 	return  meth.kind == cindex.CursorKind.FUNCTION_TEMPLATE
 
-def is_template_class(meth):
+def is_template_class(node):
 	""" Check if a class is a template """
-	return  meth.kind == cindex.CursorKind.CLASS_TEMPLATE
+	return  node.kind == cindex.CursorKind.CLASS_TEMPLATE
 
-def get_template_types(meth):
+def get_template_types(node):
 	""" Return the template types of a template method (represent all usable instances of the template method) """
+	if node.kind == cindex.CursorKind.CLASS_DECL:
+		return ['']
 
-	# for c1 in meth.lexical_parent.get_children():
+	# for c1 in node.lexical_parent.get_children():
 		# Search other attribute with specific name (since annotations are not valid on templates).
-		# if c1.spelling == 'template_types_of_' + meth.spelling:
-	for c2 in meth.get_children():
+		# if c1.spelling == 'template_types_of_' + node.spelling:
+	for c2 in node.get_children():
 		if c2.kind == cindex.CursorKind.ANNOTATE_ATTR:
 			if c2.spelling.startswith('pop_template_types:'):
 				return c2.spelling[len('pop_template_types:'):].split(';')
-	raise Exception('Did not find template types for template method %s. Use POP_TEMPLATE_TYPES(<type1>;<type2>)' % (meth.spelling))
+	raise Exception('Did not find template types for template method or class %s. Use POP_TEMPLATE_TYPES(<type1>;<type2>)' % (node.spelling))
 
 # Note: only used to fix a bug in clang 5 and earlier
 def get_template_invoker(meth):

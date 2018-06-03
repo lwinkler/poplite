@@ -61,9 +61,10 @@ def write_meth(fout, m, full_name, template_str):
 
 #--------------------------------------------------------------------------------
 
-def write_broker(fout, class_node, templates_str):
+def write_broker(fout, class_node):
 	
 	# implementation of static array of methods
+	templates_str = parser.get_template_types(class_node)
 	for template_str in templates_str:
 		full_name = parser.get_full_name(class_node) + template_str
 		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s>::methods_{\n'
