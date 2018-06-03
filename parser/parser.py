@@ -19,7 +19,7 @@ import clang.cindex as cindex
 from subprocess import call
 from pprint import pprint
 
-cindex.Config.set_library_path('/usr/lib/llvm-5.0/lib')
+cindex.Config.set_library_path('/usr/lib/llvm-6.0/lib')
 
 def describe_node(node, full = False):
 	""" Describe a node. For debug purposes
@@ -224,15 +224,16 @@ def is_template_class(meth):
 def get_template_types(meth):
 	""" Return the template types of a template method (represent all usable instances of the template method) """
 
-	for c1 in meth.lexical_parent.get_children():
-		# Search other attribute with specific name (since annotations are not valid on templates). TODO: see if fixed in clang
-		if c1.spelling == 'template_types_of_' + meth.spelling:
-			for c2 in c1.get_children():
-				if c2.kind == cindex.CursorKind.ANNOTATE_ATTR:
-					if c2.spelling.startswith('pop_template_method:'):
-						return c2.spelling[len('pop_template_method:'):].split(';')
-	return None
+	# for c1 in meth.lexical_parent.get_children():
+		# Search other attribute with specific name (since annotations are not valid on templates).
+		# if c1.spelling == 'template_types_of_' + meth.spelling:
+	for c2 in meth.get_children():
+		if c2.kind == cindex.CursorKind.ANNOTATE_ATTR:
+			if c2.spelling.startswith('pop_template_types:'):
+				return c2.spelling[len('pop_template_types:'):].split(';')
+	raise Exception('Did not find template types for template method %s. Use POP_TEMPLATE_TYPES(<type1>;<type2>)' % (meth.spelling))
 
+# Note: only used to fix a bug in clang 5 and earlier
 def get_template_invoker(meth):
 	""" Return the invoker of a template method """
 	for c1 in meth.lexical_parent.get_children():

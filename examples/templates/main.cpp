@@ -9,6 +9,7 @@
 //
 
 #include "storage.hpp"
+#include "printer.hpp"
 #include "map_storage.hpp"
 #include "proxy_storage.hpp"
 
@@ -72,6 +73,10 @@ int main(int argc, char* argv[])
 			stor1.print();
 			cout << "--------------------" << endl;
 		}
+
+		template_ns::printer_iface pr;
+		pr.print(121212);
+		pr.print(string("Tested the template method"));
 	}
 	catch (std::exception& e)
 	{

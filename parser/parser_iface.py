@@ -118,7 +118,7 @@ def write_template_meth(fout, m, id):
 	ttparams = parser.get_template_type_parameters(m)
 	ttparams1 = '<%s>' % (', '.join(ttparams))
 	ttparams2 = '<%s>' % (', '.join(('typename ' + t) for t in ttparams))
-	invoker = parser.get_template_invoker(m)
+	invoker = parser.get_invoker(m)
 	fout.write('template%s inline %s%s %s(%s) {' %(ttparams2, virtual, m.result_type.spelling, m.spelling, parser.list_args(m))
 			+ 'return %s<%s%s>(method_ids::%s%d%s::value%s);}\n' % (invoker, m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, ttparams1, parser.list_args2(m, True)))
 	return id + len(ttypes)
