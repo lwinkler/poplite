@@ -45,8 +45,7 @@ private:
 // this include should always be right before the parallel class declaration
 #include "global_ns/parent_a.iface.hpp"
 POP_CLASS parent_a :
-public simple_parent_a_ns::simple_parent_a
-{
+public simple_parent_a_ns::simple_parent_a {
 public:
 	POP_ALLOCATION(pop::local_allocator())
 	parent_a(std::string _str) : str_(_str) {
@@ -81,8 +80,7 @@ namespace parent_b_ns {
 // this include should always be right before the parallel class declaration
 #include "global_ns/parent_b_ns/parent_b.iface.hpp"
 POP_CLASS parent_b :
-public parent_a
-{
+public parent_a {
 public:
 	POP_ALLOCATION(pop::local_allocator())
 	parent_b(std::string _str): parent_a("A: " + _str), str_(_str) {
@@ -132,8 +130,7 @@ private:
 namespace child_ns {
 #include "global_ns/child_ns/child.iface.hpp"
 POP_CLASS child :
-public parent_b_ns::parent_b, public simple_parent_c
-{
+public parent_b_ns::parent_b, public simple_parent_c {
 public:
 	// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 	POP_ALLOCATION(pop::local_allocator())

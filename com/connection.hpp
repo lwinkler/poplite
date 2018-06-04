@@ -42,8 +42,7 @@ static const int DESTROY = -2;
 static const int UNKNOWN = -3;
 };
 
-class connection
-{
+class connection {
 public:
 	/// Constructor
 	connection(boost::asio::io_service& io_service) : socket_(io_service) {}
@@ -61,8 +60,7 @@ public:
 
 
 	/// Asynchronously write a data structure to the socket.
-	template <typename T, typename Handler> void async_write(const T& _obj, Handler _handler)
-	{
+	template <typename T, typename Handler> void async_write(const T& _obj, Handler _handler) {
 		std::stringstream ss;
 		bufout ia(ss);
 		ia << _obj;
@@ -70,16 +68,14 @@ public:
 	}
 
 	/// Asynchronously write a stringstream to the socket.
-	template <typename Handler> void async_write_ss(std::istream& _iss, Handler _handler)
-	{
+	template <typename Handler> void async_write_ss(std::istream& _iss, Handler _handler) {
 		std::istreambuf_iterator<char> eos;
 		std::string outbound_data(std::istreambuf_iterator<char>(_iss), eos);
 
 		// Format the header.
 		std::ostringstream header_stream;
 		header_stream << std::setw(header_length) << std::hex << outbound_data.size();
-		if (!header_stream || header_stream.str().size() != header_length)
-		{
+		if (!header_stream || header_stream.str().size() != header_length) {
 			// Something went wrong, inform the caller.
 			boost::system::error_code error(boost::asio::error::invalid_argument);
 			socket_.get_io_service().post(boost::bind(_handler, error));
@@ -96,8 +92,7 @@ public:
 	}
 
 	// Synchronous write an object to the socket
-	template <typename T> inline void sync_write(const T& _obj)
-	{
+	template <typename T> inline void sync_write(const T& _obj) {
 		std::stringstream ss;
 		bufout ia(ss);
 		ia << _obj;
@@ -105,8 +100,7 @@ public:
 	}
 
 	// Synchronous write to the socket
-	void sync_write_ss(std::istream& _iss)
-	{
+	void sync_write_ss(std::istream& _iss) {
 		std::istreambuf_iterator<char> eos;
 		std::string outbound_data(std::istreambuf_iterator<char>(_iss), eos);
 		LOG(debug) << "sync written " << outbound_data.size() << " bytes";
@@ -114,8 +108,7 @@ public:
 		// Format the header.
 		std::ostringstream header_stream;
 		header_stream << std::setw(header_length) << std::hex << outbound_data.size();
-		if (!header_stream || header_stream.str().size() != header_length)
-		{
+		if (!header_stream || header_stream.str().size() != header_length) {
 			// Something went wrong, inform the caller.
 			boost::system::error_code error(boost::asio::error::invalid_argument);
 			throw std::runtime_error("error header in sync_write");
@@ -131,8 +124,7 @@ public:
 	}
 
 	/// Asynchronously read a data structure from the socket.
-	template <typename Handler>void async_read(Handler _handler)
-	{
+	template <typename Handler>void async_read(Handler _handler) {
 		// Reset the stringstream
 		iss_.str("");
 		iss_.clear();
@@ -147,16 +139,14 @@ public:
 	}
 
 	/// Synchronously read a data structure from the socket into an object
-	template<typename T>void sync_read(T& _obj)
-	{
+	template<typename T>void sync_read(T& _obj) {
 		sync_read();
 		bufin ia(input_stream());
 		ia >> _obj;
 	}
 
 	/// Synchronously read a data structure from the socket
-	void sync_read()
-	{
+	void sync_read() {
 		// Reset the stringstream
 		iss_.str("");
 		iss_.clear();
@@ -166,8 +156,7 @@ public:
 		// Determine the length of the serialized data
 		std::istringstream is(std::string(inbound_header_, header_length));
 		std::size_t inbound_data_size = 0;
-		if (!(is >> std::hex >> inbound_data_size))
-		{
+		if (!(is >> std::hex >> inbound_data_size)) {
 			// Header doesn't seem to be valid. Inform the caller
 			boost::system::error_code error(boost::asio::error::invalid_argument);
 			LOG(error) << "read error";
@@ -179,13 +168,10 @@ public:
 		boost::asio::read(socket_, boost::asio::buffer(inbound_data_));
 
 		// Extract the data structure from the data just received
-		try
-		{
+		try {
 			std::string archive_data(&inbound_data_[0], inbound_data_.size());
 			iss_ << archive_data;
-		}
-		catch (std::exception& e)
-		{
+		} catch (std::exception& e) {
 			// Unable to decode data.
 			throw std::runtime_error("error in sync_read: " + std::string(e.what()));
 		}
@@ -197,19 +183,14 @@ public:
 	/// a tuple since boost::bind seems to have trouble binding a function object
 	/// created using boost::bind as a parameter.
 	template <typename Handler>
-	void handle_read_header(const boost::system::error_code& _e, std::ostream& _oss, boost::tuple<Handler> _handler)
-	{
-		if (_e)
-		{
+	void handle_read_header(const boost::system::error_code& _e, std::ostream& _oss, boost::tuple<Handler> _handler) {
+		if (_e) {
 			boost::get<0>(_handler)(_e);
-		}
-		else
-		{
+		} else {
 			// Determine the length of the serialized data.
 			std::istringstream is(std::string(inbound_header_, header_length));
 			std::size_t inbound_data_size = 0;
-			if (!(is >> std::hex >> inbound_data_size))
-			{
+			if (!(is >> std::hex >> inbound_data_size)) {
 				// Header doesn't seem to be valid. Inform the caller.
 				boost::system::error_code error(boost::asio::error::invalid_argument);
 				boost::get<0>(_handler)(error);
@@ -227,17 +208,12 @@ public:
 
 	/// Handle a completed read of message data.
 	template <typename Handler>
-	void handle_read_data(const boost::system::error_code& e, std::ostream& _oss, boost::tuple<Handler> _handler)
-	{
-		if (e)
-		{
+	void handle_read_data(const boost::system::error_code& e, std::ostream& _oss, boost::tuple<Handler> _handler) {
+		if (e) {
 			boost::get<0>(_handler)(e);
-		}
-		else
-		{
+		} else {
 			// Extract the data structure from the data just received.
-			try
-			{
+			try {
 				LOG(debug) << "Start copying data"; // TODO: Avoid this copy for efficiency
 				copy(inbound_data_.begin(), inbound_data_.end(), std::ostream_iterator<unsigned char>(_oss));
 				/*
@@ -246,9 +222,7 @@ public:
 				boost::archive::text_iarchive archive(archive_stream);
 				archive >> t;
 				*/
-			}
-			catch (std::exception& e)
-			{
+			} catch (std::exception& e) {
 				// Unable to decode data.
 				boost::system::error_code error(boost::asio::error::invalid_argument);
 				boost::get<0>(_handler)(error);

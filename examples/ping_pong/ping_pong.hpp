@@ -28,8 +28,7 @@
 #include "ping_pong.iface.hpp"
 
 /// A simple class that calls another object
-POP_CLASS ping_pong
-{
+POP_CLASS ping_pong {
 public:
 	// Constructor: We need to specify an allocator to specify how to launch the object
 	// here we use a local allocator: the object will be created locally

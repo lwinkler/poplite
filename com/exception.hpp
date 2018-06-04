@@ -15,8 +15,7 @@
 /// A serializable exception for poplite
 namespace pop {
 
-class exception : public std::exception
-{
+class exception : public std::exception {
 public:
 	exception() noexcept : text("") {}
 	exception(const std::string& _text) noexcept : text(_text) {}
@@ -32,8 +31,7 @@ public:
 
 private:
 	friend class boost::serialization::access;
-	template<class Archive> void serialize(Archive & ar, const unsigned int version)
-	{
+	template<class Archive> void serialize(Archive & ar, const unsigned int version) {
 		ar & text;
 	}
 };

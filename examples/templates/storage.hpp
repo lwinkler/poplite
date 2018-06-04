@@ -26,10 +26,9 @@ namespace template_ns {
 // this include should always be right before the parallel class declaration
 #include "template_ns/storage.iface.hpp"
 
-template<typename T> 
-POP_CLASS POP_TEMPLATE_TYPES(<int>;<std::string>)
-storage
-{
+template<typename T>
+POP_CLASS POP_TEMPLATE_TYPES(<int>; <std::string>)
+storage {
 public:
 	POP_ALLOCATION(pop::local_allocator())
 	storage() {}

@@ -20,10 +20,8 @@
 #include "com/serialize.hpp"
 #include "class/interface.hpp"
 
-namespace pop
-{
-namespace remote
-{
+namespace pop {
+namespace remote {
 template<class ParClass> using parallel_method = std::function<void(bufin&, bufout&, std::unique_ptr<ParClass>&)>;
 
 /// A utility container to store and serialize an interface
@@ -43,16 +41,14 @@ template<class T> struct iface_container final {
 private:
 	T* p_iface_ = nullptr;
 	friend class boost::serialization::access;
-	template<class Archive> void save(Archive & _ar, const unsigned int _version) const
-	{
+	template<class Archive> void save(Archive & _ar, const unsigned int _version) const {
 		// invoke serialization of the base class
 		LOG(debug) << "Save interface container at " << p_iface_->contact().host_name;
 		assert(p_iface_ != nullptr);
 		_ar << p_iface_->contact();
 	}
 
-	template<class Archive> void load(Archive & _ar, const unsigned int _version)
-	{
+	template<class Archive> void load(Archive & _ar, const unsigned int _version) {
 		pop::accesspoint ap;
 		_ar >> ap;
 		assert(p_iface_ == nullptr);
@@ -66,21 +62,18 @@ private:
 };
 
 /// A utility to decay incoming arguments
-template<class T> struct pop_decay
-{
+template<class T> struct pop_decay {
 	typedef typename std::decay<T>::type type;
 };
 
-template<class T> struct pop_decay<T&>
-{
+template<class T> struct pop_decay<T&> {
 	/// typedef pop::accesspoint type;
 	typedef typename std::conditional<std::is_base_of<pop::interface, typename std::remove_reference<T>::type>::value, iface_container<T>, typename std::decay<T>::type>::type type;
 	// typedef typename std::decay<T>::type type;
 };
 
 template<class Archive, typename... Args>
-void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> & t1)
-{
+void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> & t1) {
 	SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename pop_decay<Args>::type...> >(ar, t1);
 }
 
@@ -103,8 +96,7 @@ parallel_method<O> static_create_binded_method(void (*_invoker)(bufin&, bufout&,
 }
 
 /// A broker is the (remote) part that contains the instantiation of the parallel object
-template<class ParClass> class broker : private boost::noncopyable
-{
+template<class ParClass> class broker : private boost::noncopyable {
 public:
 	inline void remote_call(int _nb, bufin& _ia, bufout& _oa) {
 		(methods_.at(_nb))(_ia, _oa, p_obj_);
@@ -115,8 +107,7 @@ private:
 	template<typename ...Args> static ParClass* __constr(Args... args) {
 		return new ParClass(args...);
 	}
-	template<typename ...Args> static void call_constr(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj)
-	{
+	template<typename ...Args> static void call_constr(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj) {
 		if(_p_obj)
 			throw std::runtime_error("Constructor has been called twice");
 		LOG(debug) << "Call constructor";
@@ -127,8 +118,7 @@ private:
 	}
 
 	/// A simple concurrent call to a method
-	template<typename R, typename ...Args> static void conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (ParClass::*_p_meth)(Args...))
-	{
+	template<typename R, typename ...Args> static void conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (ParClass::*_p_meth)(Args...)) {
 		if(!_p_obj)
 			throw std::runtime_error("Constructor has not been called");
 		std::tuple<typename pop_decay<Args>::type...> tup;
@@ -139,8 +129,7 @@ private:
 	}
 
 	/// A simple concurrent call to a static method
-	template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (*_p_meth)(Args...))
-	{
+	template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (*_p_meth)(Args...)) {
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
 		apply_tuple_static( _p_meth, tup, _oa);
@@ -148,8 +137,7 @@ private:
 	}
 
 	/// A simple concurrent call to a static method
-	template<typename R, typename ...Args> static void const_conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (ParClass::*_p_meth)(Args...) const)
-	{
+	template<typename R, typename ...Args> static void const_conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (ParClass::*_p_meth)(Args...) const) {
 		if(!_p_obj)
 			throw std::runtime_error("Constructor has not been called");
 		std::tuple<typename pop_decay<Args>::type...> tup;

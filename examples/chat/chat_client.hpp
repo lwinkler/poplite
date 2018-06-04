@@ -27,8 +27,7 @@
 // this include should always be right before the parallel class declaration
 #include "chat_client.iface.hpp"
 
-POP_CLASS chat_client
-{
+POP_CLASS chat_client {
 public:
 	POP_ALLOCATION(pop::local_allocator())
 	chat_client(const std::string& _username) : username_(_username) {}

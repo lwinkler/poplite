@@ -37,8 +37,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #endif
 
-namespace pop
-{
+namespace pop {
 #ifdef POP_TEXT_SERIALIZATION
 // use text serialization
 using bufin = boost::archive::text_iarchive;
@@ -59,8 +58,7 @@ using read_lock =  boost::shared_lock<lock>;
 
 
 /// A class that contains all the parameters of one executable (either the main or an object executable)
-class system
-{
+class system {
 public:
 	system(int* _pargc, char **_argv) : empty_(true) {
 		if(_pargc == nullptr || _argv == nullptr) {
@@ -72,18 +70,15 @@ public:
 			args_.push_back(_argv[i]);
 	}
 
-	static const system& instance(int* _pargc = nullptr, char **_argv = nullptr)
-	{
+	static const system& instance(int* _pargc = nullptr, char **_argv = nullptr) {
 		static system inst(_pargc, _argv);
 		if(_pargc) {
 			assert(_argv != nullptr);
 			// Declare the supported options.
 			boost::program_options::options_description desc("Allowed options");
 
-			try
-			{
-				if(!inst.is_empty())
-				{
+			try {
+				if(!inst.is_empty()) {
 					LOG(error) << "pop::system can only be initialized once";
 					return inst;
 				}
@@ -130,12 +125,9 @@ public:
 							_argv[*_pargc] = nullptr;
 							shift--;
 						}
-					}
-					else i++;
+					} else i++;
 				}
-			}
-			catch(std::exception &e)
-			{
+			} catch(std::exception &e) {
 				LOG(error) << "Error in arguments : " << e.what();
 				std::cout << desc << std::endl;
 				exit(1);
@@ -149,17 +141,13 @@ public:
 		return inst;
 	}
 
-	std::string host_name() const
-	{
-		if(domain_.empty())
-		{
+	std::string host_name() const {
+		if(domain_.empty()) {
 			// if(host_name_.empty())
 			return boost::asio::ip::host_name();
 			// else
 			// return host_name_;
-		}
-		else
-		{
+		} else {
 			// if(host_name_.empty())
 			return boost::asio::ip::host_name() + "." + domain_;
 			// else

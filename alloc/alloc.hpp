@@ -19,8 +19,7 @@ namespace pop {
 /// Parent class for all allocators
 /// allocators can launch an object on a local or remote platform
 
-class allocator
-{
+class allocator {
 public:
 	/// Allocate an object at endpoint
 	virtual void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const = 0;

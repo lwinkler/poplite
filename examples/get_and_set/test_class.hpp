@@ -23,22 +23,18 @@
 
 #include "parser/defs.hpp"
 
-struct test_struct1 : boost::noncopyable
-{
+struct test_struct1 : boost::noncopyable {
 	int a;
 	test_struct1() : a(0) {}
-	template<class Archive> void serialize(Archive & ar, const unsigned int version)
-	{
+	template<class Archive> void serialize(Archive & ar, const unsigned int version) {
 		ar & a;
 	}
 };
 
-class gps_position
-{
+class gps_position {
 private:
 	friend class boost::serialization::access;
-	template<class Archive> void serialize(Archive & ar, const unsigned int version)
-	{
+	template<class Archive> void serialize(Archive & ar, const unsigned int version) {
 		ar & degrees;
 		ar & minutes;
 		ar & seconds;
@@ -60,8 +56,7 @@ public:
 // this include should always be right before the parallel class declaration
 #include "TestClass.iface.hpp"
 
-POP_CLASS TestClass
-{
+POP_CLASS TestClass {
 public:
 	// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 	POP_ALLOCATION(pop::local_allocator())
@@ -69,8 +64,7 @@ public:
 		std::cout << "call constr with " << _s << std::endl;
 	}
 
-	void POP_SYNC SetValues(int _i1, int _i2, double _d, const std::string& _s)
-	{
+	void POP_SYNC SetValues(int _i1, int _i2, double _d, const std::string& _s) {
 		i1_ = _i1;
 		i2_ = _i2;
 		d_  = _d;

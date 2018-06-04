@@ -19,15 +19,13 @@
 
 namespace pop {
 /// The connection class provides serialization primitives on top of a socket.
-class interface_combox
-{
+class interface_combox {
 public:
 	/// Constructor
 	interface_combox() :
 		acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))),
 		callback_(pop::system::instance().host_name(), acceptor_.local_endpoint().port()),
-		connection_(io_service_)
-	{
+		connection_(io_service_) {
 		// Start an accept operation for a new connection.
 		// connection_ptr new_conn();
 		LOG(debug) << "Listen on port " << acceptor_.local_endpoint().port();
@@ -58,8 +56,7 @@ public:
 		return callback_;
 	}
 
-	void send_my_contact(const pop::accesspoint& _to)
-	{
+	void send_my_contact(const pop::accesspoint& _to) {
 		boost::asio::ip::tcp::resolver resolver(io_service_);
 		boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_to.create_query());
 
@@ -76,8 +73,7 @@ public:
 		contact_connection.sync_write_ss(oss);
 	}
 
-	void close_service()
-	{
+	void close_service() {
 		LOG(debug) << "Closing service from interface";
 		boost::asio::ip::tcp::resolver resolver(io_service_);
 		boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(contact_.create_query());
@@ -95,10 +91,8 @@ public:
 
 private:
 	/// Handle completion of a accept operation
-	void handle_accept(const boost::system::error_code& e)
-	{
-		if(e)
-		{
+	void handle_accept(const boost::system::error_code& e) {
+		if(e) {
 			LOG(error) << "Error code in handle_accept: " << e.message();
 			throw std::runtime_error(e.message());
 		}

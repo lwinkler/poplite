@@ -24,8 +24,7 @@ namespace pop {
 
 
 /// Remove server for each parallel object
-template<class ParClass>class broker_combox
-{
+template<class ParClass>class broker_combox {
 public:
 	/// Constructor opens the acceptor and starts waiting for the first incoming
 	/// connection.
@@ -52,8 +51,7 @@ public:
 		std::vector<std::thread> workers;
 		// note: so far we can only set up a fixed number of threads
 		//       this determines the max number of simultaneous calls to the broker
-		for (int i = 0; i < 10; i++) // TODO: const in pop::system ?
-		{
+		for (int i = 0; i < 10; i++) { // TODO: const in pop::system ?
 			workers.push_back(std::thread([&]() {
 				io_service_.run();
 			}));
@@ -69,25 +67,19 @@ public:
 
 private:
 	/// Handle completion of a connect operation.
-	void handle_connect(const boost::system::error_code& _e, boost::asio::ip::tcp::resolver::iterator _endpoint_iterator, connection_ptr _conn)
-	{
-		if (!_e)
-		{
+	void handle_connect(const boost::system::error_code& _e, boost::asio::ip::tcp::resolver::iterator _endpoint_iterator, connection_ptr _conn) {
+		if (!_e) {
 			pop::accesspoint ap(pop::system::instance().host_name(), service_acceptor_.local_endpoint().port());
 			LOG(debug) << "send contact from broker"; // << ap;
 			_conn->sync_write(ap);
 
 			LOG(debug)<<"connected";
-		}
-		else if (_endpoint_iterator != boost::asio::ip::tcp::resolver::iterator())
-		{
+		} else if (_endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
 			// Try the next endpoint.
 			_conn->socket().close();
 			boost::asio::ip::tcp::endpoint endpoint = *_endpoint_iterator;
 			_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++_endpoint_iterator, _conn));
-		}
-		else
-		{
+		} else {
 			throw std::runtime_error("connection failed");
 		}
 		LOG(debug) << "broker starts listening";
@@ -95,10 +87,8 @@ private:
 	}
 
 
-	void handle_read(const boost::system::error_code& _e, connection_ptr _conn)
-	{
-		if(_e)
-		{
+	void handle_read(const boost::system::error_code& _e, connection_ptr _conn) {
+		if(_e) {
 			throw std::runtime_error("handle_read: " + _e.message());
 		}
 		// Receive an incomming remote method invocation
@@ -118,21 +108,17 @@ private:
 		bufout oa(oss);
 		LOG(debug) << "call remote method " << meth_id;
 
-		if(meth_id == method_id::DISCONNECT)
-		{
+		if(meth_id == method_id::DISCONNECT) {
 			LOG(debug) << "disconnect iface and broker";
 			_conn->socket().close();
 			return;
 		}
-		if(meth_id == method_id::DESTROY)
-		{
+		if(meth_id == method_id::DESTROY) {
 			LOG(debug) << "received end signal";
 			_conn->socket().close();
 			io_service_.stop();
 			return;
-		}
-		else if(is_async)
-		{
+		} else if(is_async) {
 			// if the call is asynchronous, we send the ack directly
 			oa << ack;
 			_conn->sync_write_ss(oss);
@@ -148,9 +134,7 @@ private:
 				// exc.text = "Exception caught in async method";
 			}
 			LOG(debug) << "finish calling remote method " << meth_id;
-		}
-		else
-		{
+		} else {
 			pop::exception remote_exc;
 			try {
 				brok_.remote_call(meth_id, ia, oa);
@@ -175,10 +159,8 @@ private:
 	}
 
 	/// Handle contact by a new interface
-	void handle_accept_service(const boost::system::error_code& _e, connection_ptr _service_connection)
-	{
-		if(_e)
-		{
+	void handle_accept_service(const boost::system::error_code& _e, connection_ptr _service_connection) {
+		if(_e) {
 			throw std::runtime_error(_e.message());
 		}
 		_service_connection->sync_read();
@@ -186,14 +168,12 @@ private:
 		service_type stype = service_type::UNKNOWN;
 		ia >> stype;
 		LOG(debug) << "Interface combox contacted";
-		switch(stype)
-		{
+		switch(stype) {
 			case service_type::CLOSE_SERVICE_CONNECTION:
 				// Closing the service:
 				LOG(debug) << "Closing service on broker";
 				return;
-			case service_type::OPEN_SERVICE_CONNECTION:
-			{
+			case service_type::OPEN_SERVICE_CONNECTION: {
 				// Open a contact with a new interface
 				pop::accesspoint ap;
 				ia >> ap;

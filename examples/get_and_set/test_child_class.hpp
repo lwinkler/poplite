@@ -19,8 +19,7 @@
 #include "TestChildClass.iface.hpp"
 
 POP_CLASS TestChildClass :
-public TestClass
-{
+public TestClass {
 public:
 	// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))
 	POP_ALLOCATION(pop::local_allocator())

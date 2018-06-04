@@ -20,9 +20,8 @@ namespace template_ns {
 #include "template_ns/proxy_storage.iface.hpp"
 
 template<typename T>
-POP_CLASS POP_TEMPLATE_TYPES(<int>;<std::string>)
-proxy_storage
-{
+POP_CLASS POP_TEMPLATE_TYPES(<int>; <std::string>)
+proxy_storage {
 public:
 	POP_ALLOCATION(pop::local_allocator())
 	proxy_storage() {}

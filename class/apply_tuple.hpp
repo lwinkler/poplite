@@ -15,8 +15,7 @@
 
 
 
-namespace pop
-{
+namespace pop {
 /**
  * Object Function Tuple Argument Unpacking
  *
@@ -29,14 +28,12 @@ namespace pop
  * @ingroup g_util_tuple
  */
 template < uint N >
-struct apply_obj_func
-{
+struct apply_obj_func {
 	template < typename T, typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple( T* pObj,
 	                      R (T::*f)( ArgsF... ),
 	                      std::tuple<ArgsT...>& t,
-	                      Args&&... args )
-	{
+	                      Args&&... args ) {
 		return apply_obj_func<N-1>::apply_tuple( pObj, f, t, std::get<N-1>( t ), args... );
 	}
 };
@@ -53,14 +50,12 @@ struct apply_obj_func
  * @ingroup g_util_tuple
  */
 template <>
-struct apply_obj_func<0>
-{
+struct apply_obj_func<0> {
 	template < typename T, typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple( T* pObj,
 	                      R (T::*f)( ArgsF... ),
 	                      std::tuple<ArgsT...>& /* t */,
-	                      Args&&... args )
-	{
+	                      Args&&... args ) {
 		return (pObj->*f)( args... );
 	}
 };
@@ -72,8 +67,7 @@ struct apply_obj_func<0>
  */
 // Actual apply function
 template < typename T, typename R, typename... ArgsF, typename... ArgsT >
-void apply_tuple( T* pObj, R (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa)
-{
+void apply_tuple( T* pObj, R (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa) {
 	R r = apply_obj_func<sizeof...(ArgsT)>::apply_tuple( pObj, f, t );
 	_oa << r;
 	// _oa << t;
@@ -86,8 +80,7 @@ void apply_tuple( T* pObj, R (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop:
  */
 // Template overload for void methods
 template < typename T, typename... ArgsF, typename... ArgsT >
-void apply_tuple( T* pObj, void (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa)
-{
+void apply_tuple( T* pObj, void (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa) {
 	apply_obj_func<sizeof...(ArgsT)>::apply_tuple( pObj, f, t );
 	// _oa << t;
 }
@@ -106,13 +99,11 @@ void apply_tuple( T* pObj, void (T::*f)( ArgsF... ), std::tuple<ArgsT...> & t, p
  * @ingroup g_util_tuple
  */
 template < uint N >
-struct apply_func
-{
+struct apply_func {
 	template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple( R (*f)( ArgsF... ),
 	                      std::tuple<ArgsT...>& t,
-	                      Args&&... args )
-	{
+	                      Args&&... args ) {
 		return apply_func<N-1>::apply_tuple( f, t, std::get<N-1>( t ), args... );
 	}
 };
@@ -129,13 +120,11 @@ struct apply_func
  * @ingroup g_util_tuple
  */
 template <>
-struct apply_func<0>
-{
+struct apply_func<0> {
 	template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple(R(*f)( ArgsF...),
 	                     std::tuple<ArgsT...>& /* t */,
-	                     Args&&... args)
-	{
+	                     Args&&... args) {
 		return f(args...);
 	}
 };
@@ -148,8 +137,7 @@ struct apply_func<0>
 // Actual apply function
 template < typename R, typename... ArgsF, typename... ArgsT >
 R apply_tuple( R (*f)(ArgsF...),
-               std::tuple<ArgsT...> & t )
-{
+               std::tuple<ArgsT...> & t ) {
 	return apply_func<sizeof...(ArgsT)>::apply_tuple( f, t );
 }
 } // namespace

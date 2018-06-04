@@ -16,15 +16,13 @@
 // this include should always be right before the parallel class declaration
 #include "client.iface.hpp"
 
-POP_CLASS client
-{
+POP_CLASS client {
 public:
 	POP_ALLOCATION(pop::local_allocator())
 	client(std::string _user, pop::accesspoint _server_ap);
 	virtual ~client();
 
-	POP_SYNC inline void message(std::string msg_)
-	{
+	POP_SYNC inline void message(std::string msg_) {
 		std::cout << msg_ << std::endl;
 	}
 

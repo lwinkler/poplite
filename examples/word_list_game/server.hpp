@@ -29,8 +29,7 @@
 class client_iface;
 
 /// A challenge to be completed by the user
-struct challenge
-{
+struct challenge {
 	challenge(int _num, char _letter, std::string _category) : num(_num), letter(_letter), category(_category) {}
 	void print(std::ostream & _os) const {
 		_os << "Guess " << num << " word(s) of category " << category << " starting with " << letter << std::endl;
@@ -44,8 +43,7 @@ struct challenge
 #include "server.iface.hpp"
 
 /// The server that handles the game
-POP_CLASS server
-{
+POP_CLASS server {
 public:
 	POP_ALLOCATION(pop::local_allocator())
 	// POP_ALLOCATION(pop::ssh_allocator("lwinkler@localhost"))

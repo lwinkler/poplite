@@ -17,12 +17,10 @@
 namespace pop {
 
 /// Class to allocate object manually: the command has to be run by the user on any platform
-class manual_allocator : public allocator
-{
+class manual_allocator : public allocator {
 public:
 	manual_allocator() {}
-	void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const
-	{
+	void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const {
 		std::stringstream ss;
 		ss << "./" << _executable << " '" << _class_name << "'" << " " << _callback.host_name << " " << _callback.port;
 		pop::system::instance().print_args(ss);

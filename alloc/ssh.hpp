@@ -17,12 +17,10 @@
 /// Class to allocate an object via ssh
 namespace pop {
 
-class ssh_allocator : public allocator
-{
+class ssh_allocator : public allocator {
 public:
 	ssh_allocator(const std::string& _url): url_(_url) {}
-	void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const
-	{
+	void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const {
 		std::stringstream ss;
 		const auto& popsys = pop::system::instance();
 		ss << "ssh" << " " << url_ << " " << popsys.path() << "/" << _executable << " '" << _class_name << "'" << " " << _callback.host_name << " " << _callback.port;
@@ -46,8 +44,7 @@ public:
 			perror("Error in execution of object file");
 
 			throw std::runtime_error("Error while running " + ss.str());
-		}
-		else { /* pid!=0; parent process */
+		} else { /* pid!=0; parent process */
 			// waitpid(pid,0,0); /* do not wait for child to exit */
 		}
 	}

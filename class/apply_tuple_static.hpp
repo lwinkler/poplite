@@ -15,8 +15,7 @@
 
 
 
-namespace pop
-{
+namespace pop {
 /**
  * Object Function Tuple Argument Unpacking
  *
@@ -29,14 +28,12 @@ namespace pop
  * @ingroup g_util_tuple
  */
 template < uint N >
-struct apply_obj_func_static
-{
+struct apply_obj_func_static {
 	template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple_static(
 	    R (*f)( ArgsF... ),
 	    std::tuple<ArgsT...>& t,
-	    Args&&... args )
-	{
+	    Args&&... args ) {
 		return apply_obj_func_static<N-1>::apply_tuple_static( f, t, std::get<N-1>( t ), args... );
 	}
 };
@@ -53,14 +50,12 @@ struct apply_obj_func_static
  * @ingroup g_util_tuple
  */
 template <>
-struct apply_obj_func_static<0>
-{
+struct apply_obj_func_static<0> {
 	template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple_static(
 	    R (*f)( ArgsF... ),
 	    std::tuple<ArgsT...>& /* t */,
-	    Args&&... args )
-	{
+	    Args&&... args ) {
 		return (*f)( args... );
 	}
 };
@@ -72,8 +67,7 @@ struct apply_obj_func_static<0>
  */
 // Actual apply function
 template < typename R, typename... ArgsF, typename... ArgsT >
-void apply_tuple_static(R (*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa)
-{
+void apply_tuple_static(R (*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa) {
 	R r = apply_obj_func_static<sizeof...(ArgsT)>::apply_tuple_static( f, t );
 	_oa << r;
 	// _oa << t;
@@ -86,8 +80,7 @@ void apply_tuple_static(R (*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufou
  */
 // Template overload for void methods
 template < typename... ArgsF, typename... ArgsT >
-void apply_tuple_static(void (*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa)
-{
+void apply_tuple_static(void (*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bufout& _oa) {
 	apply_obj_func_static<sizeof...(ArgsT)>::apply_tuple_static( f, t );
 	// _oa << t;
 }
@@ -106,13 +99,11 @@ void apply_tuple_static(void (*f)( ArgsF... ), std::tuple<ArgsT...> & t, pop::bu
  * @ingroup g_util_tuple
  */
 template < uint N >
-struct apply_func_static
-{
+struct apply_func_static {
 	template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple_static( R (*f)( ArgsF... ),
 	                             std::tuple<ArgsT...>& t,
-	                             Args&&... args )
-	{
+	                             Args&&... args ) {
 		return apply_func_static<N-1>::apply_tuple_static( f, t, std::get<N-1>( t ), args... );
 	}
 };
@@ -129,13 +120,11 @@ struct apply_func_static
  * @ingroup g_util_tuple
  */
 template <>
-struct apply_func_static<0>
-{
+struct apply_func_static<0> {
 	template < typename R, typename... ArgsF, typename... ArgsT, typename... Args >
 	static R apply_tuple_static(R(*f)( ArgsF...),
 	                            std::tuple<ArgsT...>& /* t */,
-	                            Args&&... args)
-	{
+	                            Args&&... args) {
 		return f(args...);
 	}
 };
@@ -148,8 +137,7 @@ struct apply_func_static<0>
 // Actual apply function
 template < typename R, typename... ArgsF, typename... ArgsT >
 R apply_tuple_static( R (*f)(ArgsF...),
-                      std::tuple<ArgsT...> & t )
-{
+                      std::tuple<ArgsT...> & t ) {
 	return apply_func_static<sizeof...(ArgsT)>::apply_tuple_static( f, t );
 }
 } // namespace

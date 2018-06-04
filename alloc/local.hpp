@@ -17,8 +17,7 @@
 namespace pop {
 
 /// Class to allocate object locally, as a fork of the process
-class local_allocator : public allocator
-{
+class local_allocator : public allocator {
 public:
 	local_allocator() {}
 	void allocate(const std::string& _executable, const std::string& _class_name, const pop::accesspoint& _callback) const {
@@ -56,8 +55,7 @@ public:
 			perror("Error in execution of object file");
 
 			throw std::runtime_error("Error while running " + ss.str());
-		}
-		else { /* pid!=0; parent process */
+		} else { /* pid!=0; parent process */
 			// waitpid(pid,0,0); /* do not wait for child to exit */
 		}
 	}

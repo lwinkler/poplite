@@ -17,8 +17,7 @@
 /// A point of access (via communication interface) that is serializable
 namespace pop {
 
-class accesspoint
-{
+class accesspoint {
 public:
 	accesspoint() noexcept : host_name(""), port(0) {}
 
@@ -42,16 +41,14 @@ public:
 	int port;
 
 
-	boost::asio::ip::tcp::resolver::query create_query() const
-	{
+	boost::asio::ip::tcp::resolver::query create_query() const {
 		boost::asio::ip::tcp::resolver::query q(host_name, std::to_string(port));
 		return q;
 	}
 
 private:
 	friend class boost::serialization::access;
-	template<class Archive>void serialize(Archive & ar, const unsigned int /*version*/)
-	{
+	template<class Archive>void serialize(Archive & ar, const unsigned int /*version*/) {
 		ar & host_name;
 		ar & port;
 	}
