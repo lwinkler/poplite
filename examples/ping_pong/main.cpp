@@ -19,9 +19,9 @@ int main(int argc, char* argv[])
 	// Init the pop system with arguments
 	pop::system::instance(&argc, argv);
 
-	if(argc < 3 || (string(argv[1]) != "async" && string(argv[1]) != "sync" ))
+	if(argc < 4)
 	{
-		cerr << "usage: " << argv[0] << " <sync or async> <nb pings>" << endl;
+		cerr << "usage: " << argv[0] << " <sync or async> <nb pings> <second host>" << endl;
 		return 1;
 	}
 
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	{
 		// create 2 objects
 		ping_pong_iface p1;
-		ping_pong_iface p2;
+		ping_pong_iface p2(argv[3]);
 		p1.set_next_one(p2.contact());
 		p2.set_next_one(p1.contact());
 
@@ -40,10 +40,14 @@ int main(int argc, char* argv[])
 			// note: we need to add a sleep here to allow all methods to complete
 			sleep(2);
 		}
-		else
+		else if(string(argv[1]) == "async")
 		{
 			// objects ping each other synchrounously
 			p2.sync_ping(atoi(argv[2]));
+		}
+		else 
+		{
+			cerr << "Unknown invoker " << argv[1] << endl;
 		}
 	}
 	catch (std::exception& e)

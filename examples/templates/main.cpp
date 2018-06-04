@@ -77,6 +77,8 @@ int main(int argc, char* argv[])
 		template_ns::printer_iface pr;
 		pr.print(121212);
 		pr.print(string("Tested the template method"));
+		pr.static_print(string("All ..."));
+		pr.const_print(string("... done !"));
 	}
 	catch (std::exception& e)
 	{

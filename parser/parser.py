@@ -239,7 +239,6 @@ def get_template_types(node):
 def get_template_invoker(meth):
 	""" Return the invoker of a template method """
 	for c1 in meth.lexical_parent.get_children():
-		# Search other attribute with specific name (since annotations are not valid on templates). TODO: see if fixed in clang
 		if c1.spelling == 'template_types_of_' + meth.spelling:
 			for c2 in c1.get_children():
 				if c2.kind == cindex.CursorKind.ANNOTATE_ATTR:

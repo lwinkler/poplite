@@ -17,6 +17,7 @@
 #ifndef _POP_PARSER_ // this accelerates parsing
 #include "class/system.hpp"
 #include "alloc/local.hpp"
+#include "alloc/ssh.hpp"
 #include "class/interface.hpp"
 #endif
 
@@ -34,6 +35,10 @@ public:
 	// here we use a local allocator: the object will be created locally
 	POP_ALLOCATION(pop::local_allocator())
 	ping_pong() {}
+
+	// this variant uses an ssh allocator
+	POP_ALLOCATION(pop::ssh_allocator(_url))
+	ping_pong(const std::string& _url) {}
 
 	// An example of synchronous method
 	void POP_SYNC  sync_ping(int _cpt);
