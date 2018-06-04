@@ -300,7 +300,7 @@ def list_args(parent, front_comma = False, back_comma = False):
 
 def align(filename):
 	""" Align the file with command astyle """
-	call(['astyle', '-ntS', filename])
+	call(['astyle', '-ntS', '--style=attach', filename])
 
 if __name__ == '__main__':
 	print 'this file is a Python library: try using popgen instead'
