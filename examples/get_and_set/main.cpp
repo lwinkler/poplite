@@ -13,8 +13,7 @@
 
 using namespace std;
 
-bool test_interface(TestClass_iface& testClass, bool set_values)
-{
+bool test_interface(TestClass_iface& testClass, bool set_values) {
 	int i1 = 11, i2 = 22;
 	double d = 88;
 	string s = "bla";
@@ -69,13 +68,11 @@ bool test_interface(TestClass_iface& testClass, bool set_values)
 
 /// A simple example for poplite
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	// Init the pop system with arguments
 	pop::system::instance(&argc, argv);
 
-	try
-	{
+	try {
 		{
 			LOG(info) << "call constructor for TestClass";
 			TestClass_iface testClass("localhost");
@@ -126,9 +123,7 @@ int main(int argc, char* argv[])
 		LOG(info) << "end of main";
 		// sleep(3);
 		// TODO: test serialization of unique ptr and ptr
-	}
-	catch (std::exception& e)
-	{
+	} catch (std::exception& e) {
 		LOG(error) << "ERROR: " << e.what();
 		return 1;
 	}

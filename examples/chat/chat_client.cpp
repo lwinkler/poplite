@@ -19,22 +19,18 @@ void chat_client::disconnect() {
 	connected_clients_.clear();
 }
 
-void chat_client::send_all(const string& _text)
-{
+void chat_client::send_all(const string& _text) {
 	LOG(debug) << "send to " << connected_clients_.size() << " clients";
-	for(auto& contact : connected_clients_)
-	{
+	for(auto& contact : connected_clients_) {
 		contact.second->print("*" + username_ + "*: " + _text);
 	}
 }
 
-void chat_client::print(const string& _text)
-{
+void chat_client::print(const string& _text) {
 	cout << endl << _text << endl;
 }
 
-void chat_client::add_contact(const pop::accesspoint& _ap)
-{
+void chat_client::add_contact(const pop::accesspoint& _ap) {
 	pop::write_lock lock1(contacts_lock_);
 	shared_ptr<chat_client_iface> pcl(new chat_client_iface(_ap));
 	const string username = pcl->get_username();
@@ -48,8 +44,7 @@ void chat_client::add_contact(const pop::accesspoint& _ap)
 	connected_clients_.emplace(username, pcl);
 }
 
-void chat_client::remove_contacts()
-{
+void chat_client::remove_contacts() {
 	connected_clients_.clear();
 }
 

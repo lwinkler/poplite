@@ -23,13 +23,11 @@ template<typename T> test_interface(storage_iface<T>& testClass, bool set_values
 
 /// A simple example for poplite
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	// Init the pop system with arguments
 	pop::system::instance(&argc, argv);
 
-	try
-	{
+	try {
 		{
 			template_ns::proxy_storage_iface<int> stor1;
 			stor1.push(11);
@@ -79,9 +77,7 @@ int main(int argc, char* argv[])
 		pr.print(string("Tested the template method"));
 		pr.static_print(string("All ..."));
 		pr.const_print(string("... done !"));
-	}
-	catch (std::exception& e)
-	{
+	} catch (std::exception& e) {
 		LOG(error) << "ERROR: " << e.what();
 		return 1;
 	}

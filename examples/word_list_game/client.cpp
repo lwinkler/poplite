@@ -18,21 +18,17 @@ using namespace std;
 client::client(string _user, pop::accesspoint _server_ap) :
 	points_(0),
 	server_(_server_ap),
-	username_(_user)
-{
+	username_(_user) {
 }
 
-client::~client()
-{
+client::~client() {
 	cout << "You have made " << points_ << " points" << endl;
 }
 
-void client::run()
-{
+void client::run() {
 	LOG(debug) << "run";
 	string word;
-	while(true)
-	{
+	while(true) {
 		LOG(debug) << "guess";
 		cout << "word: ";
 		cin >> word;

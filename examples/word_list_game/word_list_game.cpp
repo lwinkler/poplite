@@ -15,14 +15,11 @@
 
 using namespace std;
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	pop::system::instance(&argc, argv);
 
-	try
-	{
-		if(argc == 1)
-		{
+	try {
+		if(argc == 1) {
 			// Create a server
 			server_iface serv;
 			cout << "waiting for other players: game will start as soon as you log in" << endl;
@@ -40,9 +37,7 @@ int main(int argc, char* argv[])
 			serv.print_game(user);
 			cout << "Run the client" << endl;
 			cl.run();
-		}
-		else if(argc >= 3)
-		{
+		} else if(argc >= 3) {
 			cout << "Create a client and connect to an existing server " << argv[1] << ":" << argv[2] << endl;
 			pop::accesspoint ap;
 			ap.host_name = argv[1];
@@ -63,9 +58,7 @@ int main(int argc, char* argv[])
 		}
 
 		return 0;
-	}
-	catch(exception &e)
-	{
+	} catch(exception &e) {
 		cerr << "Exception: " << e.what() << endl;
 		return 1;
 	}

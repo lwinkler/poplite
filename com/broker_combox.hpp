@@ -51,7 +51,7 @@ public:
 		std::vector<std::thread> workers;
 		// note: so far we can only set up a fixed number of threads
 		//       this determines the max number of simultaneous calls to the broker
-		for (int i = 0; i < 10; i++) { // TODO: const in pop::system ?
+		for (int i = 0; i < 10; i++) { // TODO: const in pop::system ? https://www.gamedev.net/blogs/entry/2249317-a-guide-to-getting-started-with-boostasio/
 			workers.push_back(std::thread([&]() {
 				io_service_.run();
 			}));

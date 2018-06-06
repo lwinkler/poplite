@@ -23,8 +23,7 @@ template<typename T> void check_equal(const T& _a, const T& _b, int _line) {
 
 /// A simple example for poplite
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	try {
 		// Init the pop system with arguments
 		pop::system::instance(&argc, argv);

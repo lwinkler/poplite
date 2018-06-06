@@ -14,8 +14,7 @@ using namespace std;
 
 /// Two remote objects are calling each other until counter reaches zero
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	// Init the pop system with arguments
 	pop::system::instance(&argc, argv);
 
