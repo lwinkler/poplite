@@ -9,6 +9,7 @@
 //
 
 #include "ping_pong.hpp"
+#include "mutex.hpp"
 
 using namespace std;
 
@@ -31,10 +32,11 @@ int main(int argc, char* argv[]) {
 		p2.set_next_one(p1.contact());
 
 		if(string(argv[1]) == "async") {
+			pop::mutex_iface l;
 			// objects ping each other asynchrounously
-			p2.async_ping(atoi(argv[2]));
+			p2.async_ping(atoi(argv[2]), l.contact());
 			// note: we need to add a sleep here to allow all methods to complete
-			sleep(2);
+			l.wait();
 		} else if(string(argv[1]) == "async") {
 			// objects ping each other synchrounously
 			p2.sync_ping(atoi(argv[2]));
@@ -42,8 +44,6 @@ int main(int argc, char* argv[]) {
 			cerr << "Unknown invoker " << argv[1] << endl;
 		}
 
-		// pause until completion TODO: maybe add a lock or events
-		// cin.get();
 	} catch (std::exception& e) {
 		cout << "ERROR: " << e.what() << endl;
 		return 1;

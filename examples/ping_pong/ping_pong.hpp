@@ -41,7 +41,7 @@ public:
 
 	// An example of synchronous method
 	void POP_SYNC  sync_ping(int _cpt);
-	void POP_ASYNC async_ping(int _cpt);
+	void POP_ASYNC async_ping(int _cpt, pop::accesspoint _callback);
 	void POP_SYNC set_next_one(const pop::accesspoint& _ap) {
 		next_one_.reset(new ping_pong_iface(_ap));
 	}

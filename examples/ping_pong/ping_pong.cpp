@@ -9,6 +9,7 @@
 //
 
 #include "ping_pong.hpp"
+#include "mutex.hpp"
 
 void ping_pong::sync_ping(int _cpt) {
 	std::cout << "Counter = " << _cpt << std::endl;
@@ -21,12 +22,15 @@ void ping_pong::sync_ping(int _cpt) {
 	}
 }
 
-void ping_pong::async_ping(int _cpt) {
+void ping_pong::async_ping(int _cpt, pop::accesspoint _callback) {
 	std::cout << "Counter = " << _cpt << std::endl;
 	if(_cpt) {
 		// note: we need to add a delay, probably to let the connections close
-		usleep(10000);
+		usleep(100);
 		// Call next target
-		next_one_->async_ping(_cpt - 1);
+		next_one_->async_ping(_cpt - 1, _callback);
+	} else {
+		pop::mutex_iface l(_callback);
+		l.unlock();
 	}
 }
