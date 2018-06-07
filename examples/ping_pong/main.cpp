@@ -41,6 +41,9 @@ int main(int argc, char* argv[]) {
 		} else {
 			cerr << "Unknown invoker " << argv[1] << endl;
 		}
+
+		// pause until completion TODO: maybe add a lock or events
+		// cin.get();
 	} catch (std::exception& e) {
 		cout << "ERROR: " << e.what() << endl;
 		return 1;

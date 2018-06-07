@@ -24,6 +24,8 @@ void ping_pong::sync_ping(int _cpt) {
 void ping_pong::async_ping(int _cpt) {
 	std::cout << "Counter = " << _cpt << std::endl;
 	if(_cpt) {
+		// note: we need to add a delay, probably to let the connections close
+		usleep(10000);
 		// Call next target
 		next_one_->async_ping(_cpt - 1);
 	}
