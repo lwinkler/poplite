@@ -20,10 +20,6 @@ def write_head(fout, classname, filename_in):
 #include "class/broker.hpp"
 #include "%s"
 
-namespace pop
-{
-namespace remote
-{
 """ % (filename_in))
 
 #--------------------------------------------------------------------------------
@@ -62,6 +58,13 @@ def write_meth(fout, m, full_name, template_str):
 #--------------------------------------------------------------------------------
 
 def write_broker(fout, class_node):
+
+	fout.write("""
+namespace pop
+{
+namespace remote
+{
+""")
 	
 	# implementation of static array of methods
 	templates_str = parser.get_template_types(class_node)
@@ -78,6 +81,11 @@ def write_broker(fout, class_node):
 
 		fout.write('nullptr\n};\n')
 	fout.write('}\n}\n')
+
+def write_main(fout, class_node):
+	
+	# implementation of static array of methods
+	templates_str = parser.get_template_types(class_node)
 
 	fout.write("""
 #include "com/broker_combox.hpp"

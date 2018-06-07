@@ -52,20 +52,21 @@ def main():
 	
 	# Generate the file containing the interface
 	for c in parclasses:
-		if parser.get_full_name(c) not in classnames_in:
+		full_name = parser.get_full_name(c)
+		if full_name not in classnames_in:
 			continue
-		iface_out  = gendir + '/%s.iface.hpp' % parser.convert_to_classname(parser.get_full_name(c))
+		iface_out  = gendir + '/%s.iface.hpp' % parser.convert_to_classname(full_name)
 		definitions = []
 
-		print 'Generate %s containing the interface' % iface_out
+		# print 'Generate %s containing the interface' % iface_out
 		with open(iface_out, 'w') as fout:
-			parser_iface.write_head(fout, parser.get_full_name(c))
+			parser_iface.write_head(fout, full_name)
 			parser_iface.write_interface(fout, c, definitions)
 			parser_iface.write_foot(fout)
 
 		# generate cpp file of the interface
-		iface_out2 = gendir + '/%s.iface.cpp' % parser.convert_to_classname(parser.get_full_name(c))
-		print 'Generate %s containing the interface' % iface_out2
+		iface_out2 = gendir + '/%s.iface.cpp' % parser.convert_to_classname(full_name)
+		# print 'Generate %s containing the interface' % iface_out2
 		with open(iface_out2, 'w') as fout2:
 			if definitions:
 				fout2.write('#include "%s"\n%s\n' % (filename_in, '\n'.join(definitions)))
@@ -77,11 +78,19 @@ def main():
 		full_name = parser.get_full_name(c)
 		if full_name not in classnames_in:
 			continue
-		obj_out  = gendir + '/main.%s.cpp' % (parser.convert_to_objname(full_name))
 
-		with open(obj_out, 'w') as fout:
+		brok_out  = gendir + '/%s.brok.cpp' % (parser.convert_to_classname(full_name))
+		with open(brok_out, 'w') as fout:
 			parser_brok.write_head(fout, full_name, c.location.file)
 			parser_brok.write_broker(fout, c)
+			# parser_brok.write_foot(fout)
+
+		parser.align(brok_out)
+
+		obj_out  = gendir + '/main.%s.cpp' % (parser.convert_to_objname(full_name))
+		with open(obj_out, 'w') as fout:
+			parser_brok.write_head(fout, full_name, c.location.file)
+			parser_brok.write_main(fout, c)
 			# parser_brok.write_foot(fout)
 
 		parser.align(obj_out)
