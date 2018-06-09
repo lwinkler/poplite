@@ -101,7 +101,6 @@ public:
 	inline void remote_call(int _nb, bufin& _ia, bufout& _oa) {
 		(methods_.at(_nb))(_ia, _oa, p_obj_);
 	}
-private:
 
 	/// A call to constructor
 	template<typename ...Args> static ParClass* __constr(Args... args) {
@@ -144,6 +143,10 @@ private:
 		_ia >> tup;
 		apply_tuple_const(_p_obj.get(), _p_meth, tup, _oa);
 		serialize_out<bufout, Args...>(_oa, tup);
+	}
+
+	inline std::unique_ptr<ParClass>& ptr_obj() {
+		return p_obj_;
 	}
 
 

@@ -34,13 +34,21 @@ public:
 		mtx_.lock();
 	}
 
+	~mutex() {
+		mtx_.lock();
+		mtx_.unlock();
+	}
+
 	void POP_ASYNC unlock() {
+		LOG(debug) << "Unlock mutex";
 		mtx_.unlock();
 	}
 
 	void POP_SYNC wait() {
+		LOG(debug) << "Wait in mutex";
 		mtx_.lock();
 		mtx_.unlock();
+		LOG(debug) << "Stop waiting in mutex";
 	}
 
 private:

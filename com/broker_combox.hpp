@@ -46,6 +46,18 @@ public:
 		connection_ptr new_conn(new connection(io_service_));
 		new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 	}
+	/// Simplified constructor for local objects. Does not connect to interface
+	broker_combox(remote::broker<ParClass>& _brok) :
+		brok_(_brok),
+		service_acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))
+		// contact_connection_(io_service_)
+	{
+		boost::asio::ip::tcp::resolver resolver(io_service_);
+
+		// Start a connection as a point of contact
+		connection_ptr service_connection(new connection(io_service_));
+		service_acceptor_.async_accept(service_connection->socket(), boost::bind(&broker_combox::handle_accept_service, this, boost::asio::placeholders::error, service_connection));
+	}
 	/// Run io server
 	inline void run() {
 		std::vector<std::thread> workers;
@@ -61,7 +73,12 @@ public:
 		});
 	}
 
-	inline const boost::asio::ip::tcp::endpoint& contact() const {
+	inline void stop() {
+		io_service_.stop();
+	}
+
+	// TODO: Used ? rename
+	inline boost::asio::ip::tcp::endpoint contact() const {
 		return service_acceptor_.local_endpoint();
 	}
 
@@ -116,7 +133,7 @@ private:
 		if(meth_id == method_id::DESTROY) {
 			LOG(debug) << "received end signal";
 			_conn->socket().close();
-			io_service_.stop();
+			stop();
 			return;
 		} else if(is_async) {
 			// if the call is asynchronous, we send the ack directly

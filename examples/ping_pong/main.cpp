@@ -8,12 +8,47 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include "class/broker.hpp"
+#include "com/broker_combox.hpp"
+
 #include "ping_pong.hpp"
 #include "mutex.hpp"
 
 using namespace std;
 
 /// Two remote objects are calling each other until counter reaches zero
+
+namespace pop {
+template<typename T> class local_object final {
+	public:
+		local_object() : combox_(brok_) {
+			brok_.ptr_obj().reset(new T());
+
+			contact_.host_name = pop::system::instance().host_name();
+			contact_.port = combox_.contact().port();
+		}
+
+		inline void run() {
+			combox_.run();
+		}
+
+		inline void stop() {
+			combox_.stop();
+		}
+
+		inline T& object() {
+			return *(brok_.ptr_obj());
+		}
+		
+		inline const pop::accesspoint& contact() const {
+			return contact_;
+		}
+	private:
+		pop::accesspoint contact_;
+		pop::remote::broker<T> brok_;
+		pop::broker_combox<T> combox_;
+};
+} // namespace pop
 
 int main(int argc, char* argv[]) {
 	// Init the pop system with arguments
@@ -32,11 +67,20 @@ int main(int argc, char* argv[]) {
 		p2.set_next_one(p1.contact());
 
 		if(string(argv[1]) == "async") {
-			pop::mutex_iface l;
+			// pop::mutex_iface l;
+			pop::local_object<pop::mutex> l;
+			pop::accesspoint contact = l.contact();
+			std::thread th([&l] {
+					l.run();
+			});
+
 			// objects ping each other asynchrounously
-			p2.async_ping(atoi(argv[2]), l.contact());
+			p2.async_ping(atoi(argv[2]), contact);
+
 			// note: we need to add a sleep here to allow all methods to complete
-			l.wait();
+			l.object().wait();
+			l.stop();
+			th.join();
 		} else if(string(argv[1]) == "async") {
 			// objects ping each other synchrounously
 			p2.sync_ping(atoi(argv[2]));
