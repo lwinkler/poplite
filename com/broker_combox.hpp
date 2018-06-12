@@ -31,41 +31,53 @@ public:
 	broker_combox(remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query) :
 		brok_(_brok),
 		service_acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))
-		// contact_connection_(io_service_)
 	{
 		boost::asio::ip::tcp::resolver resolver(io_service_);
 		boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_query);
 		boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
 
-		// Start a connection as a point of contact
+		// Accept connection from other interfaces
 		connection_ptr service_connection(new connection(io_service_));
 		service_acceptor_.async_accept(service_connection->socket(), boost::bind(&broker_combox::handle_accept_service, this, boost::asio::placeholders::error, service_connection));
+		// run_handler_in_new_thread(io_service_);
 
 		// Start an asynchronous connect operation for the connecting interface
 		LOG(debug) <<"async connect";
+		run_handler_in_new_thread(io_service_);
 		connection_ptr new_conn(new connection(io_service_));
 		new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 	}
+
 	/// Simplified constructor for local objects. Does not connect to interface
 	broker_combox(remote::broker<ParClass>& _brok) :
 		brok_(_brok),
 		service_acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/))
-		// contact_connection_(io_service_)
 	{
-		boost::asio::ip::tcp::resolver resolver(io_service_);
-
-		// Start a connection as a point of contact
-		connection_ptr service_connection(new connection(io_service_));
+		// Accept connection from other interfaces
+		connection_ptr service_connection(new connection(io_service_)); // TODO: Avoid rewrite
 		service_acceptor_.async_accept(service_connection->socket(), boost::bind(&broker_combox::handle_accept_service, this, boost::asio::placeholders::error, service_connection));
+		// run_handler_in_new_thread(io_service_);
 	}
+
+	static void run_handler_in_new_thread(boost::asio::io_service& _service) {
+		std::thread th([&_service]{
+			_service.run();
+		});
+		th.detach();
+	}
+
 	/// Run io server
 	inline void run() {
 		std::vector<std::thread> workers;
+		// run_handler_in_new_thread(io_second_service_);
 		// note: so far we can only set up a fixed number of threads
 		//       this determines the max number of simultaneous calls to the broker
 		for (int i = 0; i < 10; i++) { // TODO: const in pop::system ? https://www.gamedev.net/blogs/entry/2249317-a-guide-to-getting-started-with-boostasio/
 			workers.push_back(std::thread([&]() {
-				io_service_.run();
+						if(i%2)
+						io_service_.run();
+						else
+						io_second_service_.run();
 			}));
 		}
 		std::for_each(workers.begin(), workers.end(), [](std::thread &t) {
@@ -75,6 +87,7 @@ public:
 
 	inline void stop() {
 		io_service_.stop();
+		io_second_service_.stop();
 	}
 
 	// TODO: Used ? rename
@@ -95,6 +108,7 @@ private:
 			// Try the next endpoint.
 			_conn->socket().close();
 			boost::asio::ip::tcp::endpoint endpoint = *_endpoint_iterator;
+			// run_handler_in_new_thread(io_second_service_); // TODO remove ?
 			_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++_endpoint_iterator, _conn));
 		} else {
 			throw std::runtime_error("connection failed");
@@ -173,6 +187,8 @@ private:
 
 		LOG(debug) << "broker re-starts listening";
 		_conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, _conn));
+
+		// run_handler_in_new_thread(io_second_service_);
 	}
 
 	/// Handle contact by a new interface
@@ -202,6 +218,7 @@ private:
 
 				// Start an asynchronous connect operation and connect to interface
 				LOG(debug) <<"async connect";
+				run_handler_in_new_thread(io_service_);
 				connection_ptr new_conn(new connection(io_service_));
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
 			}
@@ -219,6 +236,7 @@ private:
 	/// The data to be sent to each client.
 	pop::remote::broker<ParClass>& brok_;
 	boost::asio::io_service io_service_;
+	boost::asio::io_service io_second_service_; // TODO: keep ?
 	boost::asio::ip::tcp::acceptor service_acceptor_;
 };
 

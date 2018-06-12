@@ -11,8 +11,10 @@
 #include "ping_pong.hpp"
 #include "mutex.hpp"
 
+using namespace std;
+
 void ping_pong::sync_ping(int _cpt) {
-	std::cout << "Counter = " << _cpt << std::endl;
+	cout << "Counter = " << _cpt << endl;
 	if(_cpt) {
 		// Call next target
 		// trick: with sync we need to create a new connection to avoid deadlocks !
@@ -23,7 +25,7 @@ void ping_pong::sync_ping(int _cpt) {
 }
 
 void ping_pong::async_ping(int _cpt, pop::accesspoint _callback) {
-	std::cout << "Counter = " << _cpt << std::endl;
+	cout << "Counter = " << _cpt << endl;
 	if(_cpt) {
 		// note: we need to add a delay, probably to let the connections close
 		usleep(100);

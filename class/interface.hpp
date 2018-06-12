@@ -61,7 +61,7 @@ public:
 			combox_(),
 			link_life_(false) {
 		// Send our endpoint
-		combox_.send_my_contact(_contact);
+		combox_.send_my_contact(_contact); // TODO: Why do we need this ? Simplify ?
 
 		// Wait for the broker to call us back
 		combox_.run();

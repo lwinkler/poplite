@@ -63,8 +63,10 @@ int main(int argc, char* argv[]) {
 		// create 2 objects
 		ping_pong_iface p1;
 		ping_pong_iface p2(argv[3]);
+		ping_pong_iface p3;
 		p1.set_next_one(p2.contact());
-		p2.set_next_one(p1.contact());
+		p2.set_next_one(p3.contact());
+		p3.set_next_one(p1.contact()); // TODO
 
 		if(string(argv[1]) == "async") {
 			// pop::mutex_iface l;
@@ -81,7 +83,7 @@ int main(int argc, char* argv[]) {
 			l.object().wait();
 			l.stop();
 			th.join();
-		} else if(string(argv[1]) == "async") {
+		} else if(string(argv[1]) == "sync") {
 			// objects ping each other synchrounously
 			p2.sync_ping(atoi(argv[2]));
 		} else {

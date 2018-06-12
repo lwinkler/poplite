@@ -101,12 +101,6 @@ private:
 		LOG(debug) << "Interface combox connected";
 	}
 
-	/*friend class boost::serialization::access;
-	template<class Archive> void serialize(Archive & ar, const unsigned int version)
-	{
-		// ar & combox_;
-	}*/
-
 	boost::asio::io_service io_service_;
 	boost::asio::ip::tcp::acceptor acceptor_;
 	pop::accesspoint callback_;
