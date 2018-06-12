@@ -23,9 +23,6 @@ template<typename T> class local_object final {
 	public:
 		local_object() : combox_(brok_) {
 			brok_.ptr_obj().reset(new T());
-
-			contact_.host_name = pop::system::instance().host_name();
-			contact_.port = combox_.contact().port();
 		}
 
 		inline void run() {
@@ -41,10 +38,9 @@ template<typename T> class local_object final {
 		}
 		
 		inline const pop::accesspoint& contact() const {
-			return contact_;
+			return combox_.contact();
 		}
 	private:
-		pop::accesspoint contact_;
 		pop::remote::broker<T> brok_;
 		pop::broker_combox<T> combox_;
 };
