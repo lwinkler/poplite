@@ -38,7 +38,7 @@ public:
 		LOG(debug) <<"async connect " << accesspoint_.host_name << " " << accesspoint_.port;
 		connection_ptr new_conn(new connection(io_service_));
 		new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
-		run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
+		// run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
 	}
 
 	/// Simplified constructor for local objects. Does not connect to interface
@@ -50,9 +50,10 @@ public:
 		// Accept connection from other interfaces
 		connection_ptr service_connection(new connection(io_service_));
 		service_acceptor_.async_accept(service_connection->socket(), boost::bind(&broker_combox::handle_accept_service, this, boost::asio::placeholders::error, service_connection));
-		run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
+		// run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
 	}
 
+	/*
 	static void run_handler_in_new_thread(boost::asio::io_service& _service, size_t& _nb_extra_threads) {
 		std::thread th([&_service, &_nb_extra_threads]{
 			_nb_extra_threads++;
@@ -62,15 +63,16 @@ public:
 		});
 		th.detach();
 	}
+	*/
 
 	/// Run io server
 	inline void run() {
 		std::vector<std::thread> workers;
 		// note: so far we can only set up a fixed number of threads
 		//       this determines the max number of simultaneous calls to the broker
-		for (int i = 0; i < 1; i++) { // TODO: const in pop::system ? https://www.gamedev.net/blogs/entry/2249317-a-guide-to-getting-started-with-boostasio/
+		for (int i = 0; i < 10; i++) { // TODO: const in pop::system ? https://www.gamedev.net/blogs/entry/2249317-a-guide-to-getting-started-with-boostasio/
 			workers.push_back(std::thread([&]() {
-		io_service_.run();
+				io_service_.run();
 			}));
 		}
 		std::for_each(workers.begin(), workers.end(), [](std::thread &t) {
@@ -79,9 +81,7 @@ public:
 	}
 
 	inline void stop() {
-		LOG(debug) << "extra threads " << nb_extra_threads_;
 		io_service_.stop();
-		// io_second_service_.stop();
 	}
 
 	inline const pop::accesspoint& contact() const {
@@ -103,14 +103,14 @@ private:
 			_conn->socket().close();
 			boost::asio::ip::tcp::endpoint endpoint = *_endpoint_iterator;
 			_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++_endpoint_iterator, _conn));
-			run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
+			// run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
 		} else {
 			throw std::runtime_error("connection failed");
 		}
 		LOG(debug) << "broker starts listening";
 		_conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, _conn));
-		run_handler_in_new_thread(io_service_, nb_extra_threads_);
-		run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed TODO why ?
+		// run_handler_in_new_thread(io_service_, nb_extra_threads_);
+		// run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed TODO why ?
 	}
 
 
@@ -183,7 +183,7 @@ private:
 
 		LOG(debug) << "broker re-starts listening";
 		_conn->async_read(boost::bind(&broker_combox::handle_read, this, boost::asio::placeholders::error, _conn));
-		run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
+		// run_handler_in_new_thread(io_service_, nb_extra_threads_); // needed
 	}
 
 	/// Handle contact by a new interface
@@ -215,8 +215,8 @@ private:
 				LOG(debug) <<"async connect";
 				connection_ptr new_conn(new connection(io_service_));
 				new_conn->socket().async_connect(endpoint, boost::bind(&broker_combox::handle_connect, this, boost::asio::placeholders::error, ++endpoint_iterator, new_conn));
-				run_handler_in_new_thread(io_service_, nb_extra_threads_);
-				run_handler_in_new_thread(io_service_, nb_extra_threads_); // Needed
+				// run_handler_in_new_thread(io_service_, nb_extra_threads_);
+				// run_handler_in_new_thread(io_service_, nb_extra_threads_); // Needed
 			}
 			break;
 			default:
@@ -226,7 +226,7 @@ private:
 		// Recreate a connection for contact
 		connection_ptr new_conn2(new connection(io_service_));
 		service_acceptor_.async_accept(new_conn2->socket(), boost::bind(&broker_combox::handle_accept_service, this, boost::asio::placeholders::error, new_conn2));
-		run_handler_in_new_thread(io_service_, nb_extra_threads_);
+		// run_handler_in_new_thread(io_service_, nb_extra_threads_);
 	}
 
 private:
@@ -236,7 +236,7 @@ private:
 	boost::asio::ip::tcp::acceptor service_acceptor_;
 	pop::accesspoint accesspoint_;
 
-	size_t nb_extra_threads_ = 0;
+	// size_t nb_extra_threads_ = 0;
 };
 
 } // namespace
