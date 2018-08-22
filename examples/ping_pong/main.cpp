@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 		ping_pong_iface p3;
 		p1.set_next_one(p2.contact());
 		p2.set_next_one(p3.contact());
-		p3.set_next_one(p1.contact()); // TODO
+		p3.set_next_one(p1.contact()); // TODO remove
 
 		if(string(argv[1]) == "async") {
 			// pop::mutex_iface l;
