@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 			stor1.push(22);
 			stor1.push(33);
 			stor1.print();
-			cout << stor1.pop() << endl;
+			cout << "pop last value: " << stor1.pop() << endl;
 			stor1.print();
 			cout << "--------------------" << endl;
 		}
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 			stor2.push("twenty two");
 			stor2.push("thirty three");
 			stor2.print();
-			cout << stor2.pop() << endl;
+			cout << "pop last value: " << stor2.pop() << endl;
 			stor2.print();
 			cout << "--------------------" << endl;
 		}
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 			stor1.insert(22, "twenty two");
 			stor1.insert(33, "thirty three");
 			stor1.print();
-			cout << stor1.erase(22) << endl;
+			cout << "erase 22: " << stor1.erase(22) << endl;
 			stor1.print();
 			cout << "--------------------" << endl;
 		}
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 			stor1.insert("twenty two", 22.0);
 			stor1.insert("thirty three", 33.0);
 			stor1.print();
-			cout << stor1.erase("twenty two") << endl;
+			cout << "erase 'twenty two': " << stor1.erase("twenty two") << endl;
 			stor1.print();
 			cout << "--------------------" << endl;
 		}
