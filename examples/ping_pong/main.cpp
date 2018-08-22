@@ -21,29 +21,29 @@ using namespace std;
 // TODO: move to its own file
 namespace pop {
 template<typename T> class local_object final {
-	public:
-		local_object() : combox_(brok_) {
-			brok_.ptr_obj().reset(new T());
-		}
+public:
+	local_object() : combox_(brok_) {
+		brok_.ptr_obj().reset(new T());
+	}
 
-		inline void run() {
-			combox_.run();
-		}
+	inline void run() {
+		combox_.run();
+	}
 
-		inline void stop() {
-			combox_.stop();
-		}
+	inline void stop() {
+		combox_.stop();
+	}
 
-		inline T& object() {
-			return *(brok_.ptr_obj());
-		}
-		
-		inline const pop::accesspoint& contact() const {
-			return combox_.contact();
-		}
-	private:
-		pop::remote::broker<T> brok_;
-		pop::broker_combox<T> combox_;
+	inline T& object() {
+		return *(brok_.ptr_obj());
+	}
+
+	inline const pop::accesspoint& contact() const {
+		return combox_.contact();
+	}
+private:
+	pop::remote::broker<T> brok_;
+	pop::broker_combox<T> combox_;
 };
 } // namespace pop
 

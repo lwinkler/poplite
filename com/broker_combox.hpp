@@ -28,8 +28,7 @@ template<class ParClass>class broker_combox {
 public:
 	/// Constructor opens the acceptor and starts waiting for the first incoming
 	/// connection.
-	broker_combox(remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query) : broker_combox(_brok)
-	{
+	broker_combox(remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query) : broker_combox(_brok) {
 		boost::asio::ip::tcp::resolver resolver(io_service_);
 		boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_query);
 		boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
@@ -44,8 +43,7 @@ public:
 	broker_combox(remote::broker<ParClass>& _brok) :
 		brok_(_brok),
 		service_acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/)),
-		accesspoint_(pop::system::instance().host_name(), service_acceptor_.local_endpoint().port())
-	{
+		accesspoint_(pop::system::instance().host_name(), service_acceptor_.local_endpoint().port()) {
 		// Accept connection from other interfaces
 		connection_ptr service_connection(new connection(io_service_));
 		service_acceptor_.async_accept(service_connection->socket(), boost::bind(&broker_combox::handle_accept_service, this, boost::asio::placeholders::error, service_connection));
