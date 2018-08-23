@@ -21,6 +21,7 @@
    or implied, of Christopher Allen Ogden.
  */
 
+#ifndef _POP_PARSER_
 #ifndef _SERIALIZE_TUPLE_
 #define _SERIALIZE_TUPLE_
 #include <tuple>
@@ -51,4 +52,5 @@ void serialize(Archive & ar, std::tuple<Args...> & t, const unsigned int version
 
 }
 }
+#endif
 #endif

@@ -10,6 +10,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POPLITE_APPLY_TUPLE_CONST_H
 #define POPLITE_APPLY_TUPLE_CONST_H
 
@@ -141,4 +142,5 @@ R apply_tuple_const( R (*f)(ArgsF...),
 	return apply_const<sizeof...(ArgsT)>::apply_tuple_const( f, t );
 }
 } // namespace
+#endif
 #endif

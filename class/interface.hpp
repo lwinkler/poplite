@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POPLITE_INTERFACE_H
 #define POPLITE_INTERFACE_H
 
@@ -205,5 +206,5 @@ protected: // note: special case, we want to use in children
 	}
 };
 }
-
+#endif
 #endif

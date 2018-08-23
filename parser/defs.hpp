@@ -21,6 +21,17 @@ __attribute__((annotate("pop_template_method:"#types)))\
 static int template_types_of_##name;
 */
 
+// Forward declarations
+namespace pop {
+	class allocator;
+	class interface;
+	class system;
+	class accesspoint;
+	class connection;
+	class exception;
+	class interface_combox;
+}
+
 #else
 // Do not use in normal time
 #define POP_CLASS class
@@ -30,6 +41,5 @@ static int template_types_of_##name;
 #define POP_ALLOCATION(x)
 #define POP_TEMPLATE_TYPES(...)
 // #define POP_TEMPLATE_METHOD(x,y,z)
-
 #endif
 #endif

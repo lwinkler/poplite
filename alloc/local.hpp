@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POP_ALLOC_LOCAL_H
 #define POP_ALLOC_LOCAL_H
 
@@ -62,4 +63,5 @@ public:
 };
 }
 
+#endif
 #endif

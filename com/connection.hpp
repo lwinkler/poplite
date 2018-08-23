@@ -10,6 +10,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POP_CONNECTION_HPP
 #define POP_CONNECTION_HPP
 
@@ -261,4 +262,5 @@ using connection_ptr = boost::shared_ptr<connection>;
 
 } // namespace
 
+#endif
 #endif
