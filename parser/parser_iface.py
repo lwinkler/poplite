@@ -33,7 +33,7 @@ def write_foot(fout):
 
 #--------------------------------------------------------------------------------
 
-def write_interface(fout, class_node, definitions):
+def write_interface(fout, class_node, fout_cpp):
 	parent_nodes = parser.get_direct_parents(class_node, True, True)
 	classname = class_node.spelling
 	if len(parent_nodes) > 1:
@@ -48,7 +48,7 @@ def write_interface(fout, class_node, definitions):
 private:""" % (template, classname, ', '.join(['public ' + iface for iface in parent_ifaces])))
 
 	[methods, real_parents] = parser.find_methods(class_node)
-	write_meth_ids(fout, class_node, methods, real_parents, definitions)
+	write_meth_ids(fout, class_node, methods, real_parents, fout_cpp)
 
 	fout.write('public:\n')
 
@@ -86,7 +86,7 @@ protected:
 
 	if parser.is_template_class(class_node):
 		for t in parser.get_template_types(class_node):
-			definitions.append('template<> const std::string %s_iface%s::_iface_name = "%s%s";' % (class_name, t, class_name, t))
+			fout_cpp.write('template<> const std::string %s_iface%s::_iface_name = "%s%s";\n' % (class_name, t, class_name, t))
 		# class_name += '<' + ','.join(parser.get_template_type_parameters(class_node)) + '>'
 		iface_name = ''
 		fout.write("""
@@ -126,7 +126,7 @@ def write_template_meth(fout, m, id):
 	return id + len(ttypes)
 
 #--------------------------------------------------------------------------------
-def write_meth_ids(fout, class_node, methods, real_parents, definitions):
+def write_meth_ids(fout, class_node, methods, real_parents, fout_cpp):
 	fout.write("""
 struct method_ids
 {
@@ -138,7 +138,7 @@ struct method_ids
 			id0 = id
 			fout.write('template<class T> struct %s%d{static const int value;};\n' % (m.spelling, id0))
 			for t in parser.get_template_types(m):
-				definitions.append('template<> const int %s_iface::method_ids::%s%d%s::value = %d;' % (parser.get_full_name(class_node), m.spelling, id0, t, id))
+				fout_cpp.write('template<> const int %s_iface::method_ids::%s%d%s::value = %d;\n' % (parser.get_full_name(class_node), m.spelling, id0, t, id))
 				id += 1
 		else:
 			fout.write('static const int %s%d = %d;\n' % (m.spelling, id, id))

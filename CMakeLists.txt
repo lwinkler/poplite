@@ -18,6 +18,7 @@ set(POPLITE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Function used to add a parallel object to the compilation
 function(pop_add_object object_name header_name)
+
 	get_filename_component(_dir      ${header_name} ABSOLUTE)
 	get_filename_component(_filename ${header_name} NAME_WE)
 
@@ -32,15 +33,22 @@ function(pop_add_object object_name header_name)
 	# note: there are conflicts while generating multiple files with one command
 	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
 	# Not fixed yet !
-	string(REPLACE "::" "/" object_name2 "${object_name}")
-	string(REPLACE "::" "." object_name3 "${object_name}")
-	add_custom_command(OUTPUT gen/${object_name2}.iface.hpp gen/${object_name2}.iface.cpp gen/${object_name2}.brok.cpp gen/main.${object_name3}.cpp
+	string(REPLACE "::" "/" obj_name_path "${object_name}")
+	string(REPLACE "::" "." obj_name_dot "${object_name}")
+	set(tarfile "gen/${header_name}.tar")
+	add_custom_command(OUTPUT ${tarfile}
 	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} -- ${INC_DIRS}
 	DEPENDS ${header_name})
 
+	add_custom_command(OUTPUT gen/${obj_name_path}.iface.hpp COMMAND tar xf ${tarfile} gen/${obj_name_path}.iface.hpp DEPENDS ${tarfile})
+	add_custom_command(OUTPUT gen/${obj_name_path}.iface.cpp COMMAND tar xf ${tarfile} gen/${obj_name_path}.iface.cpp DEPENDS ${tarfile})
+	add_custom_command(OUTPUT gen/${obj_name_path}.brok.cpp  COMMAND tar xf ${tarfile} gen/${obj_name_path}.brok.cpp  DEPENDS ${tarfile})
+	add_custom_command(OUTPUT gen/main.${obj_name_dot}.cpp   COMMAND tar xf ${tarfile} gen/main.${obj_name_dot}.cpp   DEPENDS ${tarfile})
+
 	# extra arguments are seen as dependencies
-	add_executable(${object_name3}.obj gen/main.${object_name3}.cpp gen/${object_name2}.brok.cpp ${ARGN})
-	target_link_libraries(${object_name3}.obj ${Boost_LIBRARIES} )
+	add_executable(${obj_name_dot}.obj gen/main.${obj_name_dot}.cpp gen/${obj_name_path}.brok.cpp ${ARGN})
+	target_link_libraries(${obj_name_dot}.obj ${Boost_LIBRARIES} )
+
 endfunction(pop_add_object)
 
 # Function used to add several parallel objects to the compilation (it is faster to treat them in bulk)
