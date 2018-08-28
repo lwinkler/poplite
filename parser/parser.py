@@ -93,7 +93,7 @@ def find_parallel_classes(node, classnames):
 	found = []
 
 	# print 'node %s %s %s [line=%s, col=%s]' % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
-	if node.kind in (cindex.CursorKind.CLASS_DECL, cindex.CursorKind.CLASS_TEMPLATE) and get_full_name(node) in classnames:
+	if node.kind in (cindex.CursorKind.CLASS_DECL, cindex.CursorKind.CLASS_TEMPLATE) and (classnames is None or get_full_name(node) in classnames):
 		# print 'Found parallel class %s [line=%s, col=%s]' % (node.spelling, node.location.line, node.location.column)
 		found.append(node)
 
