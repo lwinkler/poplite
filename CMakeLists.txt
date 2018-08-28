@@ -15,6 +15,13 @@ set(CMAKE_CXX_FLAGS_DEBUG          "-O2 -g")
 set(CMAKE_INCLUDE_CURRENT_DIR true) # automatically include current dir
 set(POPLITE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Function to add the targets and commands for a new object
+function(pop_add_class_generation_commands tarfile i_hpp i_cpp b_cpp o_cpp)
+	add_custom_command(OUTPUT ${i_hpp} COMMAND tar xf ${tarfile} ${i_hpp} DEPENDS ${tarfile})
+	add_custom_command(OUTPUT ${i_cpp} COMMAND tar xf ${tarfile} ${i_cpp} DEPENDS ${tarfile} ${i_hpp})
+	add_custom_command(OUTPUT ${b_cpp} COMMAND tar xf ${tarfile} ${b_cpp} DEPENDS ${tarfile} ${i_hpp})
+	add_custom_command(OUTPUT ${o_cpp} COMMAND tar xf ${tarfile} ${o_cpp} DEPENDS ${tarfile} ${i_cpp})
+endfunction(pop_add_class_generation_commands)
 
 # Function used to add a parallel object to the compilation
 function(pop_add_object object_name header_name)
@@ -36,14 +43,9 @@ function(pop_add_object object_name header_name)
 	string(REPLACE "::" "/" obj_name_path "${object_name}")
 	string(REPLACE "::" "." obj_name_dot "${object_name}")
 	set(tarfile "gen/${header_name}.tar")
-	add_custom_command(OUTPUT ${tarfile}
-	COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} -- ${INC_DIRS}
-	DEPENDS ${header_name})
+	add_custom_command(OUTPUT ${tarfile} COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} -- ${INC_DIRS} DEPENDS ${header_name})
 
-	add_custom_command(OUTPUT gen/${obj_name_path}.iface.hpp COMMAND tar xf ${tarfile} gen/${obj_name_path}.iface.hpp DEPENDS ${tarfile})
-	add_custom_command(OUTPUT gen/${obj_name_path}.iface.cpp COMMAND tar xf ${tarfile} gen/${obj_name_path}.iface.cpp DEPENDS ${tarfile})
-	add_custom_command(OUTPUT gen/${obj_name_path}.brok.cpp  COMMAND tar xf ${tarfile} gen/${obj_name_path}.brok.cpp  DEPENDS ${tarfile})
-	add_custom_command(OUTPUT gen/main.${obj_name_dot}.cpp   COMMAND tar xf ${tarfile} gen/main.${obj_name_dot}.cpp   DEPENDS ${tarfile})
+	pop_add_class_generation_commands(${tarfile} gen/${obj_name_path}.iface.hpp gen/${obj_name_path}.iface.cpp gen/${obj_name_path}.brok.cpp gen/main.${obj_name_dot}.cpp)
 
 	# extra arguments are seen as dependencies
 	add_executable(${obj_name_dot}.obj gen/main.${obj_name_dot}.cpp gen/${obj_name_path}.brok.cpp ${ARGN})
@@ -61,23 +63,23 @@ function(pop_add_objects classnames dependencies)
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
 
+	# message("Add command to generate:${cmd_out}"
+	list(GET dependencies 0 header_name)
+	set(tarfile "gen/${header_name}.tar")
+
 	foreach(cl ${classnames})
-		string(REPLACE "::" "/" cl2 "${cl}")
-		string(REPLACE "::" "." cl3 "${cl}")
-		set(cmd_out "${cmd_out};gen/${cl2}.iface.hpp;gen/${cl2}.iface.cpp;gen/${cl2}.brok.cpp;gen/main.${cl3}.cpp")
-		add_executable(${cl3}.obj gen/main.${cl3}.cpp gen/${cl2}.brok.cpp ${dependencies})
-		target_link_libraries(${cl3}.obj ${Boost_LIBRARIES})
-		# add_library(gen/main.${cl2}.cpp)
+		string(REPLACE "::" "/" obj_name_path "${cl}")
+		string(REPLACE "::" "." obj_name_dot "${cl}")
+		# add_library(gen/main.${obj_name_path}.cpp)
+
+		pop_add_class_generation_commands(${tarfile} gen/${obj_name_path}.iface.hpp gen/${obj_name_path}.iface.cpp gen/${obj_name_path}.brok.cpp gen/main.${obj_name_dot}.cpp)
+
+		add_executable(${obj_name_dot}.obj gen/main.${obj_name_dot}.cpp gen/${obj_name_path}.brok.cpp ${dependencies})
+		target_link_libraries(${obj_name_dot}.obj ${Boost_LIBRARIES})
 	endforeach()
 	string(REPLACE ";" "," classnames2 "${classnames}")
 
-	# message("Add command to generate:${cmd_out}")
-	list(GET dependencies 0 header)
-	add_custom_command(
-		OUTPUT ${cmd_out}
-		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header} ${classnames2} -- ${INC_DIRS}
-		DEPENDS ${dependencies}
-	)
+	add_custom_command(OUTPUT ${tarfile} COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${classnames2} -- ${INC_DIRS} DEPENDS ${header_name})
 
 endfunction(pop_add_objects)
 
