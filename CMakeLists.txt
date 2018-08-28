@@ -17,6 +17,7 @@ set(POPLITE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Function to add the targets and commands for a new object
 function(pop_add_class_generation_commands tarfile i_hpp i_cpp b_cpp o_cpp)
+	# message("Add commands for ${i_hpp} ${i_cpp} ${b_cpp} ${o_cpp}")
 	add_custom_command(OUTPUT ${i_hpp} COMMAND tar xf ${tarfile} ${i_hpp} DEPENDS ${tarfile})
 	add_custom_command(OUTPUT ${i_cpp} COMMAND tar xf ${tarfile} ${i_cpp} DEPENDS ${tarfile} ${i_hpp})
 	add_custom_command(OUTPUT ${b_cpp} COMMAND tar xf ${tarfile} ${b_cpp} DEPENDS ${tarfile} ${i_hpp})
@@ -82,6 +83,22 @@ function(pop_add_objects classnames dependencies)
 	add_custom_command(OUTPUT ${tarfile} COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${classnames2} -- ${INC_DIRS} DEPENDS ${header_name})
 
 endfunction(pop_add_objects)
+
+# Function used to add several parallel objects to the compilation. Class names are read automatically by cmake
+function(pop_add_all_classes header_name)
+
+	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+	set(INC_DIRS "")
+	foreach(dir ${dirs})
+		# Create the include path artificially
+		set(INC_DIRS "${INC_DIRS};-I${dir}")
+	endforeach()
+
+	# message("Look for parallel classes in ${header_name}")
+	execute_process(COMMAND ${POPLITE_DIR}/parser/poplist.py ${header_name} -- ${INC_DIRS} OUTPUT_VARIABLE all_classes RESULT_VARIABLE res WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+        pop_add_objects(${all_classes} "${header_name};${ARGN}")
+endfunction(pop_add_all_classes)
+
 
 add_subdirectory(examples)
 add_subdirectory(popc_tests)

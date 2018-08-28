@@ -34,7 +34,7 @@ def main():
 		if parser.is_parallel(parclass) and str(parclass.location.file) == header_hpp_fname:
 				classnames.append(parser.get_full_name(parclass))
 
-	print ';'.join(classnames)
+	sys.stdout.write(';'.join(classnames))
 
 if __name__ == '__main__':
 	main()
