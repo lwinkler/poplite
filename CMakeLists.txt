@@ -18,10 +18,10 @@ set(POPLITE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 # Function to add the targets and commands for a new object
 function(pop_add_class_generation_commands tarfile i_hpp i_cpp b_cpp o_cpp)
 	# message("Add commands for ${i_hpp} ${i_cpp} ${b_cpp} ${o_cpp}")
-	add_custom_command(OUTPUT ${i_hpp} COMMAND tar xf ${tarfile} ${i_hpp} DEPENDS ${tarfile})
-	add_custom_command(OUTPUT ${i_cpp} COMMAND tar xf ${tarfile} ${i_cpp} DEPENDS ${tarfile} ${i_hpp})
-	add_custom_command(OUTPUT ${b_cpp} COMMAND tar xf ${tarfile} ${b_cpp} DEPENDS ${tarfile} ${i_hpp})
-	add_custom_command(OUTPUT ${o_cpp} COMMAND tar xf ${tarfile} ${o_cpp} DEPENDS ${tarfile} ${i_cpp})
+	add_custom_command(OUTPUT ${i_hpp} COMMAND tar mxf ${tarfile} ${i_hpp} DEPENDS ${tarfile})
+	add_custom_command(OUTPUT ${i_cpp} COMMAND tar mxf ${tarfile} ${i_cpp} DEPENDS ${tarfile} ${i_hpp})
+	add_custom_command(OUTPUT ${b_cpp} COMMAND tar mxf ${tarfile} ${b_cpp} DEPENDS ${tarfile} ${i_hpp})
+	add_custom_command(OUTPUT ${o_cpp} COMMAND tar mxf ${tarfile} ${o_cpp} DEPENDS ${tarfile} ${i_cpp})
 endfunction(pop_add_class_generation_commands)
 
 # Function used to add a parallel object to the compilation
