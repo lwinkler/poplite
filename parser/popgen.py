@@ -37,16 +37,16 @@ def main():
 	header_hpp_fname = argv1[1]
 	classnames_in = argv1[2].split(',')
 	gendir = os.path.dirname(header_hpp_fname) + '/gen' if os.path.dirname(header_hpp_fname) else 'gen' 
-	tar = tarfile.TarFile(gendir + '/' + header_hpp_fname + '.tar','w')
 
 	# Generate fake interface files before parsing
-	# for cl in classnames_in:
-		# iface_out = gendir + '/%s.iface.hpp' % parser.convert_to_classname(cl)
-		# idir = os.path.dirname(iface_out)
-		# if not os.path.exists(idir):
-			# os.makedirs(idir)
-		# with open(iface_out, 'w') as fout:
-			# fout.write('class %s_iface;\n' % cl)
+	for cl in classnames_in:
+		iface_out = gendir + '/%s.iface.hpp' % parser.convert_to_classname(cl)
+		idir = os.path.dirname(iface_out)
+		if not os.path.exists(idir):
+			os.makedirs(idir)
+		with open(iface_out, 'w') as fout:
+			fout.write('class %s_iface;\n' % cl)
+	tar = tarfile.TarFile(gendir + '/' + header_hpp_fname + '.tar','w')
 
 	tu = parser.init_tu(header_hpp_fname, argv2)
 	#parser.print_ast(tu.cursor)
