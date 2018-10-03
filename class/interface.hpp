@@ -67,7 +67,7 @@ public:
 		combox_.run();
 	}
 
-	interface(interface&&) = default; // TODO: Move is not working due to parent classes. See if boost fixes this
+	interface(interface&&) = default;
 	interface& operator=(interface&&) = default;
 
 	// you shall not copy

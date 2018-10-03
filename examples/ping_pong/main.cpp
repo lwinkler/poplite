@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include "util/local_broker.hpp"
 #include "class/broker.hpp"
 #include "com/broker_combox.hpp"
 
@@ -16,37 +17,8 @@
 
 using namespace std;
 
+
 /// Two remote objects are calling each other until counter reaches zero
-// TODO: See if we can construct the broker with an object and destroy the thread in destructor
-// TODO: move to its own file
-namespace pop {
-template<typename T> class local_object final {
-public:
-	local_object() : combox_(brok_) {
-		brok_.ptr_obj().reset(new T());
-	}
-
-	inline void run() {
-		combox_.run();
-	}
-
-	inline void stop() {
-		combox_.stop();
-	}
-
-	inline T& object() {
-		return *(brok_.ptr_obj());
-	}
-
-	inline const pop::accesspoint& contact() const {
-		return combox_.contact();
-	}
-private:
-	pop::remote::broker<T> brok_;
-	pop::broker_combox<T> combox_;
-};
-} // namespace pop
-
 
 // Call our interface
 void play_ping_pong(ping_pong_iface& _p, const string& _invoker, unsigned int _nb_calls) {
@@ -57,7 +29,7 @@ void play_ping_pong(ping_pong_iface& _p, const string& _invoker, unsigned int _n
 		// note: we need to add a wait here to allow all methods to complete
 		l.wait();
 	} else if(_invoker == "async2") {
-		pop::local_object<pop::mutex> l;
+		pop::local_broker<pop::mutex> l;
 		pop::accesspoint contact = l.contact();
 		std::thread th([&l] {
 			l.run();

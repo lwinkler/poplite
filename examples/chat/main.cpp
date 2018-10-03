@@ -19,7 +19,10 @@ int main(int argc, char* argv[]) {
 	pop::system::instance(&argc, argv);
 
 	string username = argc > 1 ? argv[1] : getenv("USER");
-	chat_client_iface c1(username);
+	std::shared_ptr<chat_client_iface> c0(new chat_client_iface(username));
+	std::shared_ptr<chat_client_iface> c00(std::move(c0));
+	chat_client_iface& c1(*c00.get());
+	chat_client_iface* a = std::move(&c1);
 
 	cout << "Contact this client " << username << " at " << c1.contact().host_name << ":" << c1.contact().port << endl;
 	cout << "'a':add contact" << endl;
