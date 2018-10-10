@@ -24,12 +24,11 @@ def write_head(fout, classname, filename_in):
 
 #--------------------------------------------------------------------------------
 
-
-#--------------------------------------------------------------------------------
-
 def write_constr(m, classname):
 	
-	return 'std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)' % (classname, parser.list_args1(m))
+	return 'create_binded_constructor<%s>(&remote::broker<%s>::constructor_conc<%s>)' % (classname, classname, parser.list_args1(m))
+
+#--------------------------------------------------------------------------------
 
 def write_meth(m, full_name, template_str):
 	
@@ -79,7 +78,7 @@ namespace remote
 		fout.write(',\n'.join(meths))
 
 		fout.write('\n};\n')
-		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s>::constr_methods_{\n'
+		fout.write('template<> const std::vector<parallel_constructor<%s>> broker<%s>::constr_methods_{\n'
 			% (full_name, full_name))
 		meths = []
 		for c in parser.find_constructors(class_node):
