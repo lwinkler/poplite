@@ -45,12 +45,12 @@ def write_meth(m, full_name, template_str):
 		meths = []
 		for t in parser.get_template_types(m):
 			# TODO: Difficult case: if the template inherits from a different template or a non-template class. Not handled yet.
-			meths.append('%s(&remote::broker<%s>::%s, &%s::%s%s)' % (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling, t))
+			meths.append('%s(&%s, &%s::%s%s)' % (create, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling, t))
 		return ',\n'.join(meths)
 	else:
 		# fout.write('std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n'
 				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
-		return '%s(&remote::broker<%s>::%s, &%s::%s)' % (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling)
+		return '%s(&%s, &%s::%s)' % (create, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling)
 
 #--------------------------------------------------------------------------------
 
