@@ -32,7 +32,6 @@ def write_constr(m, classname): # TODO remove classname and do the same binded m
 
 def write_meth(m, full_name, template_str):
 	
-	ret = ''
 	conc = 'conc'
 	create = 'create_binded_method'
 	if m.is_static_method():
@@ -45,14 +44,15 @@ def write_meth(m, full_name, template_str):
 	create += '<%s>' % (full_name)
 	
 	if parser.is_template_method(m):
+		meths = []
 		for t in parser.get_template_types(m):
 			# TODO: Difficult case: if the template inherits from a different template or a non-template class. Not handled yet.
-			ret += '%s(&remote::broker<%s>::%s, &%s::%s%s)' % (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling, t)
+			meths.append('%s(&remote::broker<%s>::%s, &%s::%s%s)' % (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling, t))
+		return ',\n'.join(meths)
 	else:
 		# fout.write('std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n'
 				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
-		ret += '%s(&remote::broker<%s>::%s, &%s::%s)' % (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling)
-	return ret
+		return '%s(&remote::broker<%s>::%s, &%s::%s)' % (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling)
 
 #--------------------------------------------------------------------------------
 
