@@ -24,9 +24,9 @@ def write_head(fout, classname, filename_in):
 
 #--------------------------------------------------------------------------------
 
-def write_constr(m, classname):
+def write_constr(m, classname): # TODO remove classname and do the same binded method for other methods
 	
-	return 'create_binded_constructor<%s%s>()' % (classname, parser.list_args1(m, True))
+	return 'create_binded_constructor<%s>()' % (parser.list_args1(m))
 
 #--------------------------------------------------------------------------------
 
