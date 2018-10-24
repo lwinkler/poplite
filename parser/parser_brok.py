@@ -26,7 +26,7 @@ def write_head(fout, classname, filename_in):
 
 def write_constr(m, classname):
 	
-	return 'create_binded_constructor<%s>(&remote::broker<%s>::constructor_conc<%s>)' % (classname, classname, parser.list_args1(m))
+	return 'create_binded_constructor<%s%s>()' % (classname, parser.list_args1(m, True))
 
 #--------------------------------------------------------------------------------
 

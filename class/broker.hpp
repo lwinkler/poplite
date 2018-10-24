@@ -23,7 +23,7 @@
 namespace pop {
 namespace remote {
 template<class ParClass> using parallel_method      = std::function<void(bufin&, bufout&, ParClass&)>;
-template<class ParClass> using parallel_constructor = std::function<void(bufin&, bufout&, ParClass*&)>;
+template<class ParClass> using parallel_constructor = std::function<ParClass*(bufin&, bufout&, ParClass*&)>;
 
 /// A utility container to store and serialize an interface
 template<class T> struct iface_container final {
@@ -78,11 +78,6 @@ void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> &
 	SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename pop_decay<Args>::type...> >(ar, t1);
 }
 
-// create a constructor method for broker method array
-template<typename O, typename ...Args>
-parallel_constructor<O, Args...> create_binded_constructor(void (*_invoker)(bufin&, bufout&)) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2);
-}
 
 // create a method pointer for broker method array
 template<typename O, typename Oc, typename R, typename ...Args>
@@ -137,7 +132,7 @@ public:
 	}
 
 	/// A simple concurrent call to a static method
-	template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, ParClass& _obj, R (*_p_meth)(Args...)) {
+	template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, ParClass& /*_obj*/, R (*_p_meth)(Args...)) {
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
 		apply_tuple_static( _p_meth, tup, _oa);
@@ -145,14 +140,13 @@ public:
 	}
 
 	/// A simple concurrent call to a constructor method
-	template<typename ...Args> static void constructor_conc(bufin& _ia, bufout& _oa) {
-		/*
+	/*
+	template<typename ...Args> static void constructor_conc(bufin& _ia, bufout& _oa, ParClass*&) {
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
-		apply_tuple_static( _p_meth, tup, _oa);
+		apply_tuple_static(call_constr<Args...>, tup, _oa);
 		serialize_out<bufout, Args...>(_oa, tup);
-		*/
-	}
+	}*/
 
 	/// A simple concurrent call to a static method
 	template<typename R, typename ...Args> static void const_conc(bufin& _ia, bufout& _oa, ParClass& _obj, R (ParClass::*_p_meth)(Args...) const) {
@@ -178,6 +172,20 @@ private:
 	static const std::vector<remote::parallel_constructor<ParClass>> constr_methods_;
 	std::unique_ptr<ParClass> p_obj_;
 };
+
+// create a method pointer for broker method array
+template<typename O, typename Oc, typename R, typename ...Args>
+parallel_method<O> create_binded_methodAAA(void (*_invoker)(bufin&, bufout&, O&, R (O::*)(Args...)), R(Oc::*_p_meth)(Args...)) {
+	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+}
+
+// create a constructor method for broker method array
+// TODO LW: rearrange code
+template<typename O, typename ...Args>
+parallel_constructor<O> create_binded_constructor() {
+	O* (*invoker)(bufin&, bufout&) = &remote::broker<O>::call_constr;
+	return std::bind(invoker, std::placeholders::_1, std::placeholders::_2);
+}
 
 }
 } // namespaces
