@@ -113,6 +113,7 @@ public:
 						// note: do not remove 2 for single arguments
 						shift = 2;
 					}
+					// TODO: Using --pop-path=... does not handle correctly the number of arguments
 					if(shift) {
 						while(shift) {
 							// shift all args by 1

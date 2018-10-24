@@ -23,7 +23,7 @@
 namespace pop {
 namespace remote {
 template<class ParClass> using parallel_method      = std::function<void(bufin&, bufout&, ParClass&)>;
-template<class ParClass> using parallel_constructor = std::function<ParClass*(bufin&, bufout&, ParClass*&)>;
+template<class ParClass> using parallel_constructor = std::function<ParClass*(bufin&, bufout&)>;
 
 /// A utility container to store and serialize an interface
 template<class T> struct iface_container final {
@@ -101,19 +101,17 @@ parallel_method<O> static_create_binded_method(void (*_invoker)(bufin&, bufout&,
 template<class ParClass> class broker : private boost::noncopyable {
 public:
 	inline void remote_call(int _nb, bufin& _ia, bufout& _oa) {
-		if(_nb < static_cast<int>(methods_.size())) {
+		if(_nb < static_cast<int>(methods_.size())) { // TODO: use size_t for method id
 			methods_.at(_nb)(_ia, _oa, *p_obj_);
 		} else {
 			if(p_obj_)
 				throw std::runtime_error("Constructor has been called twice");
-			ParClass* p_obj{};
-			constr_methods_.at(_nb - methods_.size())(_ia, _oa, p_obj);
+			ParClass* p_obj = constr_methods_.at(_nb - methods_.size())(_ia, _oa);
 			p_obj_.reset(p_obj);
 		}
 	}
 
 	template<typename ...Args> static ParClass* call_constr(bufin& _ia, bufout& _oa) {
-		// TODO remove
 		LOG(debug) << "Call constructor";
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
@@ -172,12 +170,6 @@ private:
 	static const std::vector<remote::parallel_constructor<ParClass>> constr_methods_;
 	std::unique_ptr<ParClass> p_obj_;
 };
-
-// create a method pointer for broker method array
-template<typename O, typename Oc, typename R, typename ...Args>
-parallel_method<O> create_binded_methodAAA(void (*_invoker)(bufin&, bufout&, O&, R (O::*)(Args...)), R(Oc::*_p_meth)(Args...)) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
-}
 
 // create a constructor method for broker method array
 // TODO LW: rearrange code
