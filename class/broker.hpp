@@ -79,24 +79,6 @@ void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> &
 }
 
 
-// create a method pointer for broker method array
-template<typename O, typename Oc, typename R, typename ...Args>
-parallel_method<O> create_binded_method(void (*_invoker)(bufin&, bufout&, O&, R (O::*)(Args...)), R(Oc::*_p_meth)(Args...)) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
-}
-
-// create a method pointer for broker method array
-template<typename O, typename Oc, typename R, typename ...Args>
-parallel_method<O> const_create_binded_method(void (*_invoker)(bufin&, bufout&, O&, R (O::*)(Args...) const), R(Oc::*_p_meth)(Args...) const) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
-}
-
-// create a method pointer for broker method array
-template<typename O, typename R, typename ...Args>
-parallel_method<O> static_create_binded_method(void (*_invoker)(bufin&, bufout&, O&, R (*)(Args...)), R(*_p_meth)(Args...)) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
-}
-
 /// A broker is the (remote) part that contains the instantiation of the parallel object
 template<class ParClass> class broker : private boost::noncopyable {
 public:
@@ -166,7 +148,23 @@ public:
 		return std::bind(invoker, std::placeholders::_1, std::placeholders::_2);
 	}
 
+	// create a method pointer for broker method array
+	template<typename Oc, typename R, typename ...Args>
+	static parallel_method<ParClass> create_binded_method(void (*_invoker)(bufin&, bufout&, ParClass&, R (ParClass::*)(Args...)), R(Oc::*_p_meth)(Args...)) {
+		return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+	}
 
+	// create a method pointer for broker method array
+	template<typename Oc, typename R, typename ...Args>
+	static parallel_method<ParClass> const_create_binded_method(void (*_invoker)(bufin&, bufout&, ParClass&, R (ParClass::*)(Args...) const), R(Oc::*_p_meth)(Args...) const) {
+		return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+	}
+
+	// create a method pointer for broker method array
+	template<typename R, typename ...Args>
+	static parallel_method<ParClass> static_create_binded_method(void (*_invoker)(bufin&, bufout&, ParClass&, R (*)(Args...)), R(*_p_meth)(Args...)) {
+		return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+	}
 
 private:
 	/// A call to constructor

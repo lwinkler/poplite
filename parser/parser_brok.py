@@ -24,7 +24,7 @@ def write_head(fout, classname, filename_in):
 
 #--------------------------------------------------------------------------------
 
-def write_constr(m, classname): # TODO remove classname and do the same binded method for other methods
+def write_constr(m):
 	
 	return 'create_binded_constructor<%s>()' % (parser.list_args1(m))
 
@@ -40,8 +40,6 @@ def write_meth(m, full_name, template_str):
 	elif m.is_const_method():
 		conc = 'const_conc'
 		create = 'const_create_binded_method'
-	
-	create += '<%s>' % (full_name)
 	
 	if parser.is_template_method(m):
 		meths = []
@@ -82,7 +80,7 @@ namespace remote
 			% (full_name, full_name))
 		meths = []
 		for c in parser.find_constructors(class_node):
-			meths.append(write_constr(c, full_name))
+			meths.append(write_constr(c))
 		fout.write(',\n'.join(meths))
 
 		fout.write('\n};\n')
