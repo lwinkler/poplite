@@ -177,8 +177,8 @@ public:
 		serialize_out<bufout, Args...>(_oa, tup);
 	}
 
-	inline std::unique_ptr<ParClass>& ptr_obj() {
-		return nullptr; // TODO p_obj_;
+	inline ParClass& obj() {
+		return *future_.get();
 	}
 
 	// create a constructor method for broker method array

@@ -19,7 +19,7 @@ namespace pop {
 template<typename T> class local_broker final {
 public:
 	local_broker() : combox_(brok_) {
-		brok_.ptr_obj().reset(new T()); // TODO: set in constructor instead
+		// TODO LW: Make this work brok_.ptr_obj().reset(new T()); // TODO: set in constructor instead
 	}
 
 	inline void run() {
@@ -31,7 +31,7 @@ public:
 	}
 
 	inline T& object() {
-		return *(brok_.ptr_obj());
+		return brok_.obj();
 	}
 
 	inline const pop::accesspoint& contact() const {
