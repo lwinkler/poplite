@@ -23,7 +23,7 @@
 namespace pop {
 namespace remote {
 template<class ParClass> using parallel_method      = std::function<void(bufin&, bufout&, ParClass&)>;
-template<class ParClass> using parallel_constructor = std::function<std::future<ParClass*>(bufin&, bufout&)>;
+template<class ParClass> using parallel_constructor = std::function<std::shared_future<ParClass*>(bufin&, bufout&)>;
 
 /// A utility container to store and serialize an interface
 template<class T> struct iface_container final {
@@ -130,13 +130,13 @@ public:
 		}
 	}
 
-	template<typename ...Args> static std::future<ParClass*> call_constr(bufin& _ia, bufout& _oa) {
+	template<typename ...Args> static std::shared_future<ParClass*> call_constr(bufin& _ia, bufout& _oa) {
 		LOG(debug) << "Call constructor";
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		LOG(debug) << __LINE__;
 		_ia >> tup;
 		LOG(debug) << __LINE__;
-		std::future<ParClass*> ret = std::async(std::launch::async, [&](){return apply_tuple_constr(__constr<Args...>, tup);});
+		std::shared_future<ParClass*> ret = std::async(std::launch::async, [&](){return apply_tuple_constr(__constr<Args...>, tup);});
 		LOG(debug) << __LINE__;
 		serialize_out<bufout, Args...>(_oa, tup); // TODO: Do we need to return a tuple ?
 		LOG(debug) << __LINE__;
@@ -185,7 +185,7 @@ public:
 	// TODO LW: rearrange code
 	template<typename ...Args>
 	static parallel_constructor<ParClass> create_binded_constructor() {
-		std::future<ParClass*> (*invoker)(bufin&, bufout&) = &call_constr<Args...>;
+		std::shared_future<ParClass*> (*invoker)(bufin&, bufout&) = &call_constr<Args...>;
 		return std::bind(invoker, std::placeholders::_1, std::placeholders::_2);
 	}
 
@@ -219,7 +219,7 @@ private:
 	static const std::vector<remote::parallel_constructor<ParClass>> constr_methods_;
 
 	// std::promise<ParClass*> promise_;
-	std::future<ParClass*> future_;
+	std::shared_future<ParClass*> future_;
 	// std::unique_ptr<ParClass> p_obj_;
 };
 
