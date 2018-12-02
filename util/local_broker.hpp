@@ -19,7 +19,7 @@ namespace pop {
 template<typename T> class local_broker final {
 public:
 	local_broker() : combox_(brok_) {
-		brok_.ptr_obj().reset(new T());
+		brok_.ptr_obj().reset(new T()); // TODO: set in constructor instead
 	}
 
 	inline void run() {

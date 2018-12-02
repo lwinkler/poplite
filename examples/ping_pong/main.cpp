@@ -9,8 +9,6 @@
 //
 
 #include "util/local_broker.hpp"
-#include "class/broker.hpp"
-#include "com/broker_combox.hpp"
 
 #include "ping_pong.hpp"
 #include "mutex.hpp"
