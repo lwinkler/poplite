@@ -8,7 +8,7 @@
 
 #ifndef _POP_PARSER_ // this accelerates parsing
 #include "class/system.hpp"
-#include "alloc/manual.hpp"
+#include "alloc/local.hpp"
 #include "class/interface.hpp"
 #endif
 
@@ -20,7 +20,7 @@
 POP_CLASS PopObject3 {
 
 public:
-	POP_ALLOCATION(pop::manual_allocator())
+	// POP_ALLOCATION(pop::manual_allocator())
 	PopObject3();
 	~PopObject3();
 	POP_SYNC void firstMethod();

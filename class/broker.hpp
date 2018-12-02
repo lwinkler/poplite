@@ -23,7 +23,7 @@
 namespace pop {
 namespace remote {
 template<class ParClass> using parallel_method      = std::function<void(bufin&, bufout&, ParClass&)>;
-template<class ParClass> using parallel_constructor = std::function<ParClass*(bufin&, bufout&)>;
+template<class ParClass> using parallel_constructor = std::function<std::future<ParClass*>(bufin&, bufout&)>;
 
 /// A utility container to store and serialize an interface
 template<class T> struct iface_container final {
@@ -84,7 +84,7 @@ template<class ParClass> class broker : private boost::noncopyable {
 public:
 	
 	broker() {
-		future_ = promise_.get_future();
+		// future_ = promise_.get_future();
 	}
 	
 
@@ -105,7 +105,7 @@ public:
 	}
 */
 	void remote_call(int _nb, bufin& _ia, bufout& _oa) {
-		assert(_nb > 0);
+		assert(_nb >= 0);
 		LOG(debug) << __LINE__;
 		if(_nb < static_cast<int>(methods_.size())) { // TODO: use size_t for method id
 			LOG(debug) << __LINE__;
@@ -116,9 +116,8 @@ public:
 		LOG(debug) << __LINE__;
 			// if(p_obj_.valid())
 				// throw std::runtime_error("Constructor has been called twice");
-			auto fct = constr_methods_.at(_nb - methods_.size());
-		LOG(debug) << __LINE__;
-			future_ = std::async(std::launch::async, [fct, &_ia, &_oa]{ return fct(_ia, _oa); });
+			future_ = constr_methods_.at(_nb - methods_.size())(_ia, _oa);
+			// future_ = std::async(std::launch::async, [fct, &_ia, &_oa]{ return fct(_ia, _oa); });
 			// std::thread( [this, &fct, &_ia, &_oa]{ promise_.set_value_at_thread_exit(fct(_ia, _oa)); }).detach();
 
 
@@ -131,16 +130,15 @@ public:
 		}
 	}
 
-	template<typename ...Args> static ParClass* call_constr(bufin& _ia, bufout& _oa) {
+	template<typename ...Args> static std::future<ParClass*> call_constr(bufin& _ia, bufout& _oa) {
 		LOG(debug) << "Call constructor";
-		LOG(debug) << __LINE__;
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		LOG(debug) << __LINE__;
 		_ia >> tup;
 		LOG(debug) << __LINE__;
-		ParClass* ret = apply_tuple_constr(__constr<Args...>, tup);
+		std::future<ParClass*> ret = std::async(std::launch::async, [&](){return apply_tuple_constr(__constr<Args...>, tup);});
 		LOG(debug) << __LINE__;
-		serialize_out<bufout, Args...>(_oa, tup);
+		serialize_out<bufout, Args...>(_oa, tup); // TODO: Do we need to return a tuple ?
 		LOG(debug) << __LINE__;
 		return ret;
 	}
@@ -187,7 +185,7 @@ public:
 	// TODO LW: rearrange code
 	template<typename ...Args>
 	static parallel_constructor<ParClass> create_binded_constructor() {
-		ParClass* (*invoker)(bufin&, bufout&) = &call_constr<Args...>;
+		std::future<ParClass*> (*invoker)(bufin&, bufout&) = &call_constr<Args...>;
 		return std::bind(invoker, std::placeholders::_1, std::placeholders::_2);
 	}
 
@@ -220,7 +218,7 @@ private:
 	static const std::vector<remote::parallel_method<ParClass>> methods_;
 	static const std::vector<remote::parallel_constructor<ParClass>> constr_methods_;
 
-	std::promise<ParClass*> promise_;
+	// std::promise<ParClass*> promise_;
 	std::future<ParClass*> future_;
 	// std::unique_ptr<ParClass> p_obj_;
 };
