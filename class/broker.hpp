@@ -85,9 +85,13 @@ public:
 	
 	broker() {
 	}
-	// TODO: Test for leaks !
+
 	broker(ParClass* _p_obj) {
 		future_ = std::async(std::launch::async, [_p_obj](){return _p_obj;});
+	}
+
+	~broker() {
+		delete(future_.get());
 	}
 
 	void remote_call(int _nb, bufin& _ia, bufout& _oa) {
