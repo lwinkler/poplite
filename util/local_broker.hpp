@@ -18,8 +18,7 @@
 namespace pop {
 template<typename T> class local_broker final {
 public:
-	local_broker() : combox_(brok_) {
-		// TODO LW: Make this work brok_.ptr_obj().reset(new T()); // TODO: set in constructor instead
+	local_broker() : combox_(brok_), brok_(new T()) {
 	}
 
 	inline void run() {
@@ -38,8 +37,8 @@ public:
 		return combox_.contact();
 	}
 private:
-	pop::remote::broker<T> brok_;
 	pop::broker_combox<T> combox_;
+	pop::remote::broker<T> brok_;
 };
 } // namespace pop
 

@@ -84,62 +84,27 @@ template<class ParClass> class broker : private boost::noncopyable {
 public:
 	
 	broker() {
-		// future_ = promise_.get_future();
 	}
-	
+	// TODO: Test for leaks !
+	broker(ParClass* _p_obj) {
+		future_ = std::async(std::launch::async, [_p_obj](){return _p_obj;});
+	}
 
-	// ~broker() {
-		// for deletion:
-		// set_object();
-	// }
-/*
-	void set_object() {
-		if(!p_obj_) {
-			if(!future_.valid()) {
-				LOG(error) << "Future is not valid";
-				std::terminate();
-			}
-			future_.wait();
-			p_obj_.reset(future_.get());
-		}
-	}
-*/
 	void remote_call(int _nb, bufin& _ia, bufout& _oa) {
 		assert(_nb >= 0);
-		LOG(debug) << __LINE__;
 		if(_nb < static_cast<int>(methods_.size())) { // TODO: use size_t for method id
-			LOG(debug) << __LINE__;
-			//set_object();
-			//LOG(debug) << __LINE__;
 			methods_.at(_nb)(_ia, _oa, *future_.get());
 		} else {
-		LOG(debug) << __LINE__;
-			// if(p_obj_.valid())
-				// throw std::runtime_error("Constructor has been called twice");
 			future_ = constr_methods_.at(_nb - methods_.size())(_ia, _oa);
-			// future_ = std::async(std::launch::async, [fct, &_ia, &_oa]{ return fct(_ia, _oa); });
-			// std::thread( [this, &fct, &_ia, &_oa]{ promise_.set_value_at_thread_exit(fct(_ia, _oa)); }).detach();
-
-
-			// std::packaged_task<ParClass*()> tsk([&]{return fct(_ia, _oa);});
-
-			// future_ = tsk.get_future();    // is a std::future<int>
-			// std::thread thr(std::move(tsk), _ia, _oa);
-			// future_.wait();
-		LOG(debug) << __LINE__;
 		}
 	}
 
 	template<typename ...Args> static std::shared_future<ParClass*> call_constr(bufin& _ia, bufout& _oa) {
 		LOG(debug) << "Call constructor";
 		std::tuple<typename pop_decay<Args>::type...> tup;
-		LOG(debug) << __LINE__;
 		_ia >> tup;
-		LOG(debug) << __LINE__;
 		std::shared_future<ParClass*> ret = std::async(std::launch::async, [&](){return apply_tuple_constr(__constr<Args...>, tup);});
-		LOG(debug) << __LINE__;
 		serialize_out<bufout, Args...>(_oa, tup); // TODO: Do we need to return a tuple ?
-		LOG(debug) << __LINE__;
 		return ret;
 	}
 
@@ -159,15 +124,6 @@ public:
 		apply_tuple_static( _p_meth, tup, _oa);
 		serialize_out<bufout, Args...>(_oa, tup);
 	}
-
-	/// A simple concurrent call to a constructor method
-	/*
-	template<typename ...Args> static void constructor_conc(bufin& _ia, bufout& _oa, ParClass*&) {
-		std::tuple<typename pop_decay<Args>::type...> tup;
-		_ia >> tup;
-		apply_tuple_static(call_constr<Args...>, tup, _oa);
-		serialize_out<bufout, Args...>(_oa, tup);
-	}*/
 
 	/// A simple concurrent call to a static method
 	template<typename R, typename ...Args> static void const_conc(bufin& _ia, bufout& _oa, ParClass& _obj, R (ParClass::*_p_meth)(Args...) const) {
@@ -218,7 +174,6 @@ private:
 	static const std::vector<remote::parallel_method<ParClass>> methods_;
 	static const std::vector<remote::parallel_constructor<ParClass>> constr_methods_;
 
-	// std::promise<ParClass*> promise_;
 	std::shared_future<ParClass*> future_;
 	// std::unique_ptr<ParClass> p_obj_;
 };
