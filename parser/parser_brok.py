@@ -76,7 +76,7 @@ namespace remote
 		fout.write(',\n'.join(meths))
 
 		fout.write('\n};\n')
-		fout.write('template<> const std::vector<parallel_constructor<%s>> broker<%s>::constr_methods_{\n'
+		fout.write('template<> const std::vector<parallel_constructor<%s>> broker_constructor<%s>::constr_methods_{\n'
 			% (full_name, full_name))
 		meths = []
 		for c in parser.find_constructors(class_node):
