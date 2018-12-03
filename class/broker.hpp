@@ -107,7 +107,11 @@ public:
 		LOG(debug) << "Call constructor";
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
-		std::shared_future<ParClass*> ret = std::async(std::launch::async, [&](){return apply_tuple_constr(__constr<Args...>, tup);});
+		// LOG(debug) << tup;
+		std::shared_future<ParClass*> ret = std::async(std::launch::async, [tup]() mutable {
+			auto cstr = __constr<Args...>;
+			return apply_tuple_constr(cstr, tup);
+		});
 		serialize_out<bufout, Args...>(_oa, tup); // TODO: Do we need to return a tuple ?
 		return ret;
 	}
