@@ -58,7 +58,6 @@ private:
 	template<class Archive> void serialize(Archive & _ar, const unsigned int _version) {
 		boost::serialization::split_member(_ar, *this, _version);
 	}
-
 };
 
 /// A utility to decay incoming arguments

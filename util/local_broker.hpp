@@ -1,5 +1,5 @@
 // local_broker.hpp
-// ~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
 //

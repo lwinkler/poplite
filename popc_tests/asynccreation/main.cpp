@@ -16,13 +16,13 @@ int main(int argc, char** argv) {
 	try {
 		printf("Asynchronous allocation of parallel object\n");
 		printf("Before creating PopObject o1\n");
-		PopObject3_iface o1;
+		PopObject3_iface o1("o1", 3);
 		printf("Before creating PopObject o2\n");
-		PopObject3_iface o2;
+		PopObject3_iface o2("o2", 3);
 		printf("Before creating PopObject o3\n");
-		PopObject3_iface o3;
+		PopObject3_iface o3("o3", 3);
 		printf("Before creating PopObject o4\n");
-		PopObject3_iface o4;
+		PopObject3_iface o4("o4", 3);
 		printf("Before creating array of PopObject\n");
 		// Create useless objects to make sure destructor is
 		// synchronized

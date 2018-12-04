@@ -25,7 +25,8 @@ dirs = [
 	'popc_tests/heritage',
 	'popc_tests/stresstest',
 	'popc_tests/stdlib',
-	'popc_tests/tree'
+	'popc_tests/tree',
+	'popc_tests/asynccreation'
 ]
 
 all_args = ' '.join(sys.argv[1:])

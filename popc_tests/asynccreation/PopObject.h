@@ -21,7 +21,7 @@ POP_CLASS PopObject3 {
 
 public:
 	// POP_ALLOCATION(pop::manual_allocator())
-	PopObject3();
+	PopObject3(const std::string& _label = "unnamed", int _delay = 5);
 	~PopObject3();
 	POP_SYNC void firstMethod();
 	POP_ASYNC void secondMethod();
