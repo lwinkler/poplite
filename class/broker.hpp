@@ -91,8 +91,8 @@ public:
 		delete(future_.get());
 	}
 
-	inline void construct(int _nb, bufin& _ia, bufout& _oa) {
-		future_ = constr_methods_.at(_nb)(_ia, _oa);
+	inline void construct(method_id_t _method_id, bufin& _ia, bufout& _oa) {
+		future_ = constr_methods_.at(_method_id)(_ia, _oa);
 	}
 
 	inline ParClass& obj() {
@@ -144,11 +144,11 @@ public:
 	broker(ParClass* _p_obj) : broker_constructor_(_p_obj) {
 	}
 
-	void remote_call(int _nb, bufin& _ia, bufout& _oa) {
-		if(_nb < static_cast<int>(methods_.size())) { // TODO: use size_t for method id
-			methods_.at(_nb)(_ia, _oa, broker_constructor_.obj());
+	void remote_call(method_id_t _method_id, bufin& _ia, bufout& _oa) {
+		if(_method_id < static_cast<method_id_t>(methods_.size())) {
+			methods_.at(_method_id)(_ia, _oa, broker_constructor_.obj());
 		} else {
-			broker_constructor_.construct(_nb - methods_.size(), _ia, _oa);
+			broker_constructor_.construct(_method_id - methods_.size(), _ia, _oa);
 		}
 	}
 

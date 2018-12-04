@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	template<typename R, typename ...Args> R sync(int _method_id, Args& ...args) {
+	template<typename R, typename ...Args> R sync(method_id_t _method_id, Args& ...args) {
 		pop::exception exc;
 		try {
 			LOG(debug) << "call sync "<< _method_id;
@@ -135,7 +135,7 @@ public:
 	}
 
 
-	template<typename R, typename ...Args> void async(int _method_id, Args& ...args) {
+	template<typename R, typename ...Args> void async(method_id_t _method_id, Args& ...args) {
 		// note:unused
 		// static_assert(std::is_void<R>::value, "Return type of async methods must be void");
 

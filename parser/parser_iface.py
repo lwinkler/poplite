@@ -136,17 +136,17 @@ struct method_ids
 	for m in methods:
 		if parser.is_template_method(m):
 			id0 = id
-			fout.write('template<class T> struct %s%d{static const int value;};\n' % (m.spelling, id0))
+			fout.write('template<class T> struct %s%d{static const pop::method_id_t value;};\n' % (m.spelling, id0))
 			for t in parser.get_template_types(m):
-				fout_cpp.write('template<> const int %s_iface::method_ids::%s%d%s::value = %d;\n' % (parser.get_full_name(class_node), m.spelling, id0, t, id))
+				fout_cpp.write('template<> const pop::method_id_t %s_iface::method_ids::%s%d%s::value = %d;\n' % (parser.get_full_name(class_node), m.spelling, id0, t, id))
 				id += 1
 		else:
-			fout.write('static const int %s%d = %d;\n' % (m.spelling, id, id))
+			fout.write('static const pop::method_id_t %s%d = %d;\n' % (m.spelling, id, id))
 			id += 1
 
 	constructors = parser.find_constructors(class_node)
 	for m in constructors:
-		fout.write('static const int %s%d = %d;\n' % (m.spelling.split('<')[0], id, id))
+		fout.write('static const pop::method_id_t %s%d = %d;\n' % (m.spelling.split('<')[0], id, id))
 		id += 1
 
 	fout.write('};\n')

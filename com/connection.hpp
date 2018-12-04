@@ -37,9 +37,9 @@ enum class service_type : unsigned char {
 
 // Types of method calls: all other methods are defined in each generated interface
 namespace method_id {
-static const int DISCONNECT = INT_MAX; // TODO uint
-static const int DESTROY = INT_MAX - 1;
-static const int UNKNOWN = INT_MAX - 2;
+static const method_id_t DISCONNECT = static_cast<method_id_t>(-1);
+static const method_id_t DESTROY    = static_cast<method_id_t>(-2);
+static const method_id_t UNKNOWN    = static_cast<method_id_t>(-3);
 };
 
 class connection {

@@ -114,7 +114,7 @@ private:
 		// Receive an incomming remote method invocation
 		// Successfully accepted a new connection. Call method by id
 		bufin ia(_conn->input_stream());
-		int meth_id = method_id::UNKNOWN;
+		method_id_t meth_id = method_id::UNKNOWN;
 		ia >> meth_id;
 
 		LOG(debug) << "method id " << meth_id;

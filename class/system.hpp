@@ -54,6 +54,8 @@ using lock = boost::shared_mutex;
 using write_lock = boost::unique_lock<lock>;
 using read_lock =  boost::shared_lock<lock>;
 
+// Type for method ids
+using method_id_t = size_t;
 
 /// A class that contains all the parameters of one executable (either the main or an object executable)
 class system {
