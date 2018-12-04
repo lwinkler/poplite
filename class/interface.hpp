@@ -79,7 +79,7 @@ public:
 		try {
 			LOG(debug) << "Destroy interface";
 			// Close our current socket
-			sync<void>(link_life_ ? method_id::DESTROY : method_id::DISCONNECT);
+			sync<void>(link_life_ ? method_ids::DESTROY : method_ids::DISCONNECT);
 
 			if(link_life_) {
 				// Close the service of the remote object
@@ -105,7 +105,7 @@ public:
 
 			LOG(debug) << "sent to broker";
 
-			if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY) {
+			if(_method_id == method_ids::DISCONNECT || _method_id == method_ids::DESTROY) {
 				combox_.connec().socket().close();
 				return R();
 			}
@@ -152,7 +152,7 @@ public:
 
 			LOG(debug) << "sent to broker";
 
-			if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY) {
+			if(_method_id == method_ids::DISCONNECT || _method_id == method_ids::DESTROY) {
 				combox_.connec().socket().close();
 				return;
 			}
@@ -166,7 +166,7 @@ public:
 			ia >> exc;
 			assert(exc.empty());
 
-			if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY)
+			if(_method_id == method_ids::DISCONNECT || _method_id == method_ids::DESTROY)
 				combox_.connec().socket().close();
 
 			return;

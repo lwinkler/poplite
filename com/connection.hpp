@@ -36,7 +36,7 @@ enum class service_type : unsigned char {
 };
 
 // Types of method calls: all other methods are defined in each generated interface
-namespace method_id {
+struct method_ids {
 static const method_id_t DISCONNECT = static_cast<method_id_t>(-1);
 static const method_id_t DESTROY    = static_cast<method_id_t>(-2);
 static const method_id_t UNKNOWN    = static_cast<method_id_t>(-3);

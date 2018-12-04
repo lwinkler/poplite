@@ -114,7 +114,7 @@ private:
 		// Receive an incomming remote method invocation
 		// Successfully accepted a new connection. Call method by id
 		bufin ia(_conn->input_stream());
-		method_id_t meth_id = method_id::UNKNOWN;
+		method_id_t meth_id = method_ids::UNKNOWN;
 		ia >> meth_id;
 
 		LOG(debug) << "method id " << meth_id;
@@ -128,12 +128,12 @@ private:
 		bufout oa(oss);
 		LOG(debug) << "call remote method " << meth_id;
 
-		if(meth_id == method_id::DISCONNECT) {
+		if(meth_id == method_ids::DISCONNECT) {
 			LOG(debug) << "disconnect iface and broker";
 			_conn->socket().close();
 			return;
 		}
-		if(meth_id == method_id::DESTROY) {
+		if(meth_id == method_ids::DESTROY) {
 			LOG(debug) << "received end signal";
 			_conn->socket().close();
 			stop();
