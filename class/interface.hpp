@@ -94,7 +94,6 @@ public:
 		pop::exception exc;
 		try {
 			LOG(debug) << "call sync "<< _method_id;
-			assert(_method_id >= 0);
 			std::tuple<Args...> tup(std::forward_as_tuple(args...));
 			std::stringstream oss;
 			static const bool is_async = false;

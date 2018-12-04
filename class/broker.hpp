@@ -95,8 +95,8 @@ public:
 		future_ = constr_methods_.at(_nb)(_ia, _oa);
 	}
 
-	inline ParClass* obj_ptr() {
-		return future_.get();
+	inline ParClass& obj() {
+		return *future_.get();
 	}
 
 	template<typename ...Args> static std::shared_future<ParClass*> call_constr(bufin& _ia, bufout& _oa) {
@@ -145,9 +145,8 @@ public:
 	}
 
 	void remote_call(int _nb, bufin& _ia, bufout& _oa) {
-		assert(_nb >= 0);
 		if(_nb < static_cast<int>(methods_.size())) { // TODO: use size_t for method id
-			methods_.at(_nb)(_ia, _oa, *broker_constructor_.obj_ptr());
+			methods_.at(_nb)(_ia, _oa, broker_constructor_.obj());
 		} else {
 			broker_constructor_.construct(_nb - methods_.size(), _ia, _oa);
 		}
@@ -179,7 +178,7 @@ public:
 	}
 
 	inline ParClass& obj() {
-		return *broker_constructor_.obj_ptr();
+		return broker_constructor_.obj();
 	}
 
 	// create a method pointer for broker method array
