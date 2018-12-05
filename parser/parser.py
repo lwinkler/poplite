@@ -270,6 +270,18 @@ def get_direct_parents(node, parallel = None, public_only = True):
 			parents += [cc.get_definition()]
 	return parents
 
+def get_default_value(arg):
+	""" Return the default value. Only works for primitive types so far """
+	for child in arg.get_children():
+		print child.type
+		print child.location
+		toks = child.get_tokens()
+		for tok in toks:
+			print 'Found default value %s' % tok.spelling
+			return tok.spelling
+	return None
+
+# TODO Rename these functions
 def list_args1(parent, front_comma = False, back_comma = False):
 	""" List all types of arguments as a string with commas, if specified add an extra comma in front or end """
 	out = []
@@ -292,7 +304,11 @@ def list_args(parent, front_comma = False, back_comma = False):
 	""" List all arguments with types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
-		out.append(get_full_name(arg.type) + ' ' + arg.spelling)
+		defval = get_default_value(arg)
+		if defval is not None:
+			out.append(get_full_name(arg.type) + ' ' + arg.spelling + ' = ' + defval)
+		else:
+			out.append(get_full_name(arg.type) + ' ' + arg.spelling)
 	fc = ', ' if out and front_comma else ''
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc

@@ -13,7 +13,6 @@
 import parser
 
 #--------------------------------------------------------------------------------
-
 def write_head(fout, classname):
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
@@ -24,7 +23,6 @@ def write_head(fout, classname):
 """ % (parser.capitalize(classname), parser.capitalize(classname)))
 
 #--------------------------------------------------------------------------------
-
 def write_foot(fout):
 
 	fout.write("""
@@ -97,7 +95,6 @@ private:
 	fout.write('};\n')
 
 #--------------------------------------------------------------------------------
-
 def write_constr(fout, c, id, parent_ifaces, iface_name):
 	# note: virtual inheritence is not handled
 	constr = c.spelling.split('<')[0]
@@ -107,13 +104,14 @@ def write_constr(fout, c, id, parent_ifaces, iface_name):
 		% (constr, parser.list_args(c, False, False), parent_constr))
 	fout.write('{sync<void%s>(method_ids::%s%d%s);}\n' 
 		% (parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
-#--------------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------------
 def write_meth(fout, m, id):
 	virtual  = 'virtual ' if m.is_virtual_method() else ''
 	fout.write('inline %s%s %s(%s) {' %(virtual, m.result_type.spelling, m.spelling, parser.list_args(m)) 
 		+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, parser.list_args2(m, True)))
 
+#--------------------------------------------------------------------------------
 def write_template_meth(fout, m, id):
 	ttypes = parser.get_template_types(m)
 	virtual = 'virtual ' if m.is_virtual_method() else ''
