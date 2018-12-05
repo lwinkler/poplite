@@ -11,6 +11,7 @@
 #define TEST_DEFAULT_VALUES_H
 
 #include <string>
+#include <vector>
 
 #ifndef _POP_PARSER_ // this accelerates parsing
 #include "class/system.hpp"
@@ -34,6 +35,14 @@ POP_CLASS tester_default {
 		}
 	}
 
+	template<typename T> void check(const std::vector<T>& _a, const std::vector<T>& _b) {
+		if(_a != _b) {
+			std::stringstream ss;
+			ss << "vector value differ: sizes " << _a.size() << " and " << _b.size();
+			throw std::runtime_error(ss.str());
+		}
+	}
+
 public:
 	// POP_ALLOCATION(pop::manual_allocator())
 	tester_default(const std::string& _string = "my_object", int _int = 5){
@@ -41,9 +50,10 @@ public:
 		check(_int, 5);
 	}
 
-	POP_SYNC void testDefaultInt(int _int = 12) {check(_int, 12);}
-	POP_SYNC void testDefaultDouble(double _double = M_PI) {check(_double, M_PI);}
-	POP_SYNC void testDefaultString(const std::string _string = "something") {check(_string, std::string("something"));}
+	POP_SYNC void test_default_int(int _var = 12) {check(_var, 12);}
+	POP_SYNC void test_default_double(double _var = 3.14) {check(_var, 3.14);}
+	POP_SYNC void test_default_string(const std::string _var = "something") {check(_var, std::string("something"));}
+	POP_SYNC void test_default_vector_int(const std::vector<int>& _var = {1, 2, 3}) {check( _var, {1, 2, 3});}
 };
 
 #endif

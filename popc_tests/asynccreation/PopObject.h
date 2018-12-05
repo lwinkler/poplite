@@ -6,6 +6,8 @@
  * @date 2012.07.11
  */
 
+#include <string>
+
 #ifndef _POP_PARSER_ // this accelerates parsing
 #include "class/system.hpp"
 #include "alloc/local.hpp"
@@ -21,7 +23,7 @@ POP_CLASS PopObject3 {
 
 public:
 	// POP_ALLOCATION(pop::manual_allocator())
-	PopObject3(const std::string& _label, int _delay = 5);
+	PopObject3(const std::string& _label = "my_object", int _delay = 5);
 	~PopObject3();
 	POP_SYNC void firstMethod();
 	POP_ASYNC void secondMethod();

@@ -101,4 +101,5 @@ endfunction(pop_add_all_classes)
 
 
 add_subdirectory(examples)
+add_subdirectory(tests)
 add_subdirectory(popc_tests)
