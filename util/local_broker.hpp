@@ -17,6 +17,7 @@
 /// A template to create objects locally, without interface or dedicated process (see ping_pong for an example)
 namespace pop {
 template<typename T> class local_broker final {
+	using Brok = pop::remote::broker<T, pop::remote::broker_constructor_sync<T>>;
 public:
 	local_broker() : combox_(brok_), brok_(new T()) {
 	}
@@ -37,8 +38,8 @@ public:
 		return combox_.contact();
 	}
 private:
-	pop::broker_combox<T> combox_;
-	pop::remote::broker<T> brok_;
+	pop::broker_combox<Brok> combox_;
+	Brok brok_;
 };
 } // namespace pop
 

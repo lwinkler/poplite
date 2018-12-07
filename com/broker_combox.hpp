@@ -24,11 +24,11 @@ namespace pop {
 
 
 /// Remove server for each parallel object
-template<class ParClass>class broker_combox {
+template<class Brok>class broker_combox {
 public:
 	/// Constructor opens the acceptor and starts waiting for the first incoming
 	/// connection.
-	broker_combox(remote::broker<ParClass>& _brok, const boost::asio::ip::tcp::resolver::query & _query) : broker_combox(_brok) {
+	broker_combox(Brok& _brok, const boost::asio::ip::tcp::resolver::query & _query) : broker_combox(_brok) {
 		boost::asio::ip::tcp::resolver resolver(io_service_);
 		boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(_query);
 		boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
@@ -40,7 +40,7 @@ public:
 	}
 
 	/// Simplified constructor for local objects. Does not connect to interface
-	broker_combox(remote::broker<ParClass>& _brok) :
+	broker_combox(Brok& _brok) :
 		brok_(_brok),
 		service_acceptor_(io_service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 0 /*port*/)),
 		accesspoint_(pop::system::instance().host_name(), service_acceptor_.local_endpoint().port()) {
@@ -220,7 +220,7 @@ private:
 
 private:
 	/// The data to be sent to each client.
-	pop::remote::broker<ParClass>& brok_;
+	Brok& brok_;
 	boost::asio::io_service io_service_;
 	boost::asio::ip::tcp::acceptor service_acceptor_;
 	pop::accesspoint accesspoint_;

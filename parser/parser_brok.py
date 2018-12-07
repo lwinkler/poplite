@@ -26,7 +26,7 @@ def write_head(fout, classname, filename_in):
 
 def write_constr(m):
 	
-	return 'create_binded_constructor<%s>()' % (parser.list_args1(m))
+	return 'broker_constructor_async::create_binded_constructor<%s>()' % (parser.list_args1(m))
 
 #--------------------------------------------------------------------------------
 
@@ -67,8 +67,8 @@ namespace remote
 	templates_str = parser.get_template_types(class_node)
 	for template_str in templates_str:
 		full_name = parser.get_full_name(class_node) + template_str
-		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s>::methods_{\n'
-			% (full_name, full_name))
+		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s, broker_constructor_async<%s>>::methods_{\n'
+			% (full_name, full_name, full_name))
 
 		meths = []
 		for m in parser.find_methods(class_node)[0]:
@@ -76,7 +76,7 @@ namespace remote
 		fout.write(',\n'.join(meths))
 
 		fout.write('\n};\n')
-		fout.write('template<> const std::vector<parallel_constructor<%s>> broker_constructor<%s>::constr_methods_{\n'
+		fout.write('template<> const std::vector<parallel_constructor_async<%s>> broker_constructor_async<%s>::constr_methods_{\n'
 			% (full_name, full_name))
 		meths = []
 		for c in parser.find_constructors(class_node):
@@ -95,8 +95,8 @@ def write_main(fout, class_node):
 #include "com/broker_combox.hpp"
 
 template<typename T> inline void run_broker(const boost::asio::ip::tcp::resolver::query& _query) {
-	pop::remote::broker<T> brok;
-	pop::broker_combox<T> combox(brok, _query);
+	pop::remote::broker<T, pop::remote::broker_constructor_async<T>> brok;
+	pop::broker_combox combox(brok, _query);
 	combox.run();
 }
 
