@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 	def.test_default_int();
 	def.test_default_double();
 	def.test_default_string();
-	// def.test_default_vector_int();
+	def.test_default_vector_int();
 
 	return 0;
 }
