@@ -9,7 +9,7 @@
 //
 
 #ifndef POPLITE_SERIALIZE_UNIQUE_PTR_H
-#define POPLITE_SERIALIZEUNIQUE_PTR__H
+#define POPLITE_SERIALIZE_UNIQUE_PTR_H
 
 #include <memory>
 #include <boost/archive/text_oarchive.hpp>

@@ -79,7 +79,7 @@ public:
 		try {
 			LOG(debug) << "Destroy interface";
 			// Close our current socket
-			sync<void>(link_life_ ? method_id::DESTROY : method_id::DISCONNECT);
+			sync<void>(link_life_ ? method_ids::DESTROY : method_ids::DISCONNECT);
 
 			if(link_life_) {
 				// Close the service of the remote object
@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	template<typename R, typename ...Args> R sync(int _method_id, Args& ...args) {
+	template<typename R, typename ...Args> R sync(method_id_t _method_id, Args& ...args) {
 		pop::exception exc;
 		try {
 			LOG(debug) << "call sync "<< _method_id;
@@ -105,7 +105,7 @@ public:
 
 			LOG(debug) << "sent to broker";
 
-			if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY) {
+			if(_method_id == method_ids::DISCONNECT || _method_id == method_ids::DESTROY) {
 				combox_.connec().socket().close();
 				return R();
 			}
@@ -135,7 +135,7 @@ public:
 	}
 
 
-	template<typename R, typename ...Args> void async(int _method_id, Args& ...args) {
+	template<typename R, typename ...Args> void async(method_id_t _method_id, Args& ...args) {
 		// note:unused
 		// static_assert(std::is_void<R>::value, "Return type of async methods must be void");
 
@@ -152,7 +152,7 @@ public:
 
 			LOG(debug) << "sent to broker";
 
-			if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY) {
+			if(_method_id == method_ids::DISCONNECT || _method_id == method_ids::DESTROY) {
 				combox_.connec().socket().close();
 				return;
 			}
@@ -166,7 +166,7 @@ public:
 			ia >> exc;
 			assert(exc.empty());
 
-			if(_method_id == method_id::DISCONNECT || _method_id == method_id::DESTROY)
+			if(_method_id == method_ids::DISCONNECT || _method_id == method_ids::DESTROY)
 				combox_.connec().socket().close();
 
 			return;

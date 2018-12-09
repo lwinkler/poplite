@@ -24,14 +24,13 @@ def write_head(fout, classname, filename_in):
 
 #--------------------------------------------------------------------------------
 
+def write_constr(m, constr_style):
+	
+	return 'broker_constructor_%s::create_binded_constructor<%s>()' % (constr_style, parser.list_args1(m))
 
 #--------------------------------------------------------------------------------
 
-def write_constr(fout, m, classname):
-	
-	fout.write('std::bind(&remote::broker<%s>::call_constr<%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),\n' % (classname, parser.list_args1(m)))
-
-def write_meth(fout, m, full_name, template_str):
+def write_meth(m, full_name, template_str):
 	
 	conc = 'conc'
 	create = 'create_binded_method'
@@ -42,18 +41,16 @@ def write_meth(fout, m, full_name, template_str):
 		conc = 'const_conc'
 		create = 'const_create_binded_method'
 	
-	create += '<%s>' % (full_name)
-	
 	if parser.is_template_method(m):
+		meths = []
 		for t in parser.get_template_types(m):
 			# TODO: Difficult case: if the template inherits from a different template or a non-template class. Not handled yet.
-			fout.write('%s(&remote::broker<%s>::%s, &%s::%s%s),\n'
-				% (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling, t))
+			meths.append('%s(&%s, &%s::%s%s)' % (create, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling, t))
+		return ',\n'.join(meths)
 	else:
 		# fout.write('std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n'
 				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
-		fout.write('%s(&remote::broker<%s>::%s, &%s::%s),\n'
-				% (create, full_name, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling))
+		return '%s(&%s, &%s::%s)' % (create, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling)
 
 #--------------------------------------------------------------------------------
 
@@ -67,32 +64,41 @@ namespace remote
 """)
 	
 	# implementation of static array of methods
+	constr_style = parser.get_class_construction_style(class_node)
 	templates_str = parser.get_template_types(class_node)
 	for template_str in templates_str:
 		full_name = parser.get_full_name(class_node) + template_str
-		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s>::methods_{\n'
-			% (full_name, full_name))
+		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s, broker_constructor_%s<%s>>::methods_{\n'
+			% (full_name, full_name, constr_style, full_name))
 
+		meths = []
 		for m in parser.find_methods(class_node)[0]:
-			write_meth(fout, m, full_name, template_str)
+			meths.append(write_meth(m, full_name, template_str))
+		fout.write(',\n'.join(meths))
 
+		fout.write('\n};\n')
+		fout.write('template<> const std::vector<parallel_constructor_%s<%s>> broker_constructor_%s<%s>::constr_methods_{\n'
+			% (constr_style, full_name, constr_style, full_name))
+		meths = []
 		for c in parser.find_constructors(class_node):
-			write_constr(fout, c, full_name)
+			meths.append(write_constr(c, constr_style))
+		fout.write(',\n'.join(meths))
 
-		fout.write('nullptr\n};\n')
+		fout.write('\n};\n')
 	fout.write('}\n}\n')
 
 def write_main(fout, class_node):
 	
 	# implementation of static array of methods
 	templates_str = parser.get_template_types(class_node)
+	constr_style = parser.get_class_construction_style(class_node)
 
 	fout.write("""
 #include "com/broker_combox.hpp"
 
 template<typename T> inline void run_broker(const boost::asio::ip::tcp::resolver::query& _query) {
-	pop::remote::broker<T> brok;
-	pop::broker_combox<T> combox(brok, _query);
+	pop::remote::broker<T, pop::remote::broker_constructor_%s<T>> brok;
+	pop::broker_combox combox(brok, _query);
 	combox.run();
 }
 
@@ -109,7 +115,7 @@ int main(int _argc, char* _argv[])
 			return -1;
 		}
 		boost::asio::ip::tcp::resolver::query query(_argv[2], _argv[3]);
-""")
+""" % (constr_style))
 
 	for t in templates_str:
 		full_name = parser.get_full_name(class_node) + t

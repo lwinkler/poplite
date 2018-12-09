@@ -11,7 +11,7 @@
 #define POPLITE_BROKER_H
 
 
-#include <iostream>
+#include <future>
 #include "class/system.hpp"
 #include "class/apply_tuple.hpp"
 #include "class/apply_tuple_constr.hpp"
@@ -22,7 +22,9 @@
 
 namespace pop {
 namespace remote {
-template<class ParClass> using parallel_method = std::function<void(bufin&, bufout&, std::unique_ptr<ParClass>&)>;
+template<class ParClass> using parallel_method            = std::function<void(bufin&, bufout&, ParClass&)>;
+template<class ParClass> using parallel_constructor_sync  = std::function<ParClass* (bufin&, bufout&)>;
+template<class ParClass> using parallel_constructor_async = std::function<std::shared_future<ParClass*>(bufin&, bufout&)>;
 
 /// A utility container to store and serialize an interface
 template<class T> struct iface_container final {
@@ -36,7 +38,6 @@ template<class T> struct iface_container final {
 	~iface_container() {
 		delete p_iface_;
 	}
-
 
 private:
 	T* p_iface_ = nullptr;
@@ -58,7 +59,6 @@ private:
 	template<class Archive> void serialize(Archive & _ar, const unsigned int _version) {
 		boost::serialization::split_member(_ar, *this, _version);
 	}
-
 };
 
 /// A utility to decay incoming arguments
@@ -77,54 +77,150 @@ void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> &
 	SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename pop_decay<Args>::type...> >(ar, t1);
 }
 
-// create a method pointer for broker method array
-template<typename O, typename Oc, typename R, typename ...Args>
-parallel_method<O> create_binded_method(void (*_invoker)(bufin&, bufout&, std::unique_ptr<O>&, R (O::*)(Args...)), R(Oc::*_p_meth)(Args...)) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
-}
-
-// create a method pointer for broker method array
-template<typename O, typename Oc, typename R, typename ...Args>
-parallel_method<O> const_create_binded_method(void (*_invoker)(bufin&, bufout&, std::unique_ptr<O>&, R (O::*)(Args...) const), R(Oc::*_p_meth)(Args...) const) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
-}
-
-// create a method pointer for broker method array
-template<typename O, typename R, typename ...Args>
-parallel_method<O> static_create_binded_method(void (*_invoker)(bufin&, bufout&, std::unique_ptr<O>&, R (*)(Args...)), R(*_p_meth)(Args...)) {
-	return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
-}
-
-/// A broker is the (remote) part that contains the instantiation of the parallel object
-template<class ParClass> class broker : private boost::noncopyable {
+/// An object constructor for the broker: Simple version, the pointer to the object is given
+template<class ParClass> class broker_constructor_simple {
 public:
-	inline void remote_call(int _nb, bufin& _ia, bufout& _oa) {
-		(methods_.at(_nb))(_ia, _oa, p_obj_);
+	broker_constructor_simple(ParClass* _p_obj) {
+		obj_ptr_.reset(_p_obj);
 	}
 
-	template<typename ...Args> static void call_constr(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj) {
-		if(_p_obj)
-			throw std::runtime_error("Constructor has been called twice");
+	inline ParClass& obj() {
+		return *obj_ptr_;
+	}
+
+private:
+	std::unique_ptr<ParClass> obj_ptr_;
+};
+
+/// An object constructor for the broker
+template<class ParClass> class broker_constructor_sync {
+public:
+	// broker_constructor_sync() {}
+	inline void construct(method_id_t _method_id, bufin& _ia, bufout& _oa) {
+		obj_ptr_.reset(constr_methods_.at(_method_id)(_ia, _oa));
+	}
+
+	inline ParClass& obj() {
+		return *obj_ptr_;
+	}
+
+	template<typename ...Args> static ParClass* call_constr(bufin& _ia, bufout& _oa) {
 		LOG(debug) << "Call constructor";
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
-		_p_obj.reset(apply_tuple_constr(__constr<Args...>, tup));
+		// LOG(debug) << tup;
+		auto cstr = __constr<Args...>;
+		ParClass* ret = apply_tuple_constr(cstr, tup);
 		serialize_out<bufout, Args...>(_oa, tup);
+		return ret;
+	}
+
+	// create a constructor method for broker method array
+	template<typename ...Args>
+	static parallel_constructor_sync<ParClass> create_binded_constructor() {
+		ParClass* (*invoker)(bufin&, bufout&) = &call_constr<Args...>;
+		return std::bind(invoker, std::placeholders::_1, std::placeholders::_2);
+	}
+
+
+private:
+	/// A call to constructor
+	template<typename ...Args> static ParClass* __constr(Args... args) {
+		LOG(debug) << "Call constructor of parclass";
+		return new ParClass(args...);
+	}
+
+	static const std::vector<remote::parallel_constructor_sync<ParClass>> constr_methods_;
+
+	std::unique_ptr<ParClass> obj_ptr_;
+};
+
+
+/// An object constructor for the broker for async creation
+template<class ParClass> class broker_constructor_async {
+public:
+	broker_constructor_async() {
+	}
+
+	broker_constructor_async(ParClass* _p_obj) { // TODO: Remove
+		future_ = std::async(std::launch::async, [_p_obj](){return _p_obj;});
+	}
+
+	~broker_constructor_async() {
+		delete(future_.get());
+	}
+
+	inline void construct(method_id_t _method_id, bufin& _ia, bufout& _oa) {
+		future_ = constr_methods_.at(_method_id)(_ia, _oa);
+	}
+
+	inline ParClass& obj() {
+		return *future_.get();
+	}
+
+	template<typename ...Args> static std::shared_future<ParClass*> call_constr(bufin& _ia, bufout& _oa) {
+		LOG(debug) << "Call constructor";
+		std::tuple<typename pop_decay<Args>::type...> tup;
+		_ia >> tup;
+		// LOG(debug) << tup;
+		std::shared_future<ParClass*> ret = std::async(std::launch::async, [tup]() mutable {
+			auto cstr = __constr<Args...>;
+			return apply_tuple_constr(cstr, tup);
+		});
+		serialize_out<bufout, Args...>(_oa, tup);
+		return ret;
+	}
+
+	// create a constructor method for broker method array
+	template<typename ...Args>
+	static parallel_constructor_async<ParClass> create_binded_constructor() {
+		std::shared_future<ParClass*> (*invoker)(bufin&, bufout&) = &call_constr<Args...>;
+		return std::bind(invoker, std::placeholders::_1, std::placeholders::_2);
+	}
+
+
+private:
+	/// A call to constructor
+	template<typename ...Args> static ParClass* __constr(Args... args) {
+		LOG(debug) << "Call constructor of parclass";
+		return new ParClass(args...);
+	}
+
+	static const std::vector<remote::parallel_constructor_async<ParClass>> constr_methods_;
+
+	std::shared_future<ParClass*> future_;
+};
+
+
+/// A broker is the (remote) part that contains the instantiation of the parallel object
+template<class ParClass, class BrokConstr> class broker : private boost::noncopyable {
+public:
+	
+	broker() {
+	}
+
+	broker(ParClass* _p_obj) : broker_constructor_(_p_obj) {
+	}
+
+	void remote_call(method_id_t _method_id, bufin& _ia, bufout& _oa) {
+		if(_method_id < static_cast<method_id_t>(methods_.size())) {
+			methods_.at(_method_id)(_ia, _oa, broker_constructor_.obj());
+		} else {
+			broker_constructor_.construct(_method_id - methods_.size(), _ia, _oa);
+		}
 	}
 
 	/// A simple concurrent call to a method
-	template<typename R, typename ...Args> static void conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (ParClass::*_p_meth)(Args...)) {
-		if(!_p_obj)
-			throw std::runtime_error("Constructor has not been called");
+	template<typename R, typename ...Args> static void conc(bufin& _ia, bufout& _oa, ParClass& _obj, R (ParClass::*_p_meth)(Args...)) {
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
 		// TODO: maybe one day use  http://en.cppreference.com/w/cpp/utility/apply
-		apply_tuple(_p_obj.get(), _p_meth, tup, _oa);
+		apply_tuple(&_obj, _p_meth, tup, _oa);
 		serialize_out<bufout, Args...>(_oa, tup);
 	}
 
 	/// A simple concurrent call to a static method
-	template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (*_p_meth)(Args...)) {
+	template<typename R, typename ...Args> static void static_conc(bufin& _ia, bufout& _oa, ParClass& /*_obj*/, R (*_p_meth)(Args...)) {
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
 		apply_tuple_static( _p_meth, tup, _oa);
@@ -132,29 +228,41 @@ public:
 	}
 
 	/// A simple concurrent call to a static method
-	template<typename R, typename ...Args> static void const_conc(bufin& _ia, bufout& _oa, std::unique_ptr<ParClass>& _p_obj, R (ParClass::*_p_meth)(Args...) const) {
-		if(!_p_obj)
-			throw std::runtime_error("Constructor has not been called");
+	template<typename R, typename ...Args> static void const_conc(bufin& _ia, bufout& _oa, ParClass& _obj, R (ParClass::*_p_meth)(Args...) const) {
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
-		apply_tuple_const(_p_obj.get(), _p_meth, tup, _oa);
+		apply_tuple_const(&_obj, _p_meth, tup, _oa);
 		serialize_out<bufout, Args...>(_oa, tup);
 	}
 
-	inline std::unique_ptr<ParClass>& ptr_obj() {
-		return p_obj_;
+	inline ParClass& obj() {
+		return broker_constructor_.obj();
 	}
 
+	// create a method pointer for broker method array
+	template<typename Oc, typename R, typename ...Args>
+	static parallel_method<ParClass> create_binded_method(void (*_invoker)(bufin&, bufout&, ParClass&, R (ParClass::*)(Args...)), R(Oc::*_p_meth)(Args...)) {
+		return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+	}
+
+	// create a method pointer for broker method array
+	template<typename Oc, typename R, typename ...Args>
+	static parallel_method<ParClass> const_create_binded_method(void (*_invoker)(bufin&, bufout&, ParClass&, R (ParClass::*)(Args...) const), R(Oc::*_p_meth)(Args...) const) {
+		return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+	}
+
+	// create a method pointer for broker method array
+	template<typename R, typename ...Args>
+	static parallel_method<ParClass> static_create_binded_method(void (*_invoker)(bufin&, bufout&, ParClass&, R (*)(Args...)), R(*_p_meth)(Args...)) {
+		return std::bind(_invoker, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, _p_meth);
+	}
 
 private:
-	/// A call to constructor
-	template<typename ...Args> static ParClass* __constr(Args... args) {
-		return new ParClass(args...);
-	}
-
 	// The list of parallel methods: will be generated by the parser and added at link
 	static const std::vector<remote::parallel_method<ParClass>> methods_;
-	std::unique_ptr<ParClass> p_obj_;
+
+	// The object constructor for the broker
+	BrokConstr broker_constructor_;
 };
 
 }

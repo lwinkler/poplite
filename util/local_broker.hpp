@@ -1,5 +1,5 @@
 // local_broker.hpp
-// ~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2015 Laurent Winkler lwinkler888 at gmail dot com
 //
@@ -17,9 +17,9 @@
 /// A template to create objects locally, without interface or dedicated process (see ping_pong for an example)
 namespace pop {
 template<typename T> class local_broker final {
+	using Brok = pop::remote::broker<T, pop::remote::broker_constructor_sync<T>>;
 public:
-	local_broker() : combox_(brok_) {
-		brok_.ptr_obj().reset(new T());
+	local_broker() : combox_(brok_), brok_(new T()) {
 	}
 
 	inline void run() {
@@ -31,15 +31,15 @@ public:
 	}
 
 	inline T& object() {
-		return *(brok_.ptr_obj());
+		return brok_.obj();
 	}
 
 	inline const pop::accesspoint& contact() const {
 		return combox_.contact();
 	}
 private:
-	pop::remote::broker<T> brok_;
-	pop::broker_combox<T> combox_;
+	pop::broker_combox<Brok> combox_;
+	Brok brok_;
 };
 } // namespace pop
 

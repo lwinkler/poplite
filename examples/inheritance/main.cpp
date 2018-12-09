@@ -28,8 +28,8 @@ int main(int argc, char* argv[]) {
 		// Init the pop system with arguments
 		pop::system::instance(&argc, argv);
 
-		child_ns::child real1("abcd");
-		child_ns::child_iface iface1("abcd");
+		child_ns::child real1("my_object");
+		child_ns::child_iface iface1("my_object");
 
 		real1.child_method();
 		iface1.child_method();

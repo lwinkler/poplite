@@ -13,11 +13,11 @@
 
 #include <iostream>
 
-#ifndef _POP_PARSER_ // this accelerates parsing
+// #ifndef _POP_PARSER_ // this accelerates parsing
 #include "class/system.hpp"
 #include "alloc/local.hpp"
 #include "class/interface.hpp"
-#endif
+// #endif
 
 #include "parser/defs.hpp"
 

@@ -32,7 +32,6 @@ def write_head(fout, classname):
 """ % (parser.capitalize(classname), parser.capitalize(classname)))
 
 #--------------------------------------------------------------------------------
-
 def write_foot(fout):
 
 	fout.write("""
@@ -105,7 +104,6 @@ private:
 	fout.write('};\n')
 
 #--------------------------------------------------------------------------------
-
 def write_constr(fout, c, id, parent_ifaces, iface_name):
 	# note: virtual inheritence is not handled
 	constr = c.spelling.split('<')[0]
@@ -115,13 +113,14 @@ def write_constr(fout, c, id, parent_ifaces, iface_name):
 		% (constr, parser.list_args(c, False, False), parent_constr))
 	fout.write('{sync<void%s>(method_ids::%s%d%s);}\n' 
 		% (parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
-#--------------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------------
 def write_meth(fout, m, id):
 	virtual  = 'virtual ' if m.is_virtual_method() else ''
 	fout.write('inline %s%s %s(%s) {' %(virtual, m.result_type.spelling, m.spelling, parser.list_args(m)) 
 		+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, parser.list_args2(m, True)))
 
+#--------------------------------------------------------------------------------
 def write_template_meth(fout, m, id):
 	ttypes = parser.get_template_types(m)
 	virtual = 'virtual ' if m.is_virtual_method() else ''
@@ -144,17 +143,17 @@ struct method_ids
 	for m in methods:
 		if parser.is_template_method(m):
 			id0 = id
-			fout.write('template<class T> struct %s%d{static const int value;};\n' % (m.spelling, id0))
+			fout.write('template<class T> struct %s%d{static const pop::method_id_t value;};\n' % (m.spelling, id0))
 			for t in parser.get_template_types(m):
-				fout_cpp.write('template<> const int %s_iface::method_ids::%s%d%s::value = %d;\n' % (parser.get_full_name(class_node), m.spelling, id0, t, id))
+				fout_cpp.write('template<> const pop::method_id_t %s_iface::method_ids::%s%d%s::value = %d;\n' % (parser.get_full_name(class_node), m.spelling, id0, t, id))
 				id += 1
 		else:
-			fout.write('static const int %s%d = %d;\n' % (m.spelling, id, id))
+			fout.write('static const pop::method_id_t %s%d = %d;\n' % (m.spelling, id, id))
 			id += 1
 
 	constructors = parser.find_constructors(class_node)
 	for m in constructors:
-		fout.write('static const int %s%d = %d;\n' % (m.spelling.split('<')[0], id, id))
+		fout.write('static const pop::method_id_t %s%d = %d;\n' % (m.spelling.split('<')[0], id, id))
 		id += 1
 
 	fout.write('};\n')
