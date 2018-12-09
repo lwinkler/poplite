@@ -45,7 +45,8 @@ def main():
 		if not os.path.exists(idir):
 			os.makedirs(idir)
 		with open(iface_out, 'w') as fout:
-			fout.write('class %s_iface;\n' % cl)
+			parser_iface.write_forward_declaration(fout, cl)
+
 	tar = tarfile.TarFile(gendir + '/' + header_hpp_fname + '.tar','w')
 
 	tu = parser.init_tu(header_hpp_fname, argv2)

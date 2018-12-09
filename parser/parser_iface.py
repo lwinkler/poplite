@@ -13,7 +13,15 @@
 import parser
 
 #--------------------------------------------------------------------------------
+def write_forward_declaration(fout, full_name):
+	""" Write a forward declaration for the class """
+	namespaces = full_name.split('::')
+	for ns in namespaces[:-1]:
+		fout.write('namespace %s {' % ns)
+	for ns in namespaces[:-1]:
+		fout.write('}')
 
+#--------------------------------------------------------------------------------
 def write_head(fout, classname):
 
 	fout.write("""/* This file was generated automatically by the poplite parser */
