@@ -10,6 +10,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POP_BROKER_COMBOX_H
 #define POP_BROKER_COMBOX_H
 
@@ -230,4 +231,5 @@ private:
 
 } // namespace
 
+#endif
 #endif

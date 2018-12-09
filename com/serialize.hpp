@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POPLITE_SERIALIZE_H
 #define POPLITE_SERIALIZE_H
 
@@ -62,4 +63,5 @@ void serialize_out(Archive & ar, std::tuple<Args...> & t1) {
 }
 }
 
+#endif
 #endif

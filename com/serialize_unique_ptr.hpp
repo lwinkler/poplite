@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POPLITE_SERIALIZE_UNIQUE_PTR_H
 #define POPLITE_SERIALIZE_UNIQUE_PTR_H
 
@@ -48,4 +49,5 @@ inline void serialize(
 } // namespace serialization
 } // namespace boost
 
+#endif
 #endif

@@ -10,6 +10,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifndef _POP_PARSER_
 #ifndef POPLITE_APPLY_TUPLE_CONSTR_H
 #define POPLITE_APPLY_TUPLE_CONSTR_H
 
@@ -67,4 +68,5 @@ template < typename T, typename... ArgsF, typename... ArgsT > T* apply_tuple_con
 	return apply_func_constr<sizeof...(ArgsT)>::apply_tuple_constr(f, t );
 }
 } // namespace
+#endif
 #endif
