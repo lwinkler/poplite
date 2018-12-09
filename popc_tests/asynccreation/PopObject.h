@@ -19,7 +19,7 @@
 // this include should always be right before the parallel class declaration
 #include "PopObject3.iface.hpp"
 
-POP_CLASS PopObject3 {
+POP_CLASS_ASYNC PopObject3 {
 
 public:
 	// POP_ALLOCATION(pop::manual_allocator())

@@ -24,9 +24,9 @@ def write_head(fout, classname, filename_in):
 
 #--------------------------------------------------------------------------------
 
-def write_constr(m):
+def write_constr(m, constr_style):
 	
-	return 'broker_constructor_async::create_binded_constructor<%s>()' % (parser.list_args1(m))
+	return 'broker_constructor_%s::create_binded_constructor<%s>()' % (constr_style, parser.list_args1(m))
 
 #--------------------------------------------------------------------------------
 
@@ -64,11 +64,12 @@ namespace remote
 """)
 	
 	# implementation of static array of methods
+	constr_style = parser.get_class_construction_style(class_node)
 	templates_str = parser.get_template_types(class_node)
 	for template_str in templates_str:
 		full_name = parser.get_full_name(class_node) + template_str
-		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s, broker_constructor_async<%s>>::methods_{\n'
-			% (full_name, full_name, full_name))
+		fout.write('template<> const std::vector<parallel_method<%s>> broker<%s, broker_constructor_%s<%s>>::methods_{\n'
+			% (full_name, full_name, constr_style, full_name))
 
 		meths = []
 		for m in parser.find_methods(class_node)[0]:
@@ -76,11 +77,11 @@ namespace remote
 		fout.write(',\n'.join(meths))
 
 		fout.write('\n};\n')
-		fout.write('template<> const std::vector<parallel_constructor_async<%s>> broker_constructor_async<%s>::constr_methods_{\n'
-			% (full_name, full_name))
+		fout.write('template<> const std::vector<parallel_constructor_%s<%s>> broker_constructor_%s<%s>::constr_methods_{\n'
+			% (constr_style, full_name, constr_style, full_name))
 		meths = []
 		for c in parser.find_constructors(class_node):
-			meths.append(write_constr(c))
+			meths.append(write_constr(c, constr_style))
 		fout.write(',\n'.join(meths))
 
 		fout.write('\n};\n')
@@ -90,12 +91,13 @@ def write_main(fout, class_node):
 	
 	# implementation of static array of methods
 	templates_str = parser.get_template_types(class_node)
+	constr_style = parser.get_class_construction_style(class_node)
 
 	fout.write("""
 #include "com/broker_combox.hpp"
 
 template<typename T> inline void run_broker(const boost::asio::ip::tcp::resolver::query& _query) {
-	pop::remote::broker<T, pop::remote::broker_constructor_async<T>> brok;
+	pop::remote::broker<T, pop::remote::broker_constructor_%s<T>> brok;
 	pop::broker_combox combox(brok, _query);
 	combox.run();
 }
@@ -113,7 +115,7 @@ int main(int _argc, char* _argv[])
 			return -1;
 		}
 		boost::asio::ip::tcp::resolver::query query(_argv[2], _argv[3]);
-""")
+""" % (constr_style))
 
 	for t in templates_str:
 		full_name = parser.get_full_name(class_node) + t

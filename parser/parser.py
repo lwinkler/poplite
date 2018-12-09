@@ -192,6 +192,19 @@ def get_invoker(meth_node):
 	print '%s:%d:0 : warning: No invoker (sync or async) for method %s' % (meth_node.location.file, meth_node.location.line, meth_node.spelling)
 	return 'sync' # our default
 
+def get_class_construction_style(class_node):
+	""" Return the method class construction style (sync, async)
+	"""
+	# print 'node %s %s %s [line=%s, col=%s]' % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
+
+	for c in class_node.get_children():
+		if c.kind == cindex.CursorKind.ANNOTATE_ATTR:
+			if c.spelling.startswith('pop_parallel:'):
+				return c.spelling[len('pop_parallel:'):]
+
+	print '%s:%d:0 : warning: No construction style (sync or async) for classe %s' % (class_node.location.file, class_node.location.line, class_node.spelling)
+	return 'sync' # our default
+
 def get_allocation(constr_node):
 	""" Return the allocation
 	"""
