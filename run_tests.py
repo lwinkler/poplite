@@ -12,13 +12,14 @@
 
 
 import sys
+import time
 import subprocess
 
 dirs = [
-	'examples/get_and_set', 
 	'examples/ping_pong', 
-	'examples/inheritance',
 	'examples/templates',
+	'tests/get_and_set', 
+	'tests/inheritance',
 	'tests/default_values',
 	'popc_tests/bigdata',
 	'popc_tests/callback',
@@ -41,6 +42,7 @@ for dir1 in dirs:
 		print process.stdout.read()
 
 
+time.sleep(3)
 print 'Remaining running processes'
 process = subprocess.Popen('ps', shell=True, stdout=subprocess.PIPE)
 process.wait()
