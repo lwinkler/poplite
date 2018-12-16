@@ -14,16 +14,22 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-	// Init the pop system with arguments
-	pop::system::instance(&argc, argv);
+	try {
+		// Init the pop system with arguments
+		pop::system::instance(&argc, argv);
 
-	tester_default_iface def;
+		tester_default_iface def;
 
-	// TODO: There is probably a lot to improve with the parsing of default values
-	def.test_default_int();
-	def.test_default_double();
-	def.test_default_string();
-	def.test_default_vector_int();
+		def.test_default_int();
+		def.test_default_double_1();
+		def.test_default_double_2();
+		def.test_default_double_3();
+		def.test_default_string();
+		def.test_default_vector_int();
+	} catch(const std::exception& exc) {
+		cout << "Exception: " << exc.what() << endl;
+		return 1;
+	}
 
 	return 0;
 }
