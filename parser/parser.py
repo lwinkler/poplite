@@ -87,7 +87,7 @@ def get_full_name(node):
 	return ns + node.spelling
 
 def find_parallel_classes(node, classnames):
-	""" Find all classes with annotation "pop_parallel"
+	""" Find all classes with annotation "pop_parallel:..."
 	"""
 
 	found = []
@@ -197,6 +197,7 @@ def get_class_construction_style(class_node):
 	"""
 	# print 'node %s %s %s [line=%s, col=%s]' % (class_node.get_definition(), class_node.spelling, class_node.kind, class_node.location.line, class_node.location.column)
 
+	# TODO: Replace with is_parallel
 	for c in class_node.get_children():
 		if c.kind == cindex.CursorKind.ANNOTATE_ATTR:
 			if c.spelling.startswith('pop_parallel:'):
@@ -222,7 +223,7 @@ def is_parallel(node):
 	"""
 	# describe_node(node)
 	for c in node.get_children():
-		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling == 'pop_parallel':
+		if c.kind == cindex.CursorKind.ANNOTATE_ATTR and c.spelling.startswith('pop_parallel:'):
 			return True
 	return False
 

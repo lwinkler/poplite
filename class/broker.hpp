@@ -81,6 +81,13 @@ void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> &
 /// An object constructor for the broker
 template<class ParClass> class broker_constructor_sync {
 public:
+	broker_constructor_sync() {
+	}
+
+	broker_constructor_sync(ParClass* _p_obj) {
+		obj_ptr_.reset(_p_obj);
+	}
+
 	inline void construct(method_id_t _method_id, bufin& _ia, bufout& _oa) {
 		obj_ptr_.reset(constr_methods_.at(_method_id)(_ia, _oa));
 	}
@@ -124,12 +131,6 @@ private:
 /// An object constructor for the broker for async creation
 template<class ParClass> class broker_constructor_async {
 public:
-	broker_constructor_async() {
-	}
-
-	broker_constructor_async(ParClass* _p_obj) { // TODO: Remove
-		future_ = std::async(std::launch::async, [_p_obj](){return _p_obj;});
-	}
 
 	~broker_constructor_async() {
 		delete(future_.get());

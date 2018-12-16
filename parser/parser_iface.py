@@ -17,9 +17,10 @@ def write_forward_declaration(fout, full_name):
 	""" Write a forward declaration for the class """
 	namespaces = full_name.split('::')
 	for ns in namespaces[:-1]:
-		fout.write('namespace %s {' % ns)
+		fout.write('namespace %s {\n' % ns)
+	fout.write('class %s_iface;\n' % namespaces[-1])
 	for ns in namespaces[:-1]:
-		fout.write('}')
+		fout.write('}\n')
 
 #--------------------------------------------------------------------------------
 def write_head(fout, classname):

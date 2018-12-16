@@ -19,7 +19,10 @@ namespace pop {
 template<typename T> class local_broker final {
 	using Brok = pop::remote::broker<T, pop::remote::broker_constructor_sync<T>>;
 public:
-	local_broker() : combox_(brok_), brok_(new T()) {
+	local_broker() : 
+		brok_(new T()),
+		combox_(brok_)
+	{
 	}
 
 	inline void run() {
@@ -38,8 +41,8 @@ public:
 		return combox_.contact();
 	}
 private:
-	pop::broker_combox<Brok> combox_;
 	Brok brok_;
+	pop::broker_combox<Brok> combox_;
 };
 } // namespace pop
 
