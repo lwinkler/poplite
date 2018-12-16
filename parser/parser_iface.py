@@ -110,15 +110,15 @@ def write_constr(fout, c, id, parent_ifaces, iface_name):
 	objfile = parser.get_full_name(c.lexical_parent).replace('::', '.')
 	parent_constr = ', '.join([iface + '("%s.obj", %s, %s)' % (objfile, iface_name, parser.get_allocation(c)) for iface in parent_ifaces])
 	fout.write('%s_iface(%s) : %s\n' 
-		% (constr, parser.list_args(c, False, False), parent_constr))
+		% (constr, parser.list_arg_names_and_types(c, False, False), parent_constr))
 	fout.write('{sync<void%s>(method_ids::%s%d%s);}\n' 
-		% (parser.list_args1(c, True), constr, id, parser.list_args2(c, True)))
+		% (parser.list_args_types(c, True), constr, id, parser.list_arg_names(c, True)))
 
 #--------------------------------------------------------------------------------
 def write_meth(fout, m, id):
 	virtual  = 'virtual ' if m.is_virtual_method() else ''
-	fout.write('inline %s%s %s(%s) {' %(virtual, m.result_type.spelling, m.spelling, parser.list_args(m)) 
-		+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, parser.list_args2(m, True)))
+	fout.write('inline %s%s %s(%s) {' %(virtual, m.result_type.spelling, m.spelling, parser.list_arg_names_and_types(m)) 
+		+ 'return %s<%s%s>(method_ids::%s%d%s);}\n' % (parser.get_invoker(m), m.result_type.spelling, parser.list_args_types(m, True), m.spelling, id, parser.list_arg_names(m, True)))
 
 #--------------------------------------------------------------------------------
 def write_template_meth(fout, m, id):
@@ -128,8 +128,8 @@ def write_template_meth(fout, m, id):
 	ttparams1 = '<%s>' % (', '.join(ttparams))
 	ttparams2 = '<%s>' % (', '.join(('typename ' + t) for t in ttparams))
 	invoker = parser.get_invoker(m)
-	fout.write('template%s inline %s%s %s(%s) {' %(ttparams2, virtual, m.result_type.spelling, m.spelling, parser.list_args(m))
-			+ 'return %s<%s%s>(method_ids::%s%d%s::value%s);}\n' % (invoker, m.result_type.spelling, parser.list_args1(m, True), m.spelling, id, ttparams1, parser.list_args2(m, True)))
+	fout.write('template%s inline %s%s %s(%s) {' %(ttparams2, virtual, m.result_type.spelling, m.spelling, parser.list_arg_names_and_types(m))
+			+ 'return %s<%s%s>(method_ids::%s%d%s::value%s);}\n' % (invoker, m.result_type.spelling, parser.list_args_types(m, True), m.spelling, id, ttparams1, parser.list_arg_names(m, True)))
 	return id + len(ttypes)
 
 #--------------------------------------------------------------------------------

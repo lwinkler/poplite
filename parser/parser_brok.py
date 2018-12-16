@@ -26,7 +26,7 @@ def write_head(fout, classname, filename_in):
 
 def write_constr(m, constr_style):
 	
-	return 'broker_constructor_%s::create_binded_constructor<%s>()' % (constr_style, parser.list_args1(m))
+	return 'broker_constructor_%s::create_binded_constructor<%s>()' % (constr_style, parser.list_args_types(m))
 
 #--------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ def write_meth(m, full_name, template_str):
 		return ',\n'.join(meths)
 	else:
 		# fout.write('std::bind(&remote::broker<%s>::%s<%s%s>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, &%s::%s),\n'
-				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args1(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
+				# % (full_name, conc, parser.get_full_name(m.result_type), parser.list_args_types(m, True), parser.get_full_name(m.lexical_parent), m.spelling))
 		return '%s(&%s, &%s::%s)' % (create, conc, parser.get_full_name(m.lexical_parent) + template_str, m.spelling)
 
 #--------------------------------------------------------------------------------

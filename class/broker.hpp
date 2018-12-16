@@ -78,25 +78,9 @@ void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> &
 	SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename pop_decay<Args>::type...> >(ar, t1);
 }
 
-/// An object constructor for the broker: Simple version, the pointer to the object is given
-template<class ParClass> class broker_constructor_simple {
-public:
-	broker_constructor_simple(ParClass* _p_obj) {
-		obj_ptr_.reset(_p_obj);
-	}
-
-	inline ParClass& obj() {
-		return *obj_ptr_;
-	}
-
-private:
-	std::unique_ptr<ParClass> obj_ptr_;
-};
-
 /// An object constructor for the broker
 template<class ParClass> class broker_constructor_sync {
 public:
-	// broker_constructor_sync() {}
 	inline void construct(method_id_t _method_id, bufin& _ia, bufout& _oa) {
 		obj_ptr_.reset(constr_methods_.at(_method_id)(_ia, _oa));
 	}

@@ -288,8 +288,7 @@ def tokenize(arg):
 	# print 'Search default value for parameter %s :%s' % (arg.spelling, arg.type.spelling)
 	return ' '.join([tok.spelling for tok in arg.get_tokens()])
 
-# TODO Rename these functions
-def list_args1(parent, front_comma = False, back_comma = False):
+def list_args_types(parent, front_comma = False, back_comma = False):
 	""" List all types of arguments as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
@@ -298,7 +297,7 @@ def list_args1(parent, front_comma = False, back_comma = False):
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc
 
-def list_args2(parent, front_comma = False, back_comma = False):
+def list_arg_names(parent, front_comma = False, back_comma = False):
 	""" List all arguments without types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
@@ -307,7 +306,7 @@ def list_args2(parent, front_comma = False, back_comma = False):
 	bc = ', ' if out and back_comma else ''
 	return fc + ', '.join(out) + bc
 
-def list_args(parent, front_comma = False, back_comma = False):
+def list_arg_names_and_types(parent, front_comma = False, back_comma = False):
 	""" List all arguments with types as a string with commas, if specified add an extra comma in front or end """
 	out = []
 	for arg in find_arguments(parent):
