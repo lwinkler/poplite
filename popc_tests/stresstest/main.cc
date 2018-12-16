@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
 			}
 		}
 		{
+			// TODO: For now each object creates 5 file descriptors. To be improved
 			printf("Stress allocationtest started ...\n");
 			printf("Number of objects created on your computer can be limited by ulimit\n");
 			printf("ulimit -n\t To check how many files can be open on your computer\n");
