@@ -42,8 +42,9 @@ for dir1 in dirs:
 		print process.stdout.read()
 
 
+print '======> waiting 3s for termination'
 time.sleep(3)
-print 'Remaining running processes'
+print '======> Remaining running processes'
 process = subprocess.Popen('ps', shell=True, stdout=subprocess.PIPE)
 process.wait()
 print process.stdout.read()
