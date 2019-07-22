@@ -26,8 +26,18 @@ Dependencies
 	- Python bindings for clang
 	- astyle for alignement
 
+```
 	sudo apt-get install libboost-all-dev libclang-5.0-dev python-pip astyle
 	sudo pip install clang
+```
+
+- other useful packages:
+	- openssh-server
+	- cmake-ncurser-gui
+
+```
+	sudo apt-get install openssh-server cmake-ncurser-gui
+```
 
 Additionnally you may have to edit this line in **parser.py**:
 

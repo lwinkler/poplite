@@ -29,6 +29,7 @@ public:
 	POP_SYNC inline std::string get_username() {
 		return username_;
 	}
+
 	POP_SYNC inline int get_points() {
 		return points_;
 	}
