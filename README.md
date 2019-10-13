@@ -22,12 +22,12 @@ Installation
 Dependencies
 - boost libraries
 - for the parser
-	- clang 5.0
+	- clang 6.0 (if 6.0 matches the pip clang package)
 	- Python bindings for clang
 	- astyle for alignement
 
 ```
-	sudo apt-get install libboost-all-dev libclang-5.0-dev python-pip astyle
+	sudo apt-get install libboost-all-dev libclang-6.0-dev python-pip astyle
 	sudo pip install clang
 ```
 
@@ -39,9 +39,16 @@ Dependencies
 	sudo apt-get install openssh-server cmake-ncurser-gui
 ```
 
-Additionnally you may have to edit this line in **parser.py**:
+Additionnally you may have to edit this line to match your version of clang in **parser.py**:
 
-	cindex.Config.set_library_path("/usr/lib/llvm-5.0/lib")
+	cindex.Config.set_library_path("/usr/lib/llvm-6.0/lib")
+
+If you still get errors be sure to add a symlink inside that directory
+
+```
+cd /usr/lib/llvm-6.0/lib
+sudo ln -s libclang-6.0.so.1 libclang.so
+```
 
 Example of parallel class
 -------------------------

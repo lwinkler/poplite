@@ -19,7 +19,7 @@ import clang.cindex as cindex
 from subprocess import call
 from pprint import pprint
 
-cindex.Config.set_library_path('/usr/lib/llvm-8/lib')
+cindex.Config.set_library_path('/usr/lib/llvm-6.0/lib')
 
 def describe_node(node, full = False):
 	""" Describe a node. For debug purposes
