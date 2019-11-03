@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ Usage: call with <filename> <classname(s)> (<template instances>)
 """
 
@@ -17,8 +17,8 @@ def main():
 		argv1 = sys.argv[:ddash]
 		argv2 = sys.argv[ddash + 1:]
 	if len(argv1) != 2:
-		print 'usage: %s <header> -- <compilation arguments...>' % sys.argv[0]
-		print ' e.g.: %s my_class.hpp -- -I/usr/include -I...' % sys.argv[0]
+		print('usage: %s <header> -- <compilation arguments...>' % sys.argv[0])
+		print(' e.g.: %s my_class.hpp -- -I/usr/include -I...' % sys.argv[0])
 		exit(1)
 
 	header_hpp_fname = argv1[1]

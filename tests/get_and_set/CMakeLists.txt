@@ -1,9 +1,11 @@
-include_directories(gen)
 
 # pop_add_object(TestClass test_class.hpp)
-# pop_add_object(TestChildClass test_child_class.hpp gen/TestClass.iface.hpp)
+# pop_add_object(TestChildClass test_child_class.hpp ${CMAKE_CURRENT_BINARY_DIR}/TestClass.iface.hpp)
 pop_add_objects("TestChildClass;TestClass" "test_child_class.hpp;test_class.hpp")
-add_executable(main_get_set main.cpp gen/TestClass.iface.hpp gen/TestChildClass.iface.hpp)
+add_executable(main_get_set
+	main.cpp
+	${CMAKE_CURRENT_BINARY_DIR}/TestClass.iface.hpp
+	${CMAKE_CURRENT_BINARY_DIR}/TestChildClass.iface.hpp)
 
 target_link_libraries(main_get_set ${Boost_LIBRARIES})
 

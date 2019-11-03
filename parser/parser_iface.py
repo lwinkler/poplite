@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ##
 ## parser_iface.py
@@ -162,5 +162,5 @@ struct method_ids
 #--------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-	print 'this file is a Python library: try using popgen instead'
+	print('this file is a Python library: try using popgen instead')
 
