@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ##
 ## parser_brok.py
@@ -149,4 +149,4 @@ int main(int _argc, char* _argv[])
 #--------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-	print 'this file is a Python library: try using popgen instead'
+	print('this file is a Python library: try using popgen instead')

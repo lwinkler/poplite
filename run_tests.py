@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ##
 ## test.py
@@ -33,18 +33,18 @@ dirs = [
 
 all_args = ' '.join(sys.argv[1:])
 for dir1 in dirs:
-	print '======> run test %s' % dir1
+	print('======> run test %s' % dir1)
 	rname = dir1.split('/')[-1]
 	process = subprocess.Popen('cd %s && make %s run_%s' % (dir1, all_args, rname), shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	if process.returncode != 0:
-		print '======> Fail with exit code %d' % process.returncode
-		print process.stdout.read()
+		print('======> Fail with exit code %d' % process.returncode)
+		print(process.stdout.read())
 
 
-print '======> waiting 3s for termination'
+print('======> waiting 3s for termination')
 time.sleep(3)
-print '======> Remaining running processes'
+print('======> Remaining running processes')
 process = subprocess.Popen('ps', shell=True, stdout=subprocess.PIPE)
 process.wait()
-print process.stdout.read()
+print(process.stdout.read())

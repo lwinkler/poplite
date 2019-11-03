@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ Usage: call with <filename> <classname(s)> (<template instances>)
 """
 
@@ -8,7 +8,7 @@ import parser
 import parser_brok
 import parser_iface
 from subprocess import call
-import StringIO
+from io import StringIO
 import tarfile
 
 #--------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ def main():
 		argv1 = sys.argv[:ddash]
 		argv2 = sys.argv[ddash + 1:]
 	if len(argv1) != 3:
-		print 'usage: %s <header> <classname> -- <compilation arguments...>' % sys.argv[0]
-		print ' e.g.: %s my_class.hpp ns::my_class -- -I/usr/include -I...' % sys.argv[0]
+		print('usage: %s <header> <classname> -- <compilation arguments...>' % sys.argv[0])
+		print(' e.g.: %s my_class.hpp ns::my_class -- -I/usr/include -I...' % sys.argv[0])
 		exit(1)
 
 	header_hpp_fname = argv1[1]
@@ -53,9 +53,9 @@ def main():
 	#parser.print_ast(tu.cursor)
 	parclasses = parser.find_parallel_classes(tu.cursor, classnames_in)
 
-	print 'found %d parallel classe(s):' % len(parclasses)
+	print('found %d parallel classe(s):' % len(parclasses))
 	for c in parclasses:
-		print 'parallel class %s at %s' % (parser.get_full_name(c), c.location.file)
+		print('parallel class %s at %s' % (parser.get_full_name(c), c.location.file))
 
 	for classname_in in classnames_in:
 		if classname_in not in [parser.get_full_name(cl) for cl in parclasses]:
@@ -67,8 +67,8 @@ def main():
 		if full_name not in classnames_in:
 			continue
 		# print 'Generate %s containing the interface' % iface_hpp_fname
-		iface_hpp_fout = StringIO.StringIO()
-		iface_cpp_fout = StringIO.StringIO()
+		iface_hpp_fout = StringIO()
+		iface_cpp_fout = StringIO()
 		parser_iface.write_head(iface_hpp_fout, full_name)
 		iface_cpp_fout.write('#include "%s"\n' % (header_hpp_fname))
 		parser_iface.write_interface(iface_hpp_fout, c, iface_cpp_fout)
@@ -83,8 +83,8 @@ def main():
 		if full_name not in classnames_in:
 			continue
 
-		brok_cpp_fout = StringIO.StringIO()
-		obj_cpp_fout = StringIO.StringIO()
+		brok_cpp_fout = StringIO()
+		obj_cpp_fout = StringIO()
 		parser_brok.write_head(brok_cpp_fout, full_name, c.location.file)
 		parser_brok.write_broker(brok_cpp_fout, c)
 		# parser_brok.write_foot(brok_cpp_fout)

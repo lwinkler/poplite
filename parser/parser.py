@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ##
 ## parser.py
@@ -25,24 +25,24 @@ def describe_node(node, full = False):
 	""" Describe a node. For debug purposes
 	"""
 	try:
-		print 'node %s (%s) %s' % (node.spelling, node.displayname, node.kind)
+		print('node %s (%s) %s' % (node.spelling, node.displayname, node.kind))
 	except:
-		print 'node'
-	print node
+		print('node')
+	print(node)
 
 	if full:
 		pprint(node.__dict__)
 		pprint(node._tu.__dict__)
 		pprint(node._tu.index.__dict__)
 		pprint(node._tu.index.obj.__dict__)
-		print dir(node)
+		print(dir(node))
 
 	# Recurse for children of this node
 	def descr(node, tabs):
 		for c in node.get_children():
-			print '%s- %s (%s): %s %s' % (tabs, c.spelling, c.displayname, c.kind, c.data)
+			print('%s- %s (%s): %s %s' % (tabs, c.spelling, c.displayname, c.kind, c.data))
 			if full:
-				print dir(c)
+				print(dir(c))
 				pprint(c._tu.index.obj.__dict__)
 			descr(c, tabs + '\t')
 	descr(node, '\t')
@@ -67,7 +67,7 @@ def convert_to_objname(name):
 def print_ast(node, indent = 0):
 	""" Print the content of source tree
 	"""
-	print '\t' * indent + 'node %s %s %s [line=%s, col=%s]' % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column)
+	print('\t' * indent + 'node %s %s %s [line=%s, col=%s]' % (node.get_definition(), node.spelling, node.kind, node.location.line, node.location.column))
 	for c in node.get_children():
 		print_ast(c, indent + 1)
 
@@ -120,7 +120,7 @@ def find_methods1(class_node, meths, real_parents):
 	if real_parents is not None:
 		par_parents = get_direct_parents(class_node, True, True)
 		if len(par_parents) > 1:
-			print 'Warning: parallel class %s has more than one parallel class as parent. The interface will only be castable into the first parent' % class_node.spelling
+			print('Warning: parallel class %s has more than one parallel class as parent. The interface will only be castable into the first parent' % class_node.spelling)
 		if len(par_parents) >= 1:
 			find_methods1(par_parents[0], meths, real_parents)
 			real_parent = get_full_name(par_parents[0].get_definition())
@@ -189,7 +189,7 @@ def get_invoker(meth_node):
 			if c.spelling.startswith('pop_invoker:'):
 				return c.spelling[len('pop_invoker:'):]
 
-	print '%s:%d:0 : warning: No invoker (sync or async) for method %s' % (meth_node.location.file, meth_node.location.line, meth_node.spelling)
+	print('%s:%d:0 : warning: No invoker (sync or async) for method %s' % (meth_node.location.file, meth_node.location.line, meth_node.spelling))
 	return 'sync' # our default
 
 def get_class_construction_style(class_node):
@@ -203,7 +203,7 @@ def get_class_construction_style(class_node):
 			if c.spelling.startswith('pop_parallel:'):
 				return c.spelling[len('pop_parallel:'):]
 
-	print '%s:%d:0 : warning: No construction style (sync or async) for classe %s' % (class_node.location.file, class_node.location.line, class_node.spelling)
+	print('%s:%d:0 : warning: No construction style (sync or async) for classe %s' % (class_node.location.file, class_node.location.line, class_node.spelling))
 	return 'sync' # our default
 
 def get_allocation(constr_node):
@@ -322,4 +322,4 @@ def align(filename):
 	call(['astyle', '-ntS', '--style=attach', filename])
 
 if __name__ == '__main__':
-	print 'this file is a Python library: try using popgen instead'
+	print('this file is a Python library: try using popgen instead')
