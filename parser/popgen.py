@@ -19,14 +19,14 @@ def main():
 		ddash = sys.argv.index('--')
 		argv1 = sys.argv[:ddash]
 		argv2 = sys.argv[ddash + 1:]
-	if len(argv1) != 3:
-		print('usage: %s <header> <classname> -- <compilation arguments...>' % sys.argv[0])
+	if len(argv1) != 4:
+		print('usage: %s <header> <classname> <generation_dir> -- <compilation arguments...>' % sys.argv[0])
 		print(' e.g.: %s my_class.hpp ns::my_class -- -I/usr/include -I...' % sys.argv[0])
 		exit(1)
 
 	header_hpp_fname = argv1[1]
 	classnames_in = argv1[2].split(',')
-	gendir = os.path.dirname(header_hpp_fname) + '/gen' if os.path.dirname(header_hpp_fname) else 'gen' 
+	gendir = argv1[3] # os.path.dirname(header_hpp_fname) + '/gen' if os.path.dirname(header_hpp_fname) else 'gen' 
 
 	# Generate fake interface files before parsing
 	for cl in classnames_in:
@@ -37,6 +37,7 @@ def main():
 		with open(iface_out, 'w') as fout:
 			parser_iface.write_forward_declaration(fout, cl)
 
+	print(argv2)
 	tu = parser.init_tu(header_hpp_fname, argv2)
 	#parser.print_ast(tu.cursor)
 	parclasses = parser.find_parallel_classes(tu.cursor, classnames_in)

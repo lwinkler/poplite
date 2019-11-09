@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.2.1)
 set(CMAKE_BUILD_TYPE       "Debug" CACHE BOOL "Mode of compilation")
 
 add_definitions(-std=c++17)
-find_package( Boost 1.40 COMPONENTS serialization system thread serialization context log program_options REQUIRED )
+find_package(Boost 1.40 COMPONENTS serialization system thread serialization context log program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(.)
 
@@ -22,34 +22,40 @@ function(pop_add_object object_name header_name)
 	get_filename_component(_filename ${header_name} NAME_WE)
 
 	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-	set(INC_DIRS "")
+	set(INC_DIRS "-I${CMAKE_CURRENT_BINARY_DIR}")
 	foreach(dir ${dirs})
 		# Create the include path artificially
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
 	endforeach()
+	set(INC_DIRS "${INC_DIRS};-I${CMAKE_CURRENT_BINARY_DIR}")
 
-	# message("Add command to generate gen/${object_name}.iface.hpp gen/main.${object_name}.cpp")
+	# message("Add command to generate ${CMAKE_CURRENT_BINARY_DIR}/${object_name}.iface.hpp ${CMAKE_CURRENT_BINARY_DIR}/main.${object_name}.cpp")
 	# note: there are conflicts while generating multiple files with one command
 	#       fixed in Cmake 3.2.1: http://www.cmake.org/Bug/view.php?id=15116
 	# Not fixed yet !
 	string(REPLACE "::" "/" obj_name_path "${object_name}")
 	string(REPLACE "::" "." obj_name_dot "${object_name}")
 	add_custom_command(
-		OUTPUT gen/${obj_name_path}.iface.hpp gen/${obj_name_path}.iface.cpp gen/${obj_name_path}.brok.cpp gen/main.${obj_name_dot}.cpp
-		COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} -- ${INC_DIRS} 
-		DEPENDS ${header_name})
+		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.iface.hpp
+			${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.iface.cpp
+			${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.brok.cpp
+			${CMAKE_CURRENT_BINARY_DIR}/main.${obj_name_dot}.cpp
+			COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${object_name} ${CMAKE_CURRENT_BINARY_DIR} -- ${INC_DIRS} 
+		DEPENDS ${header_name}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 	# extra arguments are seen as dependencies
-	add_executable(${obj_name_dot}.obj gen/main.${obj_name_dot}.cpp gen/${obj_name_path}.brok.cpp ${ARGN})
+	add_executable(${obj_name_dot}.obj ${CMAKE_CURRENT_BINARY_DIR}/main.${obj_name_dot}.cpp ${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.brok.cpp ${ARGN})
 	target_link_libraries(${obj_name_dot}.obj ${Boost_LIBRARIES} )
 
 endfunction(pop_add_object)
 
 # Function used to add several parallel objects to the compilation (it is faster to treat them in bulk)
 function(pop_add_objects classnames dependencies)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR}) # TODO: Modernize
 
 	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-	set(INC_DIRS "")
+	set(INC_DIRS "-I${CMAKE_CURRENT_BINARY_DIR}")
 	foreach(dir ${dirs})
 		# Create the include path artificially
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
@@ -62,21 +68,27 @@ function(pop_add_objects classnames dependencies)
 	foreach(cl ${classnames})
 		string(REPLACE "::" "/" obj_name_path "${cl}")
 		string(REPLACE "::" "." obj_name_dot "${cl}")
-		set(output "gen/${obj_name_path}.iface.hpp")
+		set(output "${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.iface.hpp")
 
-		list(APPEND outputs gen/${obj_name_path}.iface.hpp gen/${obj_name_path}.iface.cpp gen/${obj_name_path}.brok.cpp gen/main.${obj_name_dot}.cpp)
+		list(APPEND outputs
+			${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.iface.hpp
+			${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.iface.cpp
+			${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.brok.cpp
+			${CMAKE_CURRENT_BINARY_DIR}/main.${obj_name_dot}.cpp)
 
-		add_executable(${obj_name_dot}.obj gen/main.${obj_name_dot}.cpp gen/${obj_name_path}.brok.cpp ${dependencies})
+		add_executable(${obj_name_dot}.obj ${CMAKE_CURRENT_BINARY_DIR}/main.${obj_name_dot}.cpp ${CMAKE_CURRENT_BINARY_DIR}/${obj_name_path}.brok.cpp ${dependencies})
 		target_link_libraries(${obj_name_dot}.obj ${Boost_LIBRARIES})
 	endforeach()
 	string(REPLACE ";" "," classnames2 "${classnames}")
 
-	add_custom_command(OUTPUT ${outputs} COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${classnames2} -- ${INC_DIRS} DEPENDS ${header_name})
+	add_custom_command(OUTPUT ${outputs} COMMAND ${POPLITE_DIR}/parser/popgen.py ${header_name} ${classnames2} ${CMAKE_CURRENT_BINARY_DIR} -- ${INC_DIRS} DEPENDS ${header_name}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 endfunction(pop_add_objects)
 
 # Function used to add several parallel objects to the compilation. Class names are read automatically by cmake
 function(pop_add_all_classes header_name)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 	set(INC_DIRS "")

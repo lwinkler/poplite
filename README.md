@@ -68,7 +68,7 @@ Since objects run now on their own process their creation requires to launch the
 - A manual allocator which only prints the command to run (for debug)
 
 ### Parser
-The interface and broker of each class must be created by a parser. They will be added to the the **gen/** directory. As a consequence you need to add additional lines in CMakeLists.txt. See any example.
+The interface and broker of each class must be created by a parser. They will be added to the the generated files of CMake. As a consequence you need to add additional lines in CMakeLists.txt. See any example.
 
 
 
