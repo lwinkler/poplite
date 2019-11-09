@@ -22,7 +22,7 @@ function(pop_add_object object_name header_name)
 	get_filename_component(_filename ${header_name} NAME_WE)
 
 	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-	set(INC_DIRS "-I${CMAKE_CURRENT_BINARY_DIR}")
+	set(INC_DIRS "")
 	foreach(dir ${dirs})
 		# Create the include path artificially
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
@@ -52,10 +52,10 @@ endfunction(pop_add_object)
 
 # Function used to add several parallel objects to the compilation (it is faster to treat them in bulk)
 function(pop_add_objects classnames dependencies)
-	include_directories(${CMAKE_CURRENT_BINARY_DIR}) # TODO: Modernize
+	include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-	set(INC_DIRS "-I${CMAKE_CURRENT_BINARY_DIR}")
+	set(INC_DIRS "")
 	foreach(dir ${dirs})
 		# Create the include path artificially
 		set(INC_DIRS "${INC_DIRS};-I${dir}")
