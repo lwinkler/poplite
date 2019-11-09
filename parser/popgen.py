@@ -37,7 +37,6 @@ def main():
 		with open(iface_out, 'w') as fout:
 			parser_iface.write_forward_declaration(fout, cl)
 
-	print(argv2)
 	tu = parser.init_tu(header_hpp_fname, argv2)
 	#parser.print_ast(tu.cursor)
 	parclasses = parser.find_parallel_classes(tu.cursor, classnames_in)
