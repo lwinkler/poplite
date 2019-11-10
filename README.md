@@ -50,6 +50,13 @@ cd /usr/lib/llvm-6.0/lib
 sudo ln -s libclang-6.0.so.1 libclang.so
 ```
 
+Tests
+-----
+To run the tests use the command:
+```
+ctest
+```
+
 Example of parallel class
 -------------------------
 An example of a parallel class can be found in the directory **examples/ping_pong**.

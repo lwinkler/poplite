@@ -1,3 +1,9 @@
+#
+#	Copyright (c) Laurent Winkler 2019
+#
+#	Distributed under the Boost Software License, Version 1.0. (See accompanying
+#	file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#   
 project(poplite)
 cmake_minimum_required(VERSION 3.2.1)
 
@@ -86,7 +92,7 @@ function(pop_add_objects classnames dependencies)
 
 endfunction(pop_add_objects)
 
-# Function used to add several parallel objects to the compilation. Class names are read automatically by cmake
+# Function used to add several parallel objects to the compilation. Class names are read automatically by cmake (experimental)
 function(pop_add_all_classes header_name)
 	include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -102,7 +108,7 @@ function(pop_add_all_classes header_name)
         pop_add_objects(${all_classes} "${header_name};${ARGN}")
 endfunction(pop_add_all_classes)
 
-
+enable_testing()
 add_subdirectory(examples)
 add_subdirectory(tests)
 add_subdirectory(popc_tests)
