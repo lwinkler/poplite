@@ -54,6 +54,7 @@ Tests
 -----
 To run the tests use the command:
 ```
+cd build
 ctest
 ```
 

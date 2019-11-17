@@ -4,12 +4,22 @@
 
 import sys
 import os
+import errno
 import parser
 import parser_brok
 import parser_iface
 from subprocess import call
 
 #--------------------------------------------------------------------------------
+
+def mkdir_p(path):
+	try:
+		os.makedirs(path)
+	except OSError as exc:  # Python >2.5
+		if exc.errno == errno.EEXIST and os.path.isdir(path):
+			pass
+		else:
+			raise
 
 def main():
 	argv1 = sys.argv
@@ -32,8 +42,7 @@ def main():
 	for cl in classnames_in:
 		iface_out = gendir + '/%s.iface.hpp' % parser.convert_to_classname(cl)
 		idir = os.path.dirname(iface_out)
-		if not os.path.exists(idir):
-			os.makedirs(idir)
+		mkdir_p(idir)
 		with open(iface_out, 'w') as fout:
 			parser_iface.write_forward_declaration(fout, cl)
 
