@@ -22,12 +22,12 @@ Installation
 Dependencies
 - boost libraries
 - for the parser
-	- clang 6.0 (if 6.0 matches the pip clang package)
+	- clang 11.0 (if 11.0 matches the pip clang package)
 	- Python bindings for clang
 	- astyle for alignement
 
 ```
-	sudo apt-get install libboost-all-dev libclang-6.0-dev python-pip astyle
+	sudo apt-get install libboost-all-dev libclang-11-dev python3-pip astyle
 	sudo pip install clang
 ```
 
@@ -41,14 +41,26 @@ Dependencies
 
 Additionnally you may have to edit this line to match your version of clang in **parser.py**:
 
-	cindex.Config.set_library_path("/usr/lib/llvm-6.0/lib")
+	cindex.Config.set_library_path("/usr/lib/llvm-11.0/lib")
 
 If you still get errors be sure to add a symlink inside that directory
 
 ```
-cd /usr/lib/llvm-6.0/lib
-sudo ln -s libclang-6.0.so.1 libclang.so
+cd /usr/lib/llvm-11/lib
+sudo ln -s libclang-11.0.so.1 libclang.so
 ```
+
+Troubleshooting
+---------------
+
+## CMake 3.16 on Ubuntu 20.10
+You may need to add this symlink to fix boost includes
+```
+cd /
+sudo ln -s /usr/includes/
+```
+
+https://gitlab.kitware.com/cmake/cmake/-/issues/19841
 
 Tests
 -----

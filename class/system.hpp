@@ -20,7 +20,7 @@
 #include <boost/archive/text_iarchive.hpp>
 
 // Lines for boost log
-#define BOOST_LOG_DYN_LINK
+// #define BOOST_LOG_DYN_LINK
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
