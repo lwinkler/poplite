@@ -79,7 +79,8 @@ public:
 		if (!header_stream || header_stream.str().size() != header_length) {
 			// Something went wrong, inform the caller.
 			boost::system::error_code error(boost::asio::error::invalid_argument);
-			socket_.get_executor().post(boost::bind(_handler, error));
+			assert(false);
+			// TODO LW: socket_.get_executor().post(boost::bind(_handler, error));
 			return;
 		}
 		outbound_header_ = header_stream.str();

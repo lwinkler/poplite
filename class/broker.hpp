@@ -74,7 +74,7 @@ template<class T> struct pop_decay<T&> {
 };
 
 template<class Archive, typename... Args>
-void serialize_out(Archive & ar, std::tuple<typename pop_decay<Args>::type...> & t1) {
+void serialize_out1(Archive & ar, std::tuple<typename pop_decay<Args>::type...> & t1) {
 	SerializeOut<sizeof...(Args)>::template serialize_out<Archive, std::tuple<Args&...>, std::tuple<typename pop_decay<Args>::type...> >(ar, t1);
 }
 
@@ -103,7 +103,7 @@ public:
 		// LOG(debug) << tup;
 		auto cstr = __constr<Args...>;
 		ParClass* ret = apply_tuple_constr(cstr, tup);
-		serialize_out<bufout, Args...>(_oa, tup);
+		serialize_out1<bufout, Args...>(_oa, tup);
 		return ret;
 	}
 
@@ -153,7 +153,7 @@ public:
 			auto cstr = __constr<Args...>;
 			return apply_tuple_constr(cstr, tup);
 		});
-		serialize_out<bufout, Args...>(_oa, tup);
+		serialize_out1<bufout, Args...>(_oa, tup);
 		return ret;
 	}
 
@@ -202,7 +202,7 @@ public:
 		_ia >> tup;
 		// TODO: maybe one day use  http://en.cppreference.com/w/cpp/utility/apply
 		apply_tuple(&_obj, _p_meth, tup, _oa);
-		serialize_out<bufout, Args...>(_oa, tup);
+		serialize_out1<bufout, Args...>(_oa, tup);
 	}
 
 	/// A simple concurrent call to a static method
@@ -210,7 +210,7 @@ public:
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
 		apply_tuple_static( _p_meth, tup, _oa);
-		serialize_out<bufout, Args...>(_oa, tup);
+		serialize_out1<bufout, Args...>(_oa, tup);
 	}
 
 	/// A simple concurrent call to a static method
@@ -218,7 +218,7 @@ public:
 		std::tuple<typename pop_decay<Args>::type...> tup;
 		_ia >> tup;
 		apply_tuple_const(&_obj, _p_meth, tup, _oa);
-		serialize_out<bufout, Args...>(_oa, tup);
+		serialize_out1<bufout, Args...>(_oa, tup);
 	}
 
 	inline ParClass& obj() {

@@ -14,13 +14,15 @@
 #ifndef POP_INTERFACE_COMBOX_H
 #define POP_INTERFACE_COMBOX_H
 
+#include <boost/core/noncopyable.hpp>
+
 #include "connection.hpp"
 #include "accesspoint.hpp"
 
 
 namespace pop {
 /// The connection class provides serialization primitives on top of a socket.
-class interface_combox {
+class interface_combox : boost::noncopyable {
 public:
 	/// Constructor
 	interface_combox() :
@@ -32,12 +34,8 @@ public:
 		LOG(debug) << "Listen on port " << acceptor_.local_endpoint().port();
 		acceptor_.async_accept(connection_.socket(), boost::bind(&interface_combox::handle_accept, this, boost::asio::placeholders::error));
 	}
-	interface_combox(interface_combox&&) = default;
-	interface_combox& operator=(interface_combox&&) = default;
-
-	// you shall not copy
-	interface_combox(const interface_combox&) = delete;
-	interface_combox& operator=(const interface_combox&) = delete;
+	// interface_combox(interface_combox&&) = default;
+	// interface_combox& operator=(interface_combox&&) = default;
 
 	// virtual ~interface_combox(){/*io_service_.stop();*/}
 

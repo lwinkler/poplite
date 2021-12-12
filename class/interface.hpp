@@ -68,8 +68,8 @@ public:
 		combox_.run();
 	}
 
-	interface(interface&&) = default;
-	interface& operator=(interface&&) = default;
+	// interface(interface&&) = default;
+	// interface& operator=(interface&&) = default;
 
 	// you shall not copy
 	interface(const interface&) = delete;
