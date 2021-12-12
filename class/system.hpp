@@ -12,6 +12,7 @@
 #ifndef POPLITE_SYSTEM_H
 #define POPLITE_SYSTEM_H
 
+#define BOOST_BIND_NO_PLACEHOLDERS // TODO: To avoid a warning. See if there is a better solution
 
 #include <iostream>
 #include <boost/asio.hpp>
