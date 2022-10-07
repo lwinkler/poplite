@@ -18,7 +18,6 @@ import os
 import clang.cindex as cindex
 from subprocess import call
 from pprint import pprint
-from pathlib import Path
 
 so_path = "POPLITE_CLANG_SO"
 if not so_path in os.environ:
