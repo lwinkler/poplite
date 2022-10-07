@@ -99,7 +99,7 @@ protected:
 		iface_name = ''
 		fout.write("""
 private:
-	static const std::string _iface_name%s;
+	static inline const std::string _iface_name%s;
 """ % (iface_name));
 
 	fout.write('};\n')
