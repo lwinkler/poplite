@@ -18,8 +18,14 @@ import os
 import clang.cindex as cindex
 from subprocess import call
 from pprint import pprint
+from pathlib import Path
 
-cindex.Config.set_library_path('/usr/lib/llvm-11/lib')
+so_path = "POPLITE_CLANG_SO"
+if not so_path in os.environ:
+	print(f"Please specify {so_path}=<path to the clang shared library>", file=sys.stderr)
+	print('POPLITE_CLANG_SO="/usr/lib/llvm-14/lib/libclang-14.so.1"', file=sys.stderr)
+	exit(-1)
+cindex.Config.set_library_file(os.environ[so_path])
 
 def describe_node(node, full = False):
 	""" Describe a node. For debug purposes

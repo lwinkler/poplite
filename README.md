@@ -28,7 +28,7 @@ Dependencies
 
 ```
 	sudo apt-get install libboost-all-dev libclang-11-dev python3-pip astyle
-	sudo pip install clang
+	pip install clang
 ```
 
 - other useful packages:
@@ -39,15 +39,12 @@ Dependencies
 	sudo apt-get install openssh-server cmake-ncurser-gui
 ```
 
-Additionnally you may have to edit this line to match your version of clang in **parser.py**:
-
-	cindex.Config.set_library_path("/usr/lib/llvm-11.0/lib")
 
 If you still get errors be sure to add a symlink inside that directory
 
+The python clang parser needs to be told the location of the shared library. This is done with an envirnoment variable:
 ```
-cd /usr/lib/llvm-11/lib
-sudo ln -s libclang-11.0.so.1 libclang.so
+POPLITE_CLANG_SO="/usr/lib/llvm-14/lib/libclang-14.so.1"
 ```
 
 Troubleshooting
