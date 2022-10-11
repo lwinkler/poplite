@@ -81,8 +81,7 @@ void serialize_out1(Archive & ar, std::tuple<typename pop_decay<Args>::type...> 
 /// An object constructor for the broker
 template<class ParClass> class broker_constructor_sync {
 public:
-	broker_constructor_sync() {
-	}
+	broker_constructor_sync() = default;
 
 	broker_constructor_sync(ParClass* _p_obj) {
 		obj_ptr_.reset(_p_obj);
