@@ -87,5 +87,16 @@ Since objects run now on their own process their creation requires to launch the
 ### Parser
 The interface and broker of each class must be created by a parser. They will be added to the the generated files of CMake. As a consequence you need to add additional lines in CMakeLists.txt. See any example.
 
+CI/CD
+-----
+A simple config is provided to create CI/CD build nodes. See in the buildbot directory. Use
 
+```
+make create-master
+cp master.cfg masterdir
+make create-worker
+make start-master
+make start-worker
+```
 
+Then open [this URL](http://localhost:8010)
