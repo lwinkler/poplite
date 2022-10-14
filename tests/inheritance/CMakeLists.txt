@@ -9,7 +9,9 @@
 pop_add_objects("global_ns::child_ns::child;global_ns::parent_a;global_ns::parent_b_ns::parent_b" "child.hpp")
 
 # Avoid warnings: Some methods are not marked override
-add_definitions("-Winconsistent-missing-override")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	add_definitions("-Winconsistent-missing-override")
+endif()
 
 add_executable(main_inheritance main.cpp
 	${CMAKE_CURRENT_BINARY_DIR}/global_ns/parent_a.iface.hpp
