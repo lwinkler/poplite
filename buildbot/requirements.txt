@@ -1,0 +1,6 @@
+buildbot
+buildbot-worker
+buildbot-www
+buildbot-waterfall-view
+buildbot-console-view
+buildbot-grid-view
