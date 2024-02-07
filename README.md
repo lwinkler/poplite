@@ -1,6 +1,8 @@
 POPLITE
 =======
 
+**MIGRATION**: The latest version of this repo will be found at <https://codeberg.org/lwinkler/poplite>.
+
 Description
 -----------
 Poplite is a small C++ framework based on boost. It implements the POP (Parallel Object Programming) model for C++ objects. If you are interested in a more complete implementations you should have a look at the [POP-C++](https://github.com/pop-team/pop-cpp) framework developed by Tuan Ahn Nguyen and Pierre Kuonen.
